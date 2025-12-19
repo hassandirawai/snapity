@@ -22,5 +22,5 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: ['http://localhost:3000', 'http://192.168.1.4:3000'],
+  trustedOrigins: ['http://localhost:3000', 'http://192.168.1.4:3000', 'https://snapity-chi.vercel.app/'],
 })
