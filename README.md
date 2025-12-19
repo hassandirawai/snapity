@@ -35,7 +35,7 @@ This repository represents the **initial release** with a fully working core app
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-username/snapity.git
+git clone https://github.com/hassandirawai/snapity.git
 cd snapity
 pnpm install
 ```
