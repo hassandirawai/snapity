@@ -1,0 +1,1 @@
+ALTER TABLE "follows" ALTER COLUMN "created_at" SET DEFAULT now();

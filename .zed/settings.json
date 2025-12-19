@@ -1,0 +1,74 @@
+{
+  "prettier": {
+    "allowed": false
+  },
+  "format_on_save": "on",
+  "formatter": "language_server",
+  "code_actions_on_format": {
+    "source.fixAll.eslint": true
+  },
+  "lsp": {
+    "eslint": {
+      "settings": {
+        "codeActionOnSave": {
+          "enable": true,
+          "mode": "all"
+        },
+        "format": true,
+        "packageManager": "npm",
+        "run": "onType",
+        "validate": "on"
+      }
+    },
+    "volar": {
+      "initialization_options": {
+        "vue": {
+          "hybridMode": false
+        }
+      }
+    }
+  },
+  "languages": {
+    "Vue": {
+      "language_servers": [
+        "volar",
+        "eslint",
+        "..."
+      ],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "tab_size": 2
+    },
+    "TypeScript": {
+      "language_servers": [
+        "typescript-language-server",
+        "eslint",
+        "..."
+      ],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "tab_size": 2
+    },
+    "JavaScript": {
+      "language_servers": [
+        "typescript-language-server",
+        "eslint",
+        "..."
+      ],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "tab_size": 2
+    }
+  },
+  "tab_size": 2,
+  "hard_tabs": false
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "post_reaction" RENAME COLUMN "reactionType" TO "reaction_type";
