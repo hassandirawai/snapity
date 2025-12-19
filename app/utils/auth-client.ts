@@ -2,7 +2,8 @@ import { usernameClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/vue'
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.client ? window.location.origin : '',
+  // eslint-disable-next-line node/prefer-global/process
+  baseURL: process.env.BETTER_AUTH_URL,
   plugins: [
     usernameClient(),
   ],
