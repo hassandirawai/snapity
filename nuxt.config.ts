@@ -23,6 +23,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'vercel',
+    /* externals: {
+      inline: ['vue', '@vue/*', 'better-auth', 'vue-sonner', 'lucide-vue-next', '@iconify/vue', 'reka-ui', 'nuxt-tiptap-editor']
+    } */
   },
   app: {
     head: {
@@ -33,9 +36,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   vite: {
     plugins: [tailwindcss()],
-    optimizeDeps: {
-      include: ['vue'],
-    },
+    /* ssr: {
+      noExternal: ['vue', 'better-auth', 'vue-sonner', 'lucide-vue-next', '@iconify/vue', 'reka-ui', 'nuxt-tiptap-editor']
+    } */
   },
   eslint: {
     config: {

@@ -1,4 +1,5 @@
 import type { SignInCredentials } from '~/types/auth'
+import { toast } from 'vue-sonner'
 
 export const useAuthStore = defineStore('auth', () => {
   const session = ref<Session | null>(null)
@@ -33,6 +34,11 @@ export const useAuthStore = defineStore('auth', () => {
         onSuccess: async () => {
           await fetchSession()
           await navigateTo('/')
+          toast.success('Logged in successfully.')
+        },
+        onError: () => {
+          loading.value = false
+          toast.error('Invalid username or password.')
         },
       },
     })

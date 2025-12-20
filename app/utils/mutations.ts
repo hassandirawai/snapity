@@ -1,4 +1,5 @@
 import type { InfiniteData, InvalidateQueryFilters } from '@tanstack/vue-query'
+import { toast } from 'vue-sonner'
 
 // Mutation to submit a post
 export function useSubmitPostMutation() {
@@ -42,6 +43,8 @@ export function useSubmitPostMutation() {
           return !query.state.data
         },
       })
+
+      toast.success('Post created successfully.')
     },
   })
 

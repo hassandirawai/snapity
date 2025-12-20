@@ -44,7 +44,7 @@ async function handleSignOut() {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleSignOut">
-        <Icon name="solar:logout-outline" class="text-lg" />
+        <Icon name="fluent:sign-out-20-regular" class="text-lg" />
         Logout
       </DropdownMenuItem>
     </DropdownMenuContent>

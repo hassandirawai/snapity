@@ -15,13 +15,14 @@ const isLoading = ref<boolean>(false)
 
 const onSubmit = form.handleSubmit(async (values) => {
   await signUp.email({
-    name: '',
+    name: values.fullName,
     username: values.username,
     email: values.email,
     password: values.password,
   }, {
     onSuccess: async () => {
       await navigateTo('/')
+      toast.success('Account created successfully.')
     },
     onError: () => {
       isLoading.value = false
@@ -46,6 +47,15 @@ const onSubmit = form.handleSubmit(async (values) => {
             Create your account and start sharing.
           </p>
         </div>
+        <FormField v-slot="{ componentField }" name="fullName" :validate-on-blur="!form.isFieldDirty">
+          <FormItem>
+            <FormLabel>Full Name</FormLabel>
+            <FormControl>
+              <Input type="text" placeholder="Full Name" v-bind="componentField" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
         <FormField v-slot="{ componentField }" name="username" :validate-on-blur="!form.isFieldDirty">
           <FormItem>
             <FormLabel>Username</FormLabel>

@@ -34,7 +34,7 @@ importers:
         version: 5.90.5(vue@3.5.22(typescript@5.8.3))
       '@vee-validate/zod':
         specifier: ^4.15.1
-        version: 4.15.1(vue@3.5.22(typescript@5.8.3))(zod@3.25.67)
+        version: 4.15.1(vue@3.5.22(typescript@5.8.3))(zod@4.1.12)
       '@vueuse/core':
         specifier: ^13.5.0
         version: 13.9.0(vue@3.5.22(typescript@5.8.3))
@@ -87,11 +87,11 @@ importers:
         specifier: ^4.5.1
         version: 4.6.3(vue@3.5.22(typescript@5.8.3))
       vue-sonner:
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.9
+        version: 2.0.9(@nuxt/kit@4.2.0(magicast@0.3.5))(@nuxt/schema@4.2.0)(nuxt@4.2.0(@parcel/watcher@2.5.1)(@types/node@24.0.6)(@vue/compiler-sfc@3.5.22)(db0@0.3.4(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8)))(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8))(eslint@9.30.0(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.52.5)(terser@5.43.1)(typescript@5.8.3)(vite@7.1.12(@types/node@24.0.6)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(vue-tsc@2.2.12(typescript@5.8.3))(yaml@2.8.1))
       zod:
-        specifier: ^3.25.67
-        version: 3.25.67
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^4.16.1
@@ -6130,8 +6130,19 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  vue-sonner@2.0.2:
-    resolution: {integrity: sha512-cN6onnN6aBOZ56YWN8CMj6t4zqbz/XlenE+jx5z+mgduMMelFo6B6G+e2Q6hhxU9YFiV16MXG2MBPluZabyElQ==}
+  vue-sonner@2.0.9:
+    resolution: {integrity: sha512-i6BokNlNDL93fpzNxN/LZSn6D6MzlO+i3qXt6iVZne3x1k7R46d5HlFB4P8tYydhgqOrRbIZEsnRd3kG7qGXyw==}
+    peerDependencies:
+      '@nuxt/kit': ^4.0.3
+      '@nuxt/schema': ^4.0.3
+      nuxt: ^4.0.3
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@nuxt/schema':
+        optional: true
+      nuxt:
+        optional: true
 
   vue-tsc@2.2.12:
     resolution: {integrity: sha512-P7OP77b2h/Pmk+lZdJ0YWs+5tJ6J2+uOQPo7tlBnY44QqQSPYvS0qVT4wqDJgwrZaLe47etJLLQRFia71GYITw==}
@@ -6280,9 +6291,6 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
-
-  zod@3.25.67:
-    resolution: {integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==}
 
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
@@ -6543,7 +6551,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@3.25.67))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)':
+  '@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)':
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -6554,9 +6562,9 @@ snapshots:
       nanostores: 1.0.1
       zod: 4.1.12
 
-  '@better-auth/telemetry@1.4.7(@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@3.25.67))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))':
+  '@better-auth/telemetry@1.4.7(@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))':
     dependencies:
-      '@better-auth/core': 1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@3.25.67))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
+      '@better-auth/core': 1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
 
@@ -8780,11 +8788,11 @@ snapshots:
       - magicast
       - vue
 
-  '@vee-validate/zod@4.15.1(vue@3.5.22(typescript@5.8.3))(zod@3.25.67)':
+  '@vee-validate/zod@4.15.1(vue@3.5.22(typescript@5.8.3))(zod@4.1.12)':
     dependencies:
       type-fest: 4.41.0
       vee-validate: 4.15.1(vue@3.5.22(typescript@5.8.3))
-      zod: 3.25.67
+      zod: 4.1.12
     transitivePeerDependencies:
       - vue
 
@@ -9291,8 +9299,8 @@ snapshots:
 
   better-auth@1.4.7(drizzle-kit@0.31.4)(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8))(vue@3.5.22(typescript@5.8.3)):
     dependencies:
-      '@better-auth/core': 1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@3.25.67))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
-      '@better-auth/telemetry': 1.4.7(@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@3.25.67))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))
+      '@better-auth/core': 1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
+      '@better-auth/telemetry': 1.4.7(@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.0.1
@@ -13138,7 +13146,11 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.22(typescript@5.8.3)
 
-  vue-sonner@2.0.2: {}
+  vue-sonner@2.0.9(@nuxt/kit@4.2.0(magicast@0.3.5))(@nuxt/schema@4.2.0)(nuxt@4.2.0(@parcel/watcher@2.5.1)(@types/node@24.0.6)(@vue/compiler-sfc@3.5.22)(db0@0.3.4(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8)))(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8))(eslint@9.30.0(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.52.5)(terser@5.43.1)(typescript@5.8.3)(vite@7.1.12(@types/node@24.0.6)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(vue-tsc@2.2.12(typescript@5.8.3))(yaml@2.8.1)):
+    optionalDependencies:
+      '@nuxt/kit': 4.2.0(magicast@0.3.5)
+      '@nuxt/schema': 4.2.0
+      nuxt: 4.2.0(@parcel/watcher@2.5.1)(@types/node@24.0.6)(@vue/compiler-sfc@3.5.22)(db0@0.3.4(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8)))(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)(kysely@0.28.8))(eslint@9.30.0(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.52.5)(terser@5.43.1)(typescript@5.8.3)(vite@7.1.12(@types/node@24.0.6)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(vue-tsc@2.2.12(typescript@5.8.3))(yaml@2.8.1)
 
   vue-tsc@2.2.12(typescript@5.8.3):
     dependencies:
@@ -13296,8 +13308,6 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
-
-  zod@3.25.67: {}
 
   zod@4.1.12: {}
 
