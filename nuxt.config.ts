@@ -21,6 +21,9 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+  nitro: {
+    preset: 'vercel',
+  },
   app: {
     head: {
       title: 'Snapity',
@@ -30,6 +33,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['vue'],
+    },
   },
   eslint: {
     config: {

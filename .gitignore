@@ -26,3 +26,6 @@ logs
 # IDE files
 .zed
 .vscode
+
+.vercel
+.env*.local
