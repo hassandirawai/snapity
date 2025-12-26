@@ -17,20 +17,23 @@ export default defineNuxtConfig({
   devtools: { enabled: true, timeline: { enabled: true } },
   app: { head: { title: 'Snapity' } },
   css: ['~/assets/css/tailwind.css'],
-  compatibilityDate: '2025-12-26',
+  compatibilityDate: '2025-07-15',
 
   nitro: {
     preset: 'vercel',
     esbuild: {
       options: { target: 'node18' },
     },
-    // ✅ NO vite property here - TypeScript happy
+    rollupConfig: {
+      output: {
+        format: 'esm',
+      },
+    },
   },
 
-  // ✅ CORRECT LOCATION - Global Vite config
   vite: {
     ssr: {
-      noExternal: ['vue/server-renderer'],
+      noExternal: ['vue'],
     },
     plugins: [tailwindcss()],
     define: { global: 'globalThis' },
