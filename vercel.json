@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "*.js": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 30
+    },
+    "*.mjs": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 30
+    }
+  }
+}

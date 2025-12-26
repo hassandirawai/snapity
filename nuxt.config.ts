@@ -1,6 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -17,43 +16,36 @@ export default defineNuxtConfig({
   ],
   devtools: {
     enabled: true,
-    timeline: {
-      enabled: true,
-    },
-  },
-  nitro: {
-    preset: 'vercel',
-    /* externals: {
-      inline: ['vue', '@vue/*', 'better-auth', 'vue-sonner', 'lucide-vue-next', '@iconify/vue', 'reka-ui', 'nuxt-tiptap-editor']
-    } */
+    timeline: { enabled: true },
   },
   app: {
-    head: {
-      title: 'Snapity',
-    },
+    head: { title: 'Snapity' },
   },
   css: ['~/assets/css/tailwind.css'],
-  compatibilityDate: '2025-05-15',
+  compatibilityDate: '2025-12-26',
+
+  // ✅ PRODUCTION PROVEN - Node.js + Full transpilation
+  nitro: {
+    preset: 'vercel',
+    esbuild: {
+      options: {
+        target: 'node18'
+      }
+    }
+  },
+
   vite: {
     plugins: [tailwindcss()],
-    /* ssr: {
-      noExternal: ['vue', 'better-auth', 'vue-sonner', 'lucide-vue-next', '@iconify/vue', 'reka-ui', 'nuxt-tiptap-editor']
-    } */
-  },
-  eslint: {
-    config: {
-      standalone: false,
+    define: {
+      global: 'globalThis',
     },
   },
+
+  eslint: {
+    config: { standalone: false },
+  },
   shadcn: {
-    /**
-     * Prefix for all the imported component
-     */
     prefix: '',
-    /**
-     * Directory that the component lives in.
-     * @default "./components/ui"
-     */
     componentDir: '@/components/ui',
   },
   colorMode: {
