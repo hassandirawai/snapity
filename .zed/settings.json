@@ -1,74 +1,68 @@
 {
   "prettier": {
-    "allowed": false
+    "allowed": false,
   },
   "format_on_save": "on",
   "formatter": "language_server",
   "code_actions_on_format": {
-    "source.fixAll.eslint": true
-  },
-  "lsp": {
-    "eslint": {
-      "settings": {
-        "codeActionOnSave": {
-          "enable": true,
-          "mode": "all"
-        },
-        "format": true,
-        "packageManager": "npm",
-        "run": "onType",
-        "validate": "on"
-      }
-    },
-    "volar": {
-      "initialization_options": {
-        "vue": {
-          "hybridMode": false
-        }
-      }
-    }
+    "source.fixAll.eslint": true,
   },
   "languages": {
     "Vue": {
+      "enable_language_server": true,
       "language_servers": [
-        "volar",
-        "eslint",
-        "..."
+        "volar"
       ],
-      "format_on_save": "on",
-      "formatter": "language_server",
-      "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      },
-      "tab_size": 2
     },
     "TypeScript": {
+      "enable_language_server": true,
       "language_servers": [
-        "typescript-language-server",
-        "eslint",
-        "..."
+        "typescript-language-server"
       ],
-      "format_on_save": "on",
-      "formatter": "language_server",
-      "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      },
-      "tab_size": 2
     },
     "JavaScript": {
+      "enable_language_server": true,
       "language_servers": [
-        "typescript-language-server",
-        "eslint",
-        "..."
+        "typescript-language-server"
       ],
-      "format_on_save": "on",
+    },
+    "JSON": {
       "formatter": "language_server",
-      "code_actions_on_format": {
-        "source.fixAll.eslint": true
+    },
+  },
+  "lsp": {
+    "volar": {
+      "settings": {
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "vue.hybridMode": false,
+        "vue.server.petiteVueAutoCompletion": true,
+        "vue.updateImportsOnFileMove.enabled": true,
       },
-      "tab_size": 2
-    }
+    },
+    "typescript-language-server": {
+      "settings": {
+        "typescript": {
+          "tsdk": "node_modules/typescript/lib",
+          "enablePromptUseWorkspaceTsdk": true,
+        },
+      },
+    },
+    "eslint": {
+      "settings": {
+        "validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "vue",
+        ],
+      },
+    },
   },
   "tab_size": 2,
-  "hard_tabs": false
+  "hard_tabs": false,
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware",
+  },
 }
