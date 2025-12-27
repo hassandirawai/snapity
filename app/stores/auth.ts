@@ -10,12 +10,19 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     // await new Promise(res => setTimeout(res, 10000))
     try {
+      // Only run on client-side
+      if (process.server) {
+        loading.value = false
+        return
+      }
+
       const { data } = await authClient.getSession()
       session.value = data
     }
     catch (error: any) {
       // eslint-disable-next-line no-console
-      console.log(error)
+      console.error('Failed to fetch session:', error)
+      session.value = null
     }
     finally {
       loading.value = false

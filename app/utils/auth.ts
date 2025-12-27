@@ -7,6 +7,8 @@ export const auth = betterAuth({
   database: drizzleAdapter(useDrizzle(), {
     provider: 'pg',
   }),
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  basePath: '/api/auth',
   emailAndPassword: {
     enabled: true,
   },
@@ -23,5 +25,9 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: ['http://localhost:3000', 'http://192.168.1.4:3000', 'https://snapity-chi.vercel.app/'],
+  trustedOrigins: [
+    'http://localhost:3000',
+    'http://192.168.1.4:3000',
+    'https://snapity-chi.vercel.app',
+  ],
 })
