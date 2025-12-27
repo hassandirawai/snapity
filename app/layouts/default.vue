@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex flex-col minh-screen">
     <Navbar />
     <div class="mx-auto max-w-7xl px-3 py-6 flex w-full gap-x-6">
       <MenuBar class="sticky top-[5.54rem] border rounded-2xl h-fit p-3 hidden sm:block lg:px-6 xl:w-80" />
@@ -12,6 +12,4 @@
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>

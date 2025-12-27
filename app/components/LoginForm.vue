@@ -16,10 +16,16 @@ const form = useForm({
 const auth = useAuthStore()
 
 const onSubmit = form.handleSubmit(async (values) => {
-  await auth.signIn({
-    username: values.username,
-    password: values.password,
-  })
+  try {
+    await auth.signIn({
+      username: values.username,
+      password: values.password,
+    })
+  }
+  catch (error) {
+    console.error('Sign in error:', error)
+    toast.error('An error occurred during sign in')
+  }
 })
 </script>
 
@@ -64,7 +70,8 @@ const onSubmit = form.handleSubmit(async (values) => {
           Login
         </LoadingButton>
         <!-- Text with Divider -->
-        <div class="relative text-sm text-center after:absolute after:w-full after:flex after:border-border after:border-t-1 after:top-1/2 after:z-0">
+        <div
+          class="relative text-sm text-center after:absolute after:w-full after:flex after:border-border after:border-t after:top-1/2 after:z-0">
           <span class="relative z-10 text-muted-foreground bg-card px-2">Or Continue With</span>
         </div>
         <!-- Social Login -->
@@ -90,11 +97,7 @@ const onSubmit = form.handleSubmit(async (values) => {
         </div>
       </form>
       <div class="relative hidden bg-muted md:block">
-        <img
-          src="/sign-up-from-image.jpeg"
-          alt="Image"
-          class="h-full w-full object-cover"
-        >
+        <img src="/sign-up-from-image.jpeg" alt="Image" class="h-full w-full object-cover">
         <div class="absolute inset-0 bg-black/25" />
         <div class="absolute bottom-8 left-8 right-8">
           <p class="text-white text-xl font-medium">
@@ -106,6 +109,4 @@ const onSubmit = form.handleSubmit(async (values) => {
   </Card>
 </template>
 
-<style>
-
-</style>
+<style></style>

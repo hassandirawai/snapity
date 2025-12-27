@@ -4,28 +4,29 @@ import { toast } from 'vue-sonner'
 export const useAuthStore = defineStore('auth', () => {
   const session = ref<Session | null>(null)
   const loading = ref<boolean>(false)
-  const signingOut = ref<boolean>(false)
+  const initialized = ref<boolean>(false)
 
   async function fetchSession() {
-    loading.value = true
-    // await new Promise(res => setTimeout(res, 10000))
     try {
-      // Only run on client-side
-      if (process.server) {
-        loading.value = false
-        return
-      }
-
       const { data } = await authClient.getSession()
       session.value = data
     }
     catch (error: any) {
-      // eslint-disable-next-line no-console
       console.error('Failed to fetch session:', error)
       session.value = null
     }
+  }
+
+  async function initializeAuth() {
+    if (initialized.value) return
+
+    loading.value = true
+    try {
+      await fetchSession()
+    }
     finally {
       loading.value = false
+      initialized.value = true
     }
   }
 
@@ -69,10 +70,11 @@ export const useAuthStore = defineStore('auth', () => {
     session,
     loggedInUser,
     loading,
+    initialized,
     fetchSession,
+    initializeAuth,
     signIn,
     signOut,
-    signingOut,
   }
 }, {
   persist: true,

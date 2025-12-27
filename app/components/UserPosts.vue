@@ -30,20 +30,13 @@ const posts = computed(() => data.value?.pages.flatMap(page => page.posts) ?? []
   <!-- Show loading skeleton while fetching posts -->
   <PostsLoadingSkeleton v-if="status === 'pending'" />
   <!-- Show message if no posts are available -->
-  <p
-    v-else-if="status === 'success' && !posts.length && !hasNextPage"
-    class="text-center text-muted-foreground"
-  >
+  <p v-else-if="status === 'success' && !posts.length && !hasNextPage"
+    class="text-center text-muted-foreground min-h-screen">
     {{ userId === loggedInUser?.id ? 'You don\'t have posts yet.' : 'This user doesn\'t have posts yet.' }}
   </p>
   <!-- Show posts if available -->
-  <InfiniteScrollContainer
-    v-else
-    class="space-y-6"
-    :has-next-page="hasNextPage"
-    :loading="isFetchingNextPage"
-    @load-more="fetchNextPage"
-  >
+  <InfiniteScrollContainer v-else class="space-y-6" :has-next-page="hasNextPage" :loading="isFetchingNextPage"
+    @load-more="fetchNextPage">
     <Post v-for="post in posts" :key="post.id" :post="post" />
     <div class="flex justify-center">
       <Spinner v-if="isLoading || isFetchingNextPage" :size="24" />

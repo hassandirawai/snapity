@@ -7,8 +7,6 @@ export const auth = betterAuth({
   database: drizzleAdapter(useDrizzle(), {
     provider: 'pg',
   }),
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-  basePath: '/api/auth',
   emailAndPassword: {
     enabled: true,
   },
