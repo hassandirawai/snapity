@@ -26,9 +26,7 @@ async function handleSignOut() {
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger :class="cn('flex rounded-full', props.class)">
-      <ClientOnly>
-        <UserAvatar :size="40" :avatar-url="user?.avatar" />
-      </ClientOnly>
+      <UserAvatar :size="40" :avatar-url="user?.avatar" />
     </DropdownMenuTrigger>
     <DropdownMenuContent>
       <DropdownMenuLabel>
