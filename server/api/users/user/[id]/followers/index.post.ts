@@ -2,8 +2,9 @@ import { follows } from '~~/server/database/schema'
 
 export default defineEventHandler(async (event) => {
   try {
-    const { id: followerId } = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
+    const followerId = loggedInUser.id
     const followingId = getRouterParam(event, 'id') as string | undefined
 
     if (!followingId) {

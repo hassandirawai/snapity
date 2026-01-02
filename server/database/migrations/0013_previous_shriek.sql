@@ -1,1 +1,0 @@
-ALTER TABLE "follow" DROP COLUMN "id";

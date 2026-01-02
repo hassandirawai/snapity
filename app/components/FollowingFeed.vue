@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-const auth = useAuthStore()
-const { loggedInUser } = storeToRefs(auth)
+const { user: loggedInUser } = useUserSession()
 
 const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status } = useInfiniteQuery({
   queryKey: ['posts-feed', 'following-feed'],

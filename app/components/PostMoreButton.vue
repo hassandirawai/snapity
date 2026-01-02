@@ -6,7 +6,7 @@ const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
 
-const { loggedInUser } = useAuthStore()
+const { user: loggedInUser } = useUserSession()
 
 // Generate post link
 const postLink = ref(`http://localhost:3000/post/${props.post.id}`)
@@ -37,6 +37,4 @@ const { copy } = useClipboard({ source: postLink.value })
   </DropdownMenu>
 </template>
 
-<style>
-
-</style>
+<style></style>

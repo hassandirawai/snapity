@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
   try {
     // Check if user is authenticated
-    const user = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     // Get post id
     const postId = getRouterParam(event, 'id') as string | undefined
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       .values({
         reactionType,
         postId,
-        userId: user.id,
+        userId: loggedInUser.id,
       })
       .onConflictDoUpdate({
         target: [tables.postReactions.postId, tables.postReactions.userId],

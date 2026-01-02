@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const { user, loggedInUserId } = defineProps<{
-  user: UserInfo
+  user: UserProfile
   loggedInUserId: string
 }>()
 
@@ -16,17 +16,13 @@ const followerInfo: FollowerInfo = {
     <div class="flex w-full justify-between">
       <div class="flex flex-col">
         <h1 class="text-3xl font-bold">
-          {{ user.name }}
+          {{ user.fullName }}
         </h1>
         <p class="text-muted-foreground">
           @{{ user.username }}
         </p>
       </div>
-      <FollowButton
-        v-if="user.id !== loggedInUserId"
-        :user-id="user.id"
-        :initial-state="followerInfo"
-      >
+      <FollowButton v-if="user.id !== loggedInUserId" :user-id="user.id" :initial-state="followerInfo">
         Follow
       </FollowButton>
       <Button v-else variant="secondary">
@@ -42,10 +38,7 @@ const followerInfo: FollowerInfo = {
             {{ user.postsCount }}
           </span>
         </span>
-        <FollowerCount
-          :user-id="user.id"
-          :initial-state="followerInfo"
-        />
+        <FollowerCount :user-id="user.id" :initial-state="followerInfo" />
       </div>
     </div>
     <Separator />

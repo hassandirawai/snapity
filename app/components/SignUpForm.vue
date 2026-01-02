@@ -14,24 +14,32 @@ const form = useForm({
 const isLoading = ref<boolean>(false)
 
 const onSubmit = form.handleSubmit(async (values) => {
-  await signUp.email({
-    name: values.fullName,
-    username: values.username,
-    email: values.email,
-    password: values.password,
-  }, {
-    onSuccess: async () => {
-      await navigateTo('/')
-      toast.success('Account created successfully.')
-    },
-    onError: () => {
-      isLoading.value = false
-      toast.error('Please check your username or email address')
-    },
-    onRequest: () => {
-      isLoading.value = true
-    },
-  })
+  isLoading.value = true
+  try {
+    const { success } = await $fetch('/api/auth/signup', {
+      method: 'POST',
+      body: {
+        fullName: values.fullName,
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      },
+    })
+
+    if (success) {
+      toast.success('Account created successfully')
+      const { loggedIn, fetch } = useUserSession()
+      await fetch()
+      if (loggedIn.value) {
+        navigateTo('/')
+      }
+    }
+  } catch (error) {
+    console.log(error)
+    toast.error(error.statusMessage)
+  } finally {
+    isLoading.value = false
+  }
 })
 </script>
 
@@ -87,8 +95,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           Sign Up
         </LoadingButton>
         <div
-          class="relative text-sm text-center after:absolute after:border-t after:border-border after:top-1/2 after:w-full after:z-0 after:flex"
-        >
+          class="relative text-sm text-center after:absolute after:border-t after:border-border after:top-1/2 after:w-full after:z-0 after:flex">
           <span class="relative z-10 bg-card px-2 text-muted-foreground">
             Or Continue With
           </span>
@@ -116,11 +123,7 @@ const onSubmit = form.handleSubmit(async (values) => {
         </div>
       </form>
       <div class="relative hidden bg-muted md:block">
-        <img
-          src="/sign-up-from-image.jpeg"
-          alt="Image"
-          class="h-full w-full object-cover"
-        >
+        <img src="/sign-up-from-image.jpeg" alt="Image" class="h-full w-full object-cover">
         <div class="absolute inset-0 bg-black/25" />
         <div class="absolute bottom-8 left-8 right-8">
           <p class="text-white text-xl font-medium">

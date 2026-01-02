@@ -1,1 +1,0 @@
-ALTER TABLE "follows" ADD COLUMN "created_at" timestamp NOT NULL;

@@ -1,9 +1,9 @@
-import type { UserInfo } from '~~/shared/types/users'
+import type { UserProfile } from '~~/shared/types/users'
 import { desc, eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   try {
-    await requiredUser(event)
+    await requireUserSession(event)
 
     const username = getRouterParam(event, 'username') as string | undefined
 
@@ -21,7 +21,8 @@ export default defineEventHandler(async (event) => {
         id: tables.user.id,
         avatar: tables.user.image,
         username: tables.user.username,
-        name: tables.user.name,
+        email: tables.user.email,
+        fullName: tables.user.fullName,
         createdAt: tables.user.createdAt,
         followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
         followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN 1 END)`,
@@ -36,7 +37,7 @@ export default defineEventHandler(async (event) => {
       .groupBy(tables.user.id)
       .orderBy(desc(tables.user.id))
 
-    const userData: UserInfo | undefined = users[0]
+    const userData: UserProfile | undefined = users[0]
 
     if (!userData) {
       throw createError({

@@ -2,7 +2,7 @@ import { getUserPosts } from '~~/server/utils/queries'
 
 export default defineEventHandler(async (event) => {
   try {
-    await requiredUser(event)
+    await requireUserSession(event)
 
     const userId = getRouterParam(event, 'id') as string | undefined
 

@@ -1,1 +1,0 @@
-ALTER TYPE "public"."reaction_type" RENAME TO "reaction_type_enum";

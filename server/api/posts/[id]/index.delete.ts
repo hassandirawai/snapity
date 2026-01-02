@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   try {
-    const user = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     const postId = getRouterParam(event, 'id') as string || undefined
 
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
     const postDate = await getPostById(postId)
 
-    if (postDate.authorId !== user.id) {
+    if (postDate.authorId !== loggedInUser.id) {
       throw createError({
         statusCode: 403,
         statusMessage: 'You are not authorized to delete this post',

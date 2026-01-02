@@ -1,2 +1,0 @@
-ALTER TABLE "post_reaction" DROP CONSTRAINT "post_reaction_post_id_user_id_unique";--> statement-breakpoint
-ALTER TABLE "post_reaction" ADD CONSTRAINT "reaction_post_user_unique" UNIQUE("user_id","post_id");

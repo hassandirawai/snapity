@@ -3,7 +3,7 @@ import { createPostSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
   try {
-    const user = await requiredUser(event)
+    const user = await requireUserSession(event)
     const postId = getRouterParam(event, 'id') as string
     const { data: post } = createPostSchema.safeParse(await readBody(event))
 

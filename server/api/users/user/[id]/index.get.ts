@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   try {
     const userId = getRouterParam(event, 'id') as string | undefined
 
-    await requiredUser(event)
+    await requireUserSession(event)
 
     if (!userId) {
       throw createError({
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         id: tables.user.id,
         avatar: tables.user.image,
         username: tables.user.username,
-        name: tables.user.name,
+        fullName: tables.user.fullName,
         followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
       })
       .from(tables.user)

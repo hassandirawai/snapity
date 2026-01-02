@@ -3,8 +3,7 @@ const props = defineProps<{
   userId: string | undefined
 }>()
 
-const auth = useAuthStore()
-const { loggedInUser } = storeToRefs(auth)
+const { user: loggedInUser } = useUserSession()
 
 // Fetch the posts for the for-you feed
 const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status } = useInfiniteQuery({

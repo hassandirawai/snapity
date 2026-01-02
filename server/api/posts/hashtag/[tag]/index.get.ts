@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   try {
     const tag = getRouterParam(event, 'tag') as string | undefined
 
-    await requiredUser(event)
+    await requireUserSession(event)
 
     if (!tag) {
       throw createError({

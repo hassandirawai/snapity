@@ -1,18 +1,25 @@
 <script lang="ts" setup>
 import type { HTMLAttributes } from 'vue'
+import { toast } from 'vue-sonner';
 import { cn } from '~/lib/utils'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
 
-const { loggedInUser, signOut } = useAuthStore()
+const { user, clear } = useUserSession()
 
 const queryClient = useQueryClient()
 
 async function handleSignOut() {
-  queryClient.clear()
-  await signOut()
+  try {
+    await clear()
+    queryClient.clear()
+    await navigateTo('/login')
+  } catch (error) {
+    console.error('Logout error:', error)
+    toast.error('An error occurred during logout')
+  }
 }
 </script>
 
@@ -20,16 +27,16 @@ async function handleSignOut() {
   <DropdownMenu>
     <DropdownMenuTrigger :class="cn('flex rounded-full', props.class)">
       <ClientOnly>
-        <UserAvatar :size="40" :avatar-url="loggedInUser?.image" />
+        <UserAvatar :size="40" :avatar-url="user?.avatar" />
       </ClientOnly>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
       <DropdownMenuLabel>
-        Logged in as <span class="font-semibold">@{{ loggedInUser?.username }}</span>
+        Logged in as <span class="font-semibold">@{{ user?.username }}</span>
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem as-child>
-        <NuxtLink :to="`/users/${loggedInUser?.username}`">
+        <NuxtLink :to="`/users/${user?.username}`">
           <Icon name="fluent:person-20-regular" class="text-lg" />
           Profile
         </NuxtLink>

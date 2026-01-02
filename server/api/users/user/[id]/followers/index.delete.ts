@@ -3,7 +3,7 @@ import { follows } from '~~/server/database/schema'
 
 export default defineEventHandler(async (event) => {
   try {
-    const { id: followerId } = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     const followingId = getRouterParam(event, 'id') as string | undefined
 
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
     return await useDrizzle()
       .delete(follows)
-      .where(and(eq(follows.followerId, followerId), eq(follows.followingId, followingId)))
+      .where(and(eq(follows.followerId, loggedInUser.id), eq(follows.followingId, followingId)))
   }
   catch (error) {
     console.warn(error)

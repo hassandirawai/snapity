@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   try {
     const queryLimit = getRouterParam(event, 'limit')
 
-    const loggedInUser = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     const db = useDrizzle()
 
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
         id: tables.user.id,
         avatar: tables.user.image,
         username: tables.user.username,
-        name: tables.user.name,
+        name: tables.user.fullName,
         followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
       })
       .from(tables.user)

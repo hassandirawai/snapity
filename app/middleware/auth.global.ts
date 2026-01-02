@@ -1,21 +1,17 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  // Only run on client-side
-  if (import.meta.server)
-    return
-
-  const auth = useAuthStore()
-
-  // Initialize auth on first load
-  if (!auth.initialized) {
-    await auth.initializeAuth()
-  }
-
   const isAuthRoute = ['/login', '/signup'].includes(to.path)
   const isHome = to.path === '/'
 
-  if (isHome && !auth.session)
-    return navigateTo('/login')
+  const session = useUserSession()
 
-  if (isAuthRoute && auth.session)
-    return navigateTo('/')
+  if (!session.loggedIn.value) {
+    // Fetch user session if does not exist
+    await session.fetch()
+
+    if (isHome && !session.loggedIn.value)
+      return navigateTo('/login')
+
+    if (isAuthRoute && session.loggedIn.value)
+      return navigateTo('/')
+  }
 })

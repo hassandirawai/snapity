@@ -5,7 +5,8 @@ import { createPostSchema } from '~/utils/zod-schemas'
 export default defineEventHandler(async (event) => {
   try {
     // Check if user is authenticated
-    const user = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
+
 
     // Get post data
     const body: CreatePostSchemaType = await readBody(event)
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
       .insert(tables.posts)
       .values({
         content: parsed.data.content,
-        authorId: user.id,
+        authorId: loggedInUser.id,
       })
       .returning()
 
@@ -37,7 +38,7 @@ export default defineEventHandler(async (event) => {
     if (postHashtags) {
       hashtagRecords = await Promise.all(
         postHashtags.map(async (hashtag) => {
-        // Check if hashtag already exists in DB
+          // Check if hashtag already exists in DB
           const [existing] = await useDrizzle()
             .select()
             .from(tables.hashtags)

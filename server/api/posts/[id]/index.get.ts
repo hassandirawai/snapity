@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   try {
-    await requiredUser(event)
+    await requireUserSession(event)
 
     const postId = getRouterParam(event, 'id') as string || undefined
 

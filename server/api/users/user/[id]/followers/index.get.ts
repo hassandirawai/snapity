@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   try {
     const userId = getRouterParam(event, 'id') as string | undefined
 
-    const loggedInUser = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     if (!userId) {
       throw createError('User ID is required')
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
       .leftJoin(tables.follows, or(eq(tables.user.id, tables.follows.followerId), eq(tables.user.id, tables.follows.followingId)))
       .where(eq(tables.user.id, userId))
       .groupBy(tables.user.id)
-      .orderBy(desc(tables.user.name))
+      .orderBy(desc(tables.user.fullName))
 
     if (!users[0]) {
       throw createError({

@@ -1,6 +1,67 @@
 import type { PostType } from '~~/shared/types/posts'
 import { and, desc, eq, lt, or, sql } from 'drizzle-orm'
-import { hashtags, postHashtags } from '../database/schema'
+import { hashtags, postHashtags, user } from '../database/schema'
+import { CreateUser } from '~~/shared/types/users'
+import { signUpSchema } from '~/utils/zod-schemas'
+import { success } from 'zod'
+
+// Get user by username
+export async function findUserByUsername(username: string) {
+  const db = useDrizzle()
+
+  const data = await db.
+    select()
+    .from(user)
+    .where(eq(user.username, username))
+
+  return data[0]
+}
+
+// Get user by id
+export async function findUserById(id: string) {
+  const db = useDrizzle()
+
+  const data = await db.
+    select()
+    .from(user)
+    .where(eq(user.id, id))
+
+  return data[0]
+}
+
+// Get user by email
+export async function findUserByEmail(email: string) {
+  const db = useDrizzle()
+
+  const data = await db.
+    select()
+    .from(user)
+    .where(eq(user.email, email))
+
+  return data[0]
+}
+
+// Create user
+export async function createUser(userData: CreateUser) {
+  const db = useDrizzle()
+
+  const hashedPassword = await hashPassword(userData.password)
+
+  const data = await db
+    .insert(user)
+    .values({
+      fullName: userData.fullName,
+      username: userData.username,
+      email: userData.email,
+      password: hashedPassword
+    })
+    .returning()
+
+  return data[0]
+}
+
+// Update user
+export async function updateUser() { }
 
 // Get posts with reactions and hashtags
 export async function getForYouFeedPosts({
@@ -20,7 +81,7 @@ export async function getForYouFeedPosts({
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -35,7 +96,7 @@ export async function getForYouFeedPosts({
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
     .where(cursorDate ? lt(posts.createdAt, cursorDate) : undefined)
     .orderBy(desc(posts.createdAt))
     .limit(pageSize + 1)
@@ -60,7 +121,7 @@ export async function getFollowerFeedPosts({
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -76,7 +137,7 @@ export async function getFollowerFeedPosts({
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
     .leftJoin(follows, or(eq(follows.followerId, user.id), eq(follows.followingId, user.id)))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
     .where(
       and(
         cursorDate ? lt(posts.createdAt, cursorDate) : undefined,
@@ -114,7 +175,7 @@ export async function getUserPosts({
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -130,7 +191,7 @@ export async function getUserPosts({
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
     .leftJoin(follows, or(eq(follows.followerId, user.id), eq(follows.followingId, user.id)))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
     .where(
       and(
         cursorDate ? lt(posts.createdAt, cursorDate) : undefined,
@@ -147,7 +208,7 @@ export async function getUserPosts({
 
 // Get posts with reactions and hashtags
 export async function getPosts():
-Promise<PostType[]> {
+  Promise<PostType[]> {
   const { posts, postReactions, user, hashtags, postHashtags } = tables
 
   const db = useDrizzle()
@@ -158,7 +219,7 @@ Promise<PostType[]> {
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -173,12 +234,12 @@ Promise<PostType[]> {
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
     .orderBy(desc(posts.createdAt))
 }
 
 export async function getPostsByHashtag(tag: string):
-Promise<PostType[]> {
+  Promise<PostType[]> {
   const { posts, postReactions, user, hashtags, postHashtags } = tables
 
   const db = useDrizzle()
@@ -189,7 +250,7 @@ Promise<PostType[]> {
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -205,7 +266,7 @@ Promise<PostType[]> {
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
     .where(eq(hashtags.tag, tag))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
 }
 
 export async function getPostById(id: string): Promise<PostType> {
@@ -219,7 +280,7 @@ export async function getPostById(id: string): Promise<PostType> {
       id: posts.id,
       authorId: posts.authorId,
       authorAvatar: user.image,
-      authorName: user.name,
+      authorName: user.fullName,
       authorUsername: user.username,
       postContent: posts.content,
       postCreatedAt: posts.createdAt,
@@ -234,7 +295,7 @@ export async function getPostById(id: string): Promise<PostType> {
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.name, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
     .where(eq(posts.id, id))
 
   if (!postData[0]) {

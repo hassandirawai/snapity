@@ -11,7 +11,9 @@
         <NuxtImg src="/sanpity-logo.svg" width="96" height="96" class="w-28" />
       </NuxtLink>
       <SearchField />
-      <UserButton class="sm:ms-auto" />
+      <AuthState v-slot="{ loggedIn, clear }">
+        <UserButton class="sm:ms-auto" />
+      </AuthState>
     </div>
   </header>
 </template>

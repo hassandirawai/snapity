@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const cursorDate = cursorDateParam ? new Date(cursorDateParam) : undefined
     const pageSize = 5
 
-    const loggedInUser = await requiredUser(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     // console.log(cursorDate)
 

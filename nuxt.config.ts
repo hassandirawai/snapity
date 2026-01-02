@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     '@peterbud/nuxt-query',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
+    'nuxt-auth-utils',
   ],
   devtools: { enabled: true, timeline: { enabled: true } },
   app: { head: { title: 'Snapity' } },

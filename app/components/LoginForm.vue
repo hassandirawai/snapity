@@ -11,20 +11,34 @@ const form = useForm({
   validationSchema: toTypedSchema(loginSchema),
 })
 
-// const isLoading = ref<boolean>(false)
-
-const auth = useAuthStore()
+const isLoading = ref<boolean>(false)
 
 const onSubmit = form.handleSubmit(async (values) => {
+  isLoading.value = true
   try {
-    await auth.signIn({
-      username: values.username,
-      password: values.password,
+    const { fetch } = useUserSession()
+
+    const { success } = await $fetch('/api/auth/login', {
+      method: 'POST',
+      body: {
+        username: values.username,
+        password: values.password,
+      }
     })
+
+    if (success) {
+      await fetch()
+      await navigateTo('/')
+      toast.success('Logged in successfully')
+    } else {
+      toast.error('Unauthorized')
+    }
   }
   catch (error) {
     console.error('Sign in error:', error)
-    toast.error('An error occurred during sign in')
+    toast.error(error.statusMessage)
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -66,7 +80,7 @@ const onSubmit = form.handleSubmit(async (values) => {
             <FormMessage />
           </FormItem>
         </FormField>
-        <LoadingButton type="submit" :loading="auth.loading">
+        <LoadingButton type="submit" :loading="isLoading">
           Login
         </LoadingButton>
         <!-- Text with Divider -->
