@@ -20,7 +20,6 @@ export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
   compatibilityDate: '2025-07-15',
 
-  ssr: false,
   auth: {
     loadStrategy: 'client-only'
   },
