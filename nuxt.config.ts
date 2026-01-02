@@ -34,6 +34,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    preset: 'vercel',
     esbuild: {
       options: { target: 'node18' },
     },
