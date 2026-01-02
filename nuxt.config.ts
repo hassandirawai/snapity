@@ -24,6 +24,22 @@ export default defineNuxtConfig({
     loadStrategy: 'client-only'
   },
 
+  // Route caching rules
+  routeRules: {
+    // Public pages (can cache)
+    '/login': { cache: { maxAge: 60 * 10 } },
+    '/signup': { cache: { maxAge: 60 * 10 } },
+    '/resetpassword': { cache: { maxAge: 60 * 10 } },
+
+    // Protected pages (no cache, per-user)
+    '/': { cache: false },
+    '/chat/**': { cache: false },
+    '/post/**': { cache: false },
+    '/users/**': { cache: false },
+    '/search': { cache: false },
+    '/hashtag/**': { cache: false },
+  },
+
   nitro: {
     preset: 'vercel',
     esbuild: {
