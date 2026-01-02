@@ -4,14 +4,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const session = useUserSession()
 
-  if (!session.loggedIn.value) {
-    // Fetch user session if does not exist
-    await session.fetch()
+  // Fetch user session if does not exist
+  await session.fetch()
 
-    if (isHome && !session.loggedIn.value)
-      return navigateTo('/login')
+  if (isHome && !session.loggedIn.value)
+    return navigateTo('/login')
 
-    if (isAuthRoute && session.loggedIn.value)
-      return navigateTo('/')
-  }
+  if (isAuthRoute && session.loggedIn.value)
+    return navigateTo('/')
 })

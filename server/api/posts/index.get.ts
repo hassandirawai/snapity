@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   try {
-    await requiredUser(event)
+    await requireUserSession(event)
 
     return await getPosts()
   }

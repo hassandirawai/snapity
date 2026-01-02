@@ -14,14 +14,26 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
     'nuxt-auth-utils',
+    '@nuxthub/core',
   ],
   devtools: { enabled: true, timeline: { enabled: true } },
   app: { head: { title: 'Snapity' } },
   css: ['~/assets/css/tailwind.css'],
   compatibilityDate: '2025-07-15',
 
+  hub: {
+    db: {
+      dialect: 'postgresql',
+      driver: 'neon-http',
+      connection: {
+        connectionString: process.env.DATABASE_URL
+      }
+    },
+    blob: true,
+    cache: true
+  },
+
   nitro: {
-    preset: 'vercel',
     esbuild: {
       options: { target: 'node18' },
     },

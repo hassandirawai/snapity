@@ -1,4 +1,4 @@
-import { follows } from '~~/server/database/schema'
+import { follows } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   try {

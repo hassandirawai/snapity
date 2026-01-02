@@ -1,6 +1,6 @@
 import type { PostType } from '~~/shared/types/posts'
 import { and, desc, eq, lt, or, sql } from 'drizzle-orm'
-import { hashtags, postHashtags, user } from '../database/schema'
+import { hashtags, postHashtags, user } from '../db/schema'
 import { CreateUser } from '~~/shared/types/users'
 import { signUpSchema } from '~/utils/zod-schemas'
 import { success } from 'zod'
