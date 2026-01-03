@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     '/signup/**': { ssr: false },
     '/resetpassword/**': { ssr: false },
     // Cache public/feed pages
-    '/': { cache: { maxAge: 60 * 10 } }, // 10 mins
+    '/': { cache: { maxAge: 60 * 5 } }, // 5 mins
   },
 
   nitro: {
