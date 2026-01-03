@@ -29,8 +29,7 @@ const posts = computed(() => data.value?.pages.flatMap(page => page.posts) ?? []
   <!-- Show loading skeleton while fetching posts -->
   <PostsLoadingSkeleton v-if="status === 'pending'" />
   <!-- Show message if no posts are available -->
-  <p v-else-if="status === 'success' && !posts.length && !hasNextPage"
-    class="text-center text-muted-foreground min-h-screen">
+  <p v-else-if="status === 'success' && !posts.length && !hasNextPage" class="text-center text-muted-foreground">
     {{ userId === loggedInUser?.id ? 'You don\'t have posts yet.' : 'This user doesn\'t have posts yet.' }}
   </p>
   <!-- Show posts if available -->

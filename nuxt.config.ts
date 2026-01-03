@@ -25,12 +25,9 @@ export default defineNuxtConfig({
     db: {
       dialect: 'postgresql',
       driver: 'neon-http',
-      connection: {
-        connectionString: process.env.DATABASE_URL
-      }
     },
-    blob: true,
-    cache: true
+    blob: false,
+    cache: false,
   },
 
   nitro: {

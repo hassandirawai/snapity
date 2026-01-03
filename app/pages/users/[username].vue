@@ -31,7 +31,7 @@ if (userInfo) {
     <div class="flex flex-col w-full gap-6">
       <!-- Show user profile if available -->
       <UserProfile :user="userInfo" :logged-in-user-id="loggedInUser!.id" />
-      <div class="rounded-2xl h-12 bg-muted flex items-center justify-center">
+      <div class="rounded-2xl min-h-12 bg-muted flex items-center justify-center">
         <h2 class="text-lg font-bold">
           {{ userInfo.fullName }}'s Posts
         </h2>
