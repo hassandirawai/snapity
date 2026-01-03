@@ -30,6 +30,15 @@ export default defineNuxtConfig({
     cache: false,
   },
 
+  // Disable SSR only for auth routes
+  routeRules: {
+    '/login/**': { ssr: false },
+    '/signup/**': { ssr: false },
+    '/resetpassword/**': { ssr: false },
+    // Cache public/feed pages
+    '/': { cache: { maxAge: 60 * 10 } }, // 10 mins
+  },
+
   nitro: {
     preset: 'vercel',
     esbuild: {

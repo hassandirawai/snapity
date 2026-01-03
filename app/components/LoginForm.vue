@@ -36,7 +36,7 @@ const onSubmit = form.handleSubmit(async (values) => {
     console.log('error.statusText:', error.statusText)
 
     const message = error.data || error.statusText || 'Login failed'
-    toast.error(message)
+    toast.error(message.data)
   } finally {
     isLoading.value = false
   }
