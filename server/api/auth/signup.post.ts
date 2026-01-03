@@ -9,12 +9,20 @@ export default defineEventHandler(async (event) => {
 
   const takenUsername = await findUserByUsername(user.username)
   if (takenUsername) {
-    throw createError({ statusCode: 409, statusMessage: 'Username already taken' });
+    throw createError({
+      statusCode: 409,
+      statusMessage: 'Username already taken',
+      data: "Username already taken"
+    });
   }
 
   const takenEmail = await findUserByEmail(user.email)
   if (takenEmail) {
-    throw createError({ statusCode: 409, statusMessage: 'Email already taken' });
+    throw createError({
+      statusCode: 409,
+      statusMessage: 'Email already taken',
+      data: "Email already taken"
+    });
   }
 
   const newUser = await createUser(user)

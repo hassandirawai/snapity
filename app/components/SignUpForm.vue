@@ -34,9 +34,10 @@ const onSubmit = form.handleSubmit(async (values) => {
         navigateTo('/')
       }
     }
-  } catch (error) {
-    console.log(error)
-    toast.error(error.statusMessage)
+  } catch (error: any) {
+    console.error('Error:', error.data)
+    const errorMessage = error.data || 'Login failed'
+    toast.error(errorMessage.data)
   } finally {
     isLoading.value = false
   }

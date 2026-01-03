@@ -31,12 +31,9 @@ const onSubmit = form.handleSubmit(async (values) => {
       toast.success('Logged in successfully')
     }
   } catch (error: any) {
-    console.log('Full error:', error) // Check Vercel logs
-    console.log('error.data:', error.data)
-    console.log('error.statusText:', error.statusText)
-
-    const message = error.data || error.statusText || 'Login failed'
-    toast.error(message.data)
+    console.error('Error:', error.data)
+    const errorMessage = error.data || 'Login failed'
+    toast.error(errorMessage.data)
   } finally {
     isLoading.value = false
   }
