@@ -7,12 +7,20 @@ export default defineEventHandler(async (event) => {
   const user = await findUserByUsername(username)
 
   if (!user) {
-    throw createError({ statusCode: 404, statusMessage: 'Invalid username or password' });
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Invalid username or password',
+      data: 'Invalid username or password'
+    });
   }
 
   const isVaildPassword: boolean = await verifyPassword(user.password, password)
   if (!isVaildPassword) {
-    throw createError({ statusCode: 401, statusMessage: 'Invalid username or password' });
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Invalid username or password',
+      data: 'Invalid username or password'
+    });
   }
 
   await setUserSession(event, {

@@ -15,28 +15,28 @@ const isLoading = ref<boolean>(false)
 
 const onSubmit = form.handleSubmit(async (values) => {
   isLoading.value = true
+  const { fetch } = useUserSession()
   try {
-    const { fetch } = useUserSession()
-
     const { success } = await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
         username: values.username,
         password: values.password,
-      }
+      },
     })
 
     if (success) {
       await fetch()
       await navigateTo('/')
       toast.success('Logged in successfully')
-    } else {
-      toast.error('Unauthorized')
     }
-  }
-  catch (error) {
-    console.error('Sign in error:', error)
-    toast.error(error.statusMessage)
+  } catch (error: any) {
+    console.log('Full error:', error) // Check Vercel logs
+    console.log('error.data:', error.data)
+    console.log('error.statusText:', error.statusText)
+
+    const message = error.data || error.statusText || 'Login failed'
+    toast.error(message)
   } finally {
     isLoading.value = false
   }
