@@ -16,36 +16,28 @@ function relative(from: Date): boolean {
 </script>
 
 <template>
-  <article
-    class="group/post flex flex-col gap-3 bg-card border rounded-2xl p-6"
-  >
+  <article class="group/post flex flex-col gap-3 bg-card border rounded-2xl p-6">
     <div class="flex justify-between items-center">
       <div class="flex items-center gap-3">
         <UserAvatar :avatar-url="post?.authorAvatar" class="sm:inline" />
         <NuxtLink :to="`/users/${post.authorUsername}`" class="hover:underline">
           <h1>{{ post.authorName }}</h1>
-          <NuxtTime
-            class="text-sm text-muted-foreground"
-            :datetime="post.postCreatedAt"
-            date-style="long"
-            :relative="relative(new Date(post.postCreatedAt))"
-          />
+          <NuxtTime class="text-sm text-muted-foreground" :datetime="post.postCreatedAt" date-style="long"
+            :relative="relative(new Date(post.postCreatedAt))" />
         </NuxtLink>
       </div>
-      <DeletePostDialog :post="post">
-        <PostMoreButton :post="post" class="sm:opacity-0 transition-opacity group-hover/post:opacity-100" />
-      </DeletePostDialog>
+      <ClientOnly>
+        <DeletePostDialog :post="post">
+          <PostMoreButton :post="post" class="sm:opacity-0 transition-opacity group-hover/post:opacity-100" />
+        </DeletePostDialog>
+      </ClientOnly>
     </div>
 
     <!-- ✅ Post content with clickable hashtags -->
     <div class="flex flex-col gap-3">
-      <p class="whitespace-pre-line break-words">
+      <p class="whitespace-pre-line wrap-break-word">
         <template v-for="(part, i) in parseContent(post.postContent)" :key="i">
-          <NuxtLink
-            v-if="part.isTag"
-            :to="`/hashtag/${part.text.substring(1)}`"
-            class="text-primary hover:underline"
-          >
+          <NuxtLink v-if="part.isTag" :to="`/hashtag/${part.text.substring(1)}`" class="text-primary hover:underline">
             {{ part.text }}
           </NuxtLink>
           <span v-else>{{ part.text }}</span>

@@ -1,4 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to) => {
+  if (import.meta.server) return
+
   const isAuthRoute = ['/login', '/signup'].includes(to.path)
   const isHome = to.path === '/'
 

@@ -21,42 +21,35 @@ export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
   compatibilityDate: '2025-07-15',
 
-  hub: {
+  /*hub: {
     db: {
       dialect: 'postgresql',
       driver: 'neon-http',
     },
     blob: false,
     cache: false,
-  },
+  },*/
 
-  // Disable SSR only for auth routes
   routeRules: {
-    '/login/**': { ssr: false },
-    '/signup/**': { ssr: false },
-    '/resetpassword/**': { ssr: false },
-    // Cache public/feed pages
-    '/': { cache: { maxAge: 60 * 5 } }, // 5 mins
-  },
-
-  nitro: {
-    preset: 'vercel',
-    esbuild: {
-      options: { target: 'node18' },
+    '/': {
+      ssr: false,
     },
-    rollupConfig: {
-      output: {
-        format: 'esm',
-      },
+    '/login': {
+      ssr: false,
+    },
+    '/signup': {
+      ssr: false,
+    },
+    '/search': {
+      ssr: false
+    },
+    '/reastpassword': {
+      ssr: false
     },
   },
 
   vite: {
-    ssr: {
-      noExternal: ['vue'],
-    },
     plugins: [tailwindcss()],
-    define: { global: 'globalThis' },
   },
 
   eslint: { config: { standalone: false } },

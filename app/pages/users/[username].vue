@@ -13,8 +13,6 @@ if (error.value && status.value === 'error') {
   })
 }
 
-const { loggedIn, user: loggedInUser } = useUserSession()
-
 if (userInfo) {
   useHead({
     title: `${userInfo.value?.fullName} (@${userInfo.value?.username})`,
@@ -24,23 +22,31 @@ if (userInfo) {
 </script>
 
 <template>
-  <p v-if="!loggedIn" class="text-destructive">
-    You are not authorized to view this page.
-  </p>
-  <main v-else-if="!error && userInfo && status === 'success'" class="flex w-full gap-x-6">
-    <div class="flex flex-col w-full gap-6">
-      <!-- Show user profile if available -->
-      <UserProfile :user="userInfo" :logged-in-user-id="loggedInUser!.id" />
-      <div class="rounded-2xl min-h-12 bg-muted flex items-center justify-center">
-        <h2 class="text-lg font-bold">
-          {{ userInfo.fullName }}'s Posts
-        </h2>
-      </div>
-      <!-- Show user posts if available -->
-      <UserPosts :user-id="userInfo?.id" />
-    </div>
-    <TrendsSidebar />
-  </main>
+  <AuthState>
+    <template #default="{ loggedIn, user: loggedInUser }">
+      <main v-if="loggedIn && !error && userInfo && status === 'success'" class="flex w-full gap-x-6">
+        <div class="flex flex-col w-full gap-6">
+          <!-- Show user profile if available -->
+          <UserProfile :user="userInfo" :logged-in-user-id="loggedInUser!.id" />
+          <div class="rounded-2xl min-h-12 bg-muted flex items-center justify-center">
+            <h2 class="text-lg font-bold">
+              {{ userInfo.fullName }}'s Posts
+            </h2>
+          </div>
+          <ClientOnly>
+            <!-- Show user posts if available -->
+            <UserPosts :user-id="userInfo?.id" />
+          </ClientOnly>
+        </div>
+        <TrendsSidebar />
+      </main>
+    </template>
+    <template #placeholder>
+      <p class="text-destructive">
+        You are not authorized to view this page.
+      </p>
+    </template>
+  </AuthState>
 </template>
 
 <style></style>

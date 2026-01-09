@@ -22,12 +22,15 @@ const followerInfo: FollowerInfo = {
           @{{ user.username }}
         </p>
       </div>
-      <FollowButton v-if="user.id !== loggedInUserId" :user-id="user.id" :initial-state="followerInfo">
-        Follow
-      </FollowButton>
-      <Button v-else variant="secondary">
-        Edit Profile
-      </Button>
+      <!-- Since it does not required any seo will render it on the client side -->
+      <ClientOnly>
+        <FollowButton v-if="user.id !== loggedInUserId" :user-id="user.id" :initial-state="followerInfo">
+          Follow
+        </FollowButton>
+        <Button v-else variant="secondary">
+          Edit Profile
+        </Button>
+      </ClientOnly>
     </div>
     <div class="w-full space-y-3">
       <p>Member since {{ formatRelativeDate(new Date(user.createdAt)) }}</p>
