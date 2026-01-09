@@ -15,7 +15,7 @@ const props = defineProps<{
       as-child
     >
       <NuxtLink to="/">
-        <Icon name="fluent:home-20-regular" class="text-xl text-muted-foreground" />
+        <Icon icon="fluent:home-20-regular" class="text-xl text-muted-foreground" />
         <span class="hidden lg:inline">Home</span>
       </NuxtLink>
     </Button>
@@ -26,7 +26,7 @@ const props = defineProps<{
       as-child
     >
       <NuxtLink to="/notifications">
-        <Icon name="fluent:alert-20-regular" class="text-xl text-muted-foreground" />
+        <Icon icon="fluent:alert-20-regular" class="text-xl text-muted-foreground" />
         <span class="hidden lg:inline">Notifications</span>
       </NuxtLink>
     </Button>
@@ -37,7 +37,7 @@ const props = defineProps<{
       as-child
     >
       <NuxtLink to="/messages">
-        <Icon name="fluent:mail-20-regular" class="text-xl text-muted-foreground" />
+        <Icon icon="fluent:mail-20-regular" class="text-xl text-muted-foreground" />
         <span class="hidden lg:inline">Messages</span>
       </NuxtLink>
     </Button>
@@ -48,7 +48,7 @@ const props = defineProps<{
       as-child
     >
       <NuxtLink to="/bookmarks">
-        <Icon name="fluent:bookmark-20-regular" class="text-xl text-muted-foreground" />
+        <Icon icon="fluent:bookmark-20-regular" class="text-xl text-muted-foreground" />
         <span class="hidden lg:inline">Bookmarks</span>
       </NuxtLink>
     </Button>

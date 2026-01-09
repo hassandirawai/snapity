@@ -20,7 +20,6 @@
     "@iconify/vue": "^4.3.0",
     "@neondatabase/serverless": "^1.0.0",
     "@nuxt/eslint": "1.12.1",
-    "@nuxt/icon": "2.2.0",
     "@nuxt/image": "^2.0.0",
     "@nuxthub/core": "0.10.4",
     "@peterbud/nuxt-query": "1.3.0",

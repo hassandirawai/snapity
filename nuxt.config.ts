@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/icon',
     'shadcn-nuxt',
     '@nuxt/image',
     '@vee-validate/nuxt',
@@ -50,10 +49,6 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
-  },
-
-  icon: {
-    serverBundle: false
   },
 
   eslint: { config: { standalone: false } },

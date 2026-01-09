@@ -35,21 +35,21 @@ async function handleSignOut() {
       <DropdownMenuSeparator />
       <DropdownMenuItem as-child>
         <NuxtLink :to="`/users/${user?.username}`">
-          <Icon name="fluent:person-20-regular" class="text-lg" />
+          <Icon icon="fluent:person-20-regular" class="text-lg" />
           Profile
         </NuxtLink>
       </DropdownMenuItem>
       <DropdownMenuItem v-if="$colorMode.value === 'light'" @click="$colorMode.preference = 'dark'">
-        <Icon name="fluent:weather-moon-20-regular" class="text-lg" />
+        <Icon icon="fluent:weather-moon-20-regular" class="text-lg" />
         Dark
       </DropdownMenuItem>
       <DropdownMenuItem v-if="$colorMode.value === 'dark'" @click="$colorMode.preference = 'light'">
-        <Icon name="fluent:weather-sunny-20-regular" class="text-lg" />
+        <Icon icon="fluent:weather-sunny-20-regular" class="text-lg" />
         Light
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleSignOut">
-        <Icon name="fluent:sign-out-20-regular" class="text-lg" />
+        <Icon icon="fluent:sign-out-20-regular" class="text-lg" />
         Logout
       </DropdownMenuItem>
     </DropdownMenuContent>
