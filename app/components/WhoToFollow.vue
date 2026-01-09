@@ -13,9 +13,7 @@ const { data: users } = await useFetch('/api/users/5/', {
     <div class="space-y-3">
       <div v-for="user in users" :key="user.id" class="flex items-center justify-between">
         <NuxtLink :to="`/users/${user.username}`" class="flex items-center gap-x-3">
-          <ClientOnly>
-            <UserAvatar :avatar-url="user.avatar" />
-          </ClientOnly>
+          <UserAvatar :avatar-url="user.avatar" />
           <div>
             <p class="line-clamp-1 break-all hover:underline hover:cursor-pointer">
               {{ user.name }}
@@ -23,18 +21,13 @@ const { data: users } = await useFetch('/api/users/5/', {
             <span class="text-muted-foreground line-clamp-1 break-all">@{{ user.username }}</span>
           </div>
         </NuxtLink>
-        <FollowButton
-          :user-id="user.id"
-          :initial-state="{
-            followers: user.followers.length,
-            isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
-          }"
-        />
+        <FollowButton :user-id="user.id" :initial-state="{
+          followers: user.followers.length,
+          isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
+        }" />
       </div>
     </div>
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>

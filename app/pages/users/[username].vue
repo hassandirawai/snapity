@@ -35,10 +35,12 @@ if (userInfo) {
           </div>
           <ClientOnly>
             <!-- Show user posts if available -->
-            <!-- <UserPosts :user-id="userInfo?.id" /> -->
+            <UserPosts :user-id="userInfo?.id" />
           </ClientOnly>
         </div>
-        <TrendsSidebar />
+        <ClientOnly>
+          <TrendsSidebar />
+        </ClientOnly>
       </main>
     </template>
     <template #placeholder>
