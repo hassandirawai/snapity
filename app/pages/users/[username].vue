@@ -38,9 +38,7 @@ if (userInfo) {
             <UserPosts :user-id="userInfo?.id" />
           </ClientOnly>
         </div>
-        <ClientOnly>
-          <TrendsSidebar />
-        </ClientOnly>
+        <TrendsSidebar />
       </main>
     </template>
     <template #placeholder>

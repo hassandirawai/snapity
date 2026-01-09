@@ -21,10 +21,12 @@ const { data: users } = await useFetch('/api/users/5/', {
             <span class="text-muted-foreground line-clamp-1 break-all">@{{ user.username }}</span>
           </div>
         </NuxtLink>
-        <FollowButton :user-id="user.id" :initial-state="{
-          followers: user.followers.length,
-          isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
-        }" />
+        <ClientOnly>
+          <FollowButton :user-id="user.id" :initial-state="{
+            followers: user.followers.length,
+            isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
+          }" />
+        </ClientOnly>
       </div>
     </div>
   </div>
