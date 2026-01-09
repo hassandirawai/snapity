@@ -52,6 +52,10 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
+  icon: {
+    serverBundle: false
+  },
+
   eslint: { config: { standalone: false } },
   shadcn: { prefix: '', componentDir: '@/components/ui' },
   colorMode: { classSuffix: '' },
