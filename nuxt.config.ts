@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -9,16 +8,17 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@vueuse/nuxt',
     'nuxt-tiptap-editor',
-    '@peterbud/nuxt-query',
-    '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
     'nuxt-auth-utils',
-    '@nuxthub/core',
+    '@nuxt/icon',
+    '@nuxtjs/tailwindcss',
   ],
-  devtools: { enabled: true, timeline: { enabled: true } },
   app: { head: { title: 'Snapity' } },
   css: ['~/assets/css/tailwind.css'],
   compatibilityDate: '2025-07-15',
+
+  devtools: {
+    enabled: true
+  },
 
   /*hub: {
     db: {
@@ -31,7 +31,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': {
-      ssr: false,
+      ssr: false
     },
     '/login': {
       ssr: false,
@@ -47,15 +47,7 @@ export default defineNuxtConfig({
     },
   },
 
-  vite: {
-    plugins: [tailwindcss()],
-  },
-
   eslint: { config: { standalone: false } },
   shadcn: { prefix: '', componentDir: '@/components/ui' },
   colorMode: { classSuffix: '' },
-  nuxtQuery: {
-    autoImports: ['useQueryClient', 'useQuery', 'useMutation', 'useInfiniteQuery'],
-    devtools: true,
-  },
 })

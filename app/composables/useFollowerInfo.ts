@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/vue-query"
+
 export function useFollowerInfo(
   userId: string,
   initialState: FollowerInfo,

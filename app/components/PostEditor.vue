@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { toast } from 'vue-sonner'
+
+
 const { user: loggedInUser } = useUserSession()
 
 const editor = useEditor({
@@ -21,9 +24,17 @@ async function onSubmit() {
   mutate(postContent, {
     onSuccess: () => {
       editor.value?.commands.clearContent()
+      toast.success('Post created successfully!')
     },
+    onError: () => {
+      toast.error('Failed to create post')
+    }
   })
 }
+
+onBeforeUnmount(() => {
+  unref(editor)?.destroy()
+})
 </script>
 
 <template>
@@ -38,7 +49,7 @@ async function onSubmit() {
       </div>
       <div class="flex justify-end gap-3">
         <Button variant="ghost" size="lg" :disabled="!editor?.getText().trim()">
-          <Icon icon="fluent:image-add-20-regular" class="text-3xl text-primary" />
+          <Icon name="fluent:image-add-20-regular" class="text-3xl text-primary" />
         </Button>
         <LoadingButton size="lg" :disabled="!editor?.getText().trim() || isPending" :loading="isPending"
           @click="onSubmit">

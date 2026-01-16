@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { InfiniteData, InfiniteQueryObserverResult } from '@tanstack/vue-query'
+import type { InfiniteData, InfiniteQueryObserverResult } from '@tanstack/vue-query';
 import type { HTMLAttributes } from 'vue'
 
 const props = defineProps<{
@@ -7,9 +7,9 @@ const props = defineProps<{
   // Whether there are more pages to load
   hasNextPage: boolean
   // Whether the load more posts request is in progress
-  loading?: boolean
+  isFetchingNextPage?: boolean
   // Load more posts
-  onLoadMore: () => Promise<InfiniteQueryObserverResult<InfiniteData<PostPageType, unknown>, Error>> | Promise<void>
+  onLoadMore: () => Promise<InfiniteQueryObserverResult<InfiniteData<PostPageType, unknown>, Error>>
 }>()
 
 // Infinite scroll
@@ -24,13 +24,9 @@ useInfiniteScroll(
 </script>
 
 <template>
-  <div
-    :class="props.class"
-  >
+  <div :class="props.class">
     <slot />
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>

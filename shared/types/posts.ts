@@ -5,7 +5,7 @@ export interface PostType {
   authorName: string
   authorUsername: string | null
   postContent: string
-  postCreatedAt: Date
+  postCreatedAt: string
   likesCount: number
   disLikesCount: number
   likers: string[]
@@ -15,5 +15,5 @@ export interface PostType {
 
 export interface PostPageType {
   posts: PostType[]
-  nextCursor: Date | null
+  nextCursor: string | null
 }

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useQueryClient } from '@tanstack/vue-query';
 import type { HTMLAttributes } from 'vue'
 import { toast } from 'vue-sonner';
 import { cn } from '~/lib/utils'
@@ -35,21 +36,21 @@ async function handleSignOut() {
       <DropdownMenuSeparator />
       <DropdownMenuItem as-child>
         <NuxtLink :to="`/users/${user?.username}`">
-          <Icon icon="fluent:person-20-regular" class="text-lg" />
+          <Icon name="fluent:person-20-regular" class="text-lg" />
           Profile
         </NuxtLink>
       </DropdownMenuItem>
       <DropdownMenuItem v-if="$colorMode.value === 'light'" @click="$colorMode.preference = 'dark'">
-        <Icon icon="fluent:weather-moon-20-regular" class="text-lg" />
+        <Icon name="fluent:weather-moon-20-regular" class="text-lg" />
         Dark
       </DropdownMenuItem>
       <DropdownMenuItem v-if="$colorMode.value === 'dark'" @click="$colorMode.preference = 'light'">
-        <Icon icon="fluent:weather-sunny-20-regular" class="text-lg" />
+        <Icon name="fluent:weather-sunny-20-regular" class="text-lg" />
         Light
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleSignOut">
-        <Icon icon="fluent:sign-out-20-regular" class="text-lg" />
+        <Icon name="fluent:sign-out-20-regular" class="text-lg" />
         Logout
       </DropdownMenuItem>
     </DropdownMenuContent>

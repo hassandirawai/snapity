@@ -1,5 +1,4 @@
-import type { InfiniteData, InvalidateQueryFilters } from '@tanstack/vue-query'
-import { toast } from 'vue-sonner'
+import { useMutation, useQueryClient, type InfiniteData, type InvalidateQueryFilters } from '@tanstack/vue-query'
 
 // Mutation to submit a post
 export function useSubmitPostMutation() {
@@ -14,7 +13,7 @@ export function useSubmitPostMutation() {
 
       await queryClient.cancelQueries({ queryKey: ['posts-feed'] })
 
-      queryClient.setQueriesData<InfiniteData<PostPageType, Date | null>>(
+      queryClient.setQueriesData<InfiniteData<PostPageType, string | null>>(
         queryFilter,
         (oldData) => {
           // Get first page to add the new post to it
@@ -43,8 +42,6 @@ export function useSubmitPostMutation() {
           return !query.state.data
         },
       })
-
-      toast.success('Post created successfully.')
     },
   })
 

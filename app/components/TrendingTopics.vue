@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-const { data: hashtags, pending: _loadingHashtags } = useFetch('/api/hashtags/trending-hashtags')
+const hashtags = await $fetch('/api/hashtags/trending-hashtags')
 </script>
 
 <template>
-  <div class="w-full space-y-6 p-6 border rounded-2xl">
+  <div class="w-full bg-card space-y-6 p-6 border rounded-2xl">
     <div class="text-lg font-bold">
       Trending Topics
     </div>

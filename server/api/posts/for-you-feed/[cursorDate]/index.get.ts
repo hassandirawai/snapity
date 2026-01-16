@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
     // console.log(cursorDate)
 
-    // await new Promise(r => setTimeout(r, 2000))
+    await new Promise(r => setTimeout(r, 2000))
 
     const postData = await getForYouFeedPosts({
       pageSize,

@@ -8,6 +8,7 @@ import 'vue-sonner/style.css'
       <NuxtLoadingIndicator color="oklch(0.488 0.243 264.376)" :height="5" />
       <NuxtPage />
     </NuxtLayout>
+
     <ClientOnly>
       <Toaster position="bottom-right" rich-colors />
     </ClientOnly>

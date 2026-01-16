@@ -49,19 +49,19 @@ function relative(from: Date): boolean {
     <div class="flex justify-start items-center gap-3">
       <!-- Likes -->
       <div class="flex items-center gap-1">
-        <Icon icon="fluent:heart-20-regular" class="text-xl" />
+        <Icon name="fluent:heart-20-regular" class="text-xl" />
         <span class="flex items-center">
           {{ post.likesCount }} likes
         </span>
       </div>
       <!-- Comments -->
       <div class="flex items-center gap-1">
-        <Icon icon="fluent:comment-20-regular" class="text-xl" />
+        <Icon name="fluent:comment-20-regular" class="text-xl" />
         <span class="flex items-center">
           {{ post.disLikesCount }} comments
         </span>
       </div>
-      <Icon icon="fluent:bookmark-20-regular" class="text-xl ml-auto" />
+      <Icon name="fluent:bookmark-20-regular" class="text-xl ml-auto" />
     </div>
   </article>
 </template>

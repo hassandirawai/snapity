@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useInfiniteQuery } from '@tanstack/vue-query'
+
 const { user: loggedInUser } = useUserSession()
 
 const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status } = useInfiniteQuery({
@@ -12,7 +14,7 @@ const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status 
     return await $fetch<PostPageType>(url, { headers })
   },
   getNextPageParam: lastPage => lastPage.nextCursor,
-  initialPageParam: null as Date | null,
+  initialPageParam: null as string | null,
   enabled: computed(() => !!loggedInUser.value),
 })
 

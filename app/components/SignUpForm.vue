@@ -104,15 +104,15 @@ const onSubmit = form.handleSubmit(async (values) => {
         <!-- Social SignUp -->
         <div class="grid grid-cols-3 gap-4">
           <Button variant="outline" class="w-full text-lg hover:*:text-primary">
-            <Icon icon="mage:apple" />
+            <Icon name="mage:apple" />
             <span class="sr-only">Login with Apple</span>
           </Button>
           <Button variant="outline" class="w-full text-lg hover:*:text-primary">
-            <Icon icon="mage:google" />
+            <Icon name="mage:google" />
             <span class="sr-only">Login with Google</span>
           </Button>
           <Button variant="outline" class="w-full text-lg hover:*:text-primary">
-            <Icon icon="mage:meta" />
+            <Icon name="mage:meta" />
             <span class="sr-only">Login with Meta</span>
           </Button>
         </div>

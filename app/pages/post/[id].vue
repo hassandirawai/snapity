@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useQuery } from '@tanstack/vue-query';
+
 const { params } = useRoute()
 
 const { data: post, isLoading } = useQuery({
@@ -15,10 +17,8 @@ const { data: post, isLoading } = useQuery({
         <Spinner :size="24" />
       </div>
     </div>
-    <TrendsSidebar />
+    <!-- <TrendsSidebar /> -->
   </main>
 </template>
 
-<style>
-
-</style>
+<style></style>

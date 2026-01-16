@@ -1,18 +1,20 @@
 <script lang="ts" setup>
-// Fetch the posts for the for-you feed
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status } = useInfiniteQuery({
-  queryKey: ['posts-feed', 'for-you-feed'],
-  queryFn: async ({ pageParam }) => {
-    const url = pageParam
-      ? `/api/posts/for-you-feed/${pageParam}`
-      : `/api/posts/for-you-feed/:cursorDate`
+import { useInfiniteQuery } from '@tanstack/vue-query'
 
-    const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
-    return await $fetch<PostPageType>(url, { headers })
-  },
-  getNextPageParam: lastPage => lastPage.nextCursor,
-  initialPageParam: null as Date | null,
-})
+// Fetch the posts for the for-you feed
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+  useInfiniteQuery({
+    queryKey: ['posts-feed', 'for-you-feed'],
+    queryFn: async ({ pageParam }) => {
+      const url = pageParam ?
+        `/api/posts/for-you-feed/${pageParam}` :
+        '/api/posts/for-you-feed/:cursorDate'
+
+      return await $fetch<PostPageType>(url)
+    },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor
+  })
 
 // Flatten the pages of posts into a single array
 const posts = computed(() => data.value?.pages.flatMap(page => page.posts) ?? [])
@@ -31,7 +33,7 @@ const posts = computed(() => data.value?.pages.flatMap(page => page.posts) ?? []
     @load-more="fetchNextPage">
     <Post v-for="post in posts" :key="post.id" :post="post" />
     <div class="flex justify-center">
-      <Spinner v-if="isLoading || isFetchingNextPage" :size="24" />
+      <Spinner v-if="isFetchingNextPage" :size="24" />
     </div>
   </InfiniteScrollContainer>
 </template>

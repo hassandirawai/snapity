@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import type { ButtonProps } from './ui/button/Button.vue'
-import { cn } from '~/lib/utils'
 import { buttonVariants } from './ui/button'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { cn } from '~/lib/utils'
+import type { ButtonProps } from './ui/button/Button.vue'
 
 interface FollowButtonProps extends ButtonProps {
   userId: string
@@ -18,16 +19,16 @@ const { data } = useFollowerInfo(props.userId, props.initialState)
 const queryKey = ['follower-info', props.userId]
 
 const { mutate } = useMutation({
-  mutationFn: () => {
+  mutationFn: async () => {
     // console.log(data.value.isFollowedByUser)
 
     if (!data.value.isFollowedByUser) {
-      return $fetch(`/api/users/user/${props.userId}/followers`, {
+      return await $fetch(`/api/users/user/${props.userId}/followers`, {
         method: 'DELETE',
       })
     }
     else {
-      return $fetch(`/api/users/user/${props.userId}/followers`, {
+      return await $fetch(`/api/users/user/${props.userId}/followers`, {
         method: 'POST',
       })
     }
@@ -49,7 +50,7 @@ const { mutate } = useMutation({
 
     return { previousState }
   },
-  onError(_error, _variables, onMutateResult, _context) {
+  onError: (_error, _variables, onMutateResult, _context) => {
     queryClient.setQueryData(queryKey, onMutateResult?.previousState)
     // console.log(_error)
   },

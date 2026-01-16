@@ -6,7 +6,7 @@ const { data: users } = await useFetch('/api/users/5/', {
 </script>
 
 <template>
-  <div class="w-full space-y-6 p-6 border rounded-2xl">
+  <div class="w-full bg-card space-y-6 p-6 border rounded-2xl">
     <div class="text-lg font-bold">
       Who To Follow
     </div>
