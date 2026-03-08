@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { InfiniteData, InfiniteQueryObserverResult } from '@tanstack/vue-query';
+import type { InfiniteData, InfiniteQueryObserverResult } from '@tanstack/vue-query'
 import type { HTMLAttributes } from 'vue'
 
 const props = defineProps<{

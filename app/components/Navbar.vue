@@ -8,16 +8,17 @@
       <!-- TODO: Enhance logo size -->
       <!-- TODO: Fix navbar gap flash out suddenly -->
       <NuxtLink to="/">
-        <NuxtImg src="/sanpity-logo.svg" width="96" height="96" class="w-28" />
+        <NuxtImg
+          src="/sanpity-logo.svg"
+          width="48"
+          height="48"
+          class="w-28"
+        />
       </NuxtLink>
       <SearchField />
-      <AuthState v-slot="{ loggedIn, clear }">
-        <UserButton class="sm:ms-auto" />
-      </AuthState>
+      <UserButton class="sm:ms-auto" />
     </div>
   </header>
 </template>
 
-<style>
-
-</style>
+<style></style>

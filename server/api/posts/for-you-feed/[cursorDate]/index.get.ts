@@ -9,8 +9,7 @@ export default defineEventHandler(async (event) => {
     await requireUserSession(event)
 
     // console.log(cursorDate)
-
-    await new Promise(r => setTimeout(r, 2000))
+    // await new Promise(r => setTimeout(r, 2000))
 
     const postData = await getForYouFeedPosts({
       pageSize,
@@ -18,8 +17,8 @@ export default defineEventHandler(async (event) => {
     })
 
     const postPage: PostPageType = {
-      posts: postData.slice(0, pageSize),
-      nextCursor: postData.length > pageSize ? postData[pageSize].postCreatedAt : null,
+      postsData: postData.slice(0, pageSize),
+      nextCursor: postData.length > pageSize ? postData[pageSize].post.createdAt : null,
     }
 
     return postPage

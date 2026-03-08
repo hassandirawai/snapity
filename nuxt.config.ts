@@ -1,4 +1,3 @@
-
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -11,27 +10,54 @@ export default defineNuxtConfig({
     'nuxt-auth-utils',
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
+    '@nuxthub/core',
   ],
+  compatibilityDate: '2025-07-15',
   app: { head: { title: 'Snapity' } },
   css: ['~/assets/css/tailwind.css'],
-  compatibilityDate: '2025-07-15',
 
   devtools: {
-    enabled: true
+    enabled: true,
   },
 
-  /*hub: {
+  hub: {
     db: {
       dialect: 'postgresql',
       driver: 'neon-http',
     },
-    blob: false,
-    cache: false,
-  },*/
+    blob: {
+      driver: 'fs', // ← explicit filesystem, works with useMultipartUpload
+      dir: '.data/blob',
+    },
+  },
+
+  $production: {
+    hub: {
+      blob: {
+        driver: 'vercel-blob',
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      },
+    },
+    image: {
+      provider: 'vercel',
+    },
+  },
+
+  image: {
+    provider: 'vercel',
+    screens: {},
+  },
+
+  $production: {
+    image: {
+      provider: 'vercel',
+    },
+  },
 
   routeRules: {
     '/': {
-      ssr: false
+      ssr: false,
     },
     '/login': {
       ssr: false,
@@ -40,10 +66,10 @@ export default defineNuxtConfig({
       ssr: false,
     },
     '/search': {
-      ssr: false
+      ssr: false,
     },
     '/reastpassword': {
-      ssr: false
+      ssr: false,
     },
   },
 

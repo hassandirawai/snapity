@@ -1,30 +1,45 @@
-import type { PostType } from '~~/shared/types/posts'
-import { and, desc, eq, lt, or, sql } from 'drizzle-orm'
-import { hashtags, postHashtags, user } from '../db/schema'
-import { CreateUser } from '~~/shared/types/users'
-import { signUpSchema } from '~/utils/zod-schemas'
-import { success } from 'zod'
+import type { PostDataType } from '~~/shared/types/posts'
+import type { UserDataType } from '~~/shared/types/users'
+import type { CreateUser } from '~/utils/zod-schemas'
+import { and, desc, eq, lt, sql } from 'drizzle-orm'
+import { userDataSelect } from '~~/shared/types/users'
+import { follows, hashtags, postHashtags, posts, user } from '../db/schema'
 
 // Get user by username
-export async function findUserByUsername(username: string) {
+export async function findUserByUsername(username: string, withPassword?: boolean) {
   const db = useDrizzle()
 
-  const data = await db.
-    select()
+  const data = await db
+    .select({
+      ...userDataSelect(),
+      password: withPassword ? user.password : sql<string>`''`,
+    })
     .from(user)
-    .where(eq(user.username, username))
+    .leftJoin(follows, eq(user.id, follows.followingId))
+    .leftJoin(posts, eq(user.id, posts.authorId))
+    .where(
+      eq(user.username, username),
+    )
+    .groupBy(tables.user.id)
+    .orderBy(desc(tables.user.id))
 
   return data[0]
 }
 
 // Get user by id
-export async function findUserById(id: string) {
+export async function findUserById(id: string): Promise<UserDataType> {
   const db = useDrizzle()
 
-  const data = await db.
-    select()
+  const data = await db
+    .select(userDataSelect())
     .from(user)
-    .where(eq(user.id, id))
+    .leftJoin(follows, eq(user.id, follows.followingId))
+    .leftJoin(posts, eq(user.id, posts.authorId))
+    .where(
+      eq(user.id, id),
+    )
+    .groupBy(tables.user.id)
+    .orderBy(desc(tables.user.id))
 
   return data[0]
 }
@@ -33,8 +48,8 @@ export async function findUserById(id: string) {
 export async function findUserByEmail(email: string) {
   const db = useDrizzle()
 
-  const data = await db.
-    select()
+  const data = await db
+    .select()
     .from(user)
     .where(eq(user.email, email))
 
@@ -53,15 +68,12 @@ export async function createUser(userData: CreateUser) {
       fullName: userData.fullName,
       username: userData.username,
       email: userData.email,
-      password: hashedPassword
+      password: hashedPassword,
     })
     .returning()
 
   return data[0]
 }
-
-// Update user
-export async function updateUser() { }
 
 // Get posts with reactions and hashtags
 export async function getForYouFeedPosts({
@@ -70,33 +82,42 @@ export async function getForYouFeedPosts({
 }: {
   pageSize: number
   cursorDate?: Date
-}): Promise<PostType[]> {
-  const { posts, postReactions, user, hashtags, postHashtags } = tables
+}): Promise<PostDataType[]> {
+  const { posts, postReactions, user, hashtags, postHashtags, follows } = tables
 
   const db = useDrizzle()
 
   // Get posts
-  return await db
+  return db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .leftJoin(follows, eq(user.id, follows.followingId))
+    .groupBy(posts.id, posts.authorId, posts.content, posts.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(cursorDate ? lt(posts.createdAt, cursorDate) : undefined)
     .orderBy(desc(posts.createdAt))
     .limit(pageSize + 1)
@@ -110,7 +131,7 @@ export async function getFollowerFeedPosts({
   loggedInUserId: string
   pageSize: number
   cursorDate?: Date
-}): Promise<PostType[]> {
+}): Promise<PostDataType[]> {
   const { posts, postReactions, user, follows } = tables
 
   const db = useDrizzle()
@@ -118,26 +139,34 @@ export async function getFollowerFeedPosts({
   // Get posts
   return await db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .leftJoin(follows, or(eq(follows.followerId, user.id), eq(follows.followingId, user.id)))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .leftJoin(follows, eq(follows.followingId, user.id))
+    .groupBy(posts.id, posts.authorId, posts.content, posts.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(
       and(
         cursorDate ? lt(posts.createdAt, cursorDate) : undefined,
@@ -149,7 +178,6 @@ export async function getFollowerFeedPosts({
           follows.followingId,
           user.id,
         ),
-
       ),
     )
     .orderBy(desc(posts.createdAt))
@@ -164,7 +192,7 @@ export async function getUserPosts({
   userId: string
   pageSize: number
   cursorDate?: Date
-}): Promise<PostType[]> {
+}): Promise<PostDataType[]> {
   const { posts, postReactions, user, follows } = tables
 
   const db = useDrizzle()
@@ -172,26 +200,33 @@ export async function getUserPosts({
   // Get posts
   return await db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .leftJoin(follows, or(eq(follows.followerId, user.id), eq(follows.followingId, user.id)))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .leftJoin(follows, eq(follows.followingId, user.id))
+    .groupBy(posts.id, posts.authorId, posts.content, posts.createdAt, user.avatar, user.fullName, user.username, user.createdAt)
     .where(
       and(
         cursorDate ? lt(posts.createdAt, cursorDate) : undefined,
@@ -208,94 +243,117 @@ export async function getUserPosts({
 
 // Get posts with reactions and hashtags
 export async function getPosts():
-  Promise<PostType[]> {
-  const { posts, postReactions, user, hashtags, postHashtags } = tables
+Promise<PostDataType[]> {
+  const { posts, postReactions, user, hashtags, postHashtags, follows } = tables
 
   const db = useDrizzle()
 
   // Get posts
   return await db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, user.avatar, user.fullName, user.username, posts.content, posts.createdAt)
     .orderBy(desc(posts.createdAt))
 }
 
 export async function getPostsByHashtag(tag: string):
-  Promise<PostType[]> {
-  const { posts, postReactions, user, hashtags, postHashtags } = tables
+Promise<PostDataType[]> {
+  const { posts, postReactions, user, hashtags, postHashtags, follows } = tables
 
   const db = useDrizzle()
 
   // Get posts
   return await db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
+    .leftJoin(follows, eq(user.id, follows.followingId))
     .where(eq(hashtags.tag, tag))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .groupBy(posts.id, posts.authorId, posts.content, posts.createdAt, user.avatar, user.fullName, user.username, user.createdAt)
 }
 
-export async function getPostById(id: string): Promise<PostType> {
-  const { posts, postReactions, user, hashtags, postHashtags } = tables
+export async function getPostById(id: string): Promise<PostDataType> {
+  const { posts, postReactions, user, hashtags, postHashtags, follows } = tables
 
   const db = useDrizzle()
 
   // Get posts
   const postData = await db
     .select({
-      id: posts.id,
-      authorId: posts.authorId,
-      authorAvatar: user.image,
-      authorName: user.fullName,
-      authorUsername: user.username,
-      postContent: posts.content,
-      postCreatedAt: posts.createdAt,
-      likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
-      disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
-      likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
-      disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      post: {
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        likesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN 1 END)`.as('likesCount'),
+        disLikesCount: sql<number>`COUNT(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN 1 END)`.as('disLikesCount'),
+        likers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'like' THEN ${postReactions.userId} END)`.as('likers'),
+        disLikers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${postReactions.reactionType} = 'dislike' THEN ${postReactions.userId} END)`.as('disLikers'),
+        hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      },
+      user: {
+        id: posts.authorId,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        username: user.username,
+        createdAt: user.createdAt,
+        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
+        followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
+      },
     })
     .from(posts)
     .innerJoin(user, eq(posts.authorId, user.id))
     .leftJoin(postReactions, eq(postReactions.postId, posts.id))
     .leftJoin(postHashtags, eq(postHashtags.postId, posts.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtags.hashtagId))
-    .groupBy(posts.id, posts.authorId, user.image, user.fullName, user.username, posts.content, posts.createdAt)
+    .leftJoin(follows, eq(user.id, follows.followingId))
+    .groupBy(posts.id, posts.authorId, posts.content, posts.createdAt, user.avatar, user.fullName, user.username, user.createdAt)
     .where(eq(posts.id, id))
 
   if (!postData[0]) {

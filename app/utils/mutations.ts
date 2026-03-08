@@ -1,4 +1,6 @@
-import { useMutation, useQueryClient, type InfiniteData, type InvalidateQueryFilters } from '@tanstack/vue-query'
+import type { InfiniteData, InvalidateQueryFilters } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { toast } from 'vue-sonner'
 
 // Mutation to submit a post
 export function useSubmitPostMutation() {
@@ -13,7 +15,7 @@ export function useSubmitPostMutation() {
 
       await queryClient.cancelQueries({ queryKey: ['posts-feed'] })
 
-      queryClient.setQueriesData<InfiniteData<PostPageType, string | null>>(
+      queryClient.setQueriesData<InfiniteData<PostPageType, Date | null>>(
         queryFilter,
         (oldData) => {
           // Get first page to add the new post to it
@@ -25,7 +27,7 @@ export function useSubmitPostMutation() {
               pageParams: oldData.pageParams,
               pages: [
                 {
-                  posts: [createdPost, ...firstPage.posts],
+                  postsData: [createdPost, ...firstPage.postsData],
                   nextCursor: firstPage.nextCursor,
                 },
                 ...oldData.pages.slice(1),
@@ -42,18 +44,24 @@ export function useSubmitPostMutation() {
           return !query.state.data
         },
       })
+
+      toast.success('Post created successfully')
+    },
+    onError: () => {
+      toast.error('Failed to create post')
     },
   })
 
   return mutation
 }
 
+// Mutation for deleting a post
 export function useDeletePostMutation() {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: useUseDeletePost,
-    onSuccess: async (deletedPost) => {
+    onSuccess: async (postData) => {
       const queryFilter: InvalidateQueryFilters = {
         queryKey: ['posts-feed'],
       }
@@ -69,12 +77,79 @@ export function useDeletePostMutation() {
           return {
             pageParams: oldDate.pageParams,
             pages: oldDate.pages.map(page => ({
-              posts: page.posts.filter(post => post.id !== deletedPost.id),
+              postsData: page.postsData.filter(data => data.post.id !== postData.post.id),
               nextCursor: page.nextCursor,
             })),
           }
         },
       )
+    },
+  })
+
+  return mutation
+}
+
+// Mutation for updating user profile
+export function useUpdateProfileMutation() {
+  const queryClinet = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async ({ values, avatar }: { values: UpdateUserDataValues, avatar?: File }) => {
+      return Promise.all([
+        useUpdateUserProfile(values),
+        avatar && useUpdateUserAvatar(avatar),
+      ])
+    },
+    onSuccess: async ([updatedUser, uploadedAvatar]) => {
+      const userProfileQueryFilter: InvalidateQueryFilters = {
+        queryKey: ['posts-feed'],
+      }
+
+      const userTooltipQueryFilter: InvalidateQueryFilters = {
+        queryKey: ['user-data', updatedUser.username],
+      }
+
+      // console.error('mutation:uploadAvatar', uploadedAvatar?.avatar)
+
+      await queryClinet.cancelQueries(userProfileQueryFilter)
+
+      queryClinet.setQueriesData<InfiniteData<PostPageType, Date | null>>(
+        userProfileQueryFilter,
+        (oldData) => {
+          if (!oldData) {
+            return
+          }
+
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map(pages => ({
+              nextCursor: pages.nextCursor,
+              postsData: pages.postsData.map((postData) => {
+                if (postData.user.id === updatedUser.id) {
+                  return {
+                    post: {
+                      ...postData.post,
+                    },
+                    user: {
+                      ...updatedUser,
+                      avatar: uploadedAvatar?.avatar || postData.user.avatar,
+                    },
+                  }
+                }
+                return postData
+              }),
+            })),
+          }
+        },
+      )
+
+      await refreshNuxtData(`user_profile_${updatedUser.username}`)
+      await queryClinet.invalidateQueries(userTooltipQueryFilter)
+      const { fetch: fetchUserSession } = useUserSession()
+      await fetchUserSession()
+    },
+    onError(error) {
+      console.error(error)
     },
   })
 

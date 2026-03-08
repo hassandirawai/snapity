@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { buttonVariants } from './ui/button'
+import type { ButtonProps } from './ui/button/Button.vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { cn } from '~/lib/utils'
-import type { ButtonProps } from './ui/button/Button.vue'
 
 interface FollowButtonProps extends ButtonProps {
   userId: string
@@ -58,8 +57,11 @@ const { mutate } = useMutation({
 </script>
 
 <template>
-  <Button data-slot="button" :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)"
-    :variant="data.isFollowedByUser ? 'secondary' : 'default'" @click="mutate()">
+  <Button
+    :class="cn(props.class)"
+    :variant="data.isFollowedByUser ? 'secondary' : 'default'"
+    @click="mutate()"
+  >
     {{ data.isFollowedByUser ? 'Unfollow' : 'Follow' }}
   </Button>
 </template>

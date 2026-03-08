@@ -5,36 +5,57 @@ import { z } from 'zod'
 // Sign-Up schema
 export const signUpSchema = z.object({
   fullName: z
-    .string({ message: 'Please enter your full name.' })
-    .min(3, { message: 'Full name should be at least 3 characters long.' }),
+    .string({ error: 'Please enter your full name.' })
+    .min(3, { error: 'Full name should be at least 3 characters long.' }),
   username: z
-    .string({ message: 'Please choose a username.' })
-    .min(3, { message: 'Username should be at least 3 characters long.' })
-    .regex(/^\w+$/, { message: 'Username can only include letters, numbers, and underscores.' }),
+    .string({ error: 'Please choose a username.' })
+    .min(3, { error: 'Username should be at least 3 characters long.' })
+    .lowercase({ error: 'Username must be lowercase.' })
+    .regex(/^\w+$/, { error: 'Username can only include letters, numbers, and underscores.' }),
   email: z
-    .email({ message: 'That doesn’t look like a valid email. Please check again.' }),
+    .email({ error: 'That doesn’t look like a valid email. Please check again.' }),
   password: z
-    .string({ message: 'Please create a password.' })
-    .min(8, { message: 'Password should be at least 8 characters long for better security.' }),
+    .string({ error: 'Please create a password.' })
+    .min(8, { error: 'Password should be at least 8 characters long for better security.' }),
 })
+
+export type CreateUser = z.infer<typeof signUpSchema>
 
 // Login schema
 export const loginSchema = z.object({
   username: z
-    .string(({ message: 'Username is required' }))
+    .string(({ error: 'Username is required' }))
     .trim()
-    .min(1, { message: 'Username is required' }),
+    .min(1, { error: 'Username is required' }),
   password: z
-    .string(({ message: 'Username is required' }))
+    .string(({ error: 'Username is required' }))
     .trim()
-    .min(1, { message: 'Password is required' }),
+    .min(1, { error: 'Password is required' }),
 })
 
 // Create post schema
 export const createPostSchema = z.object({
   content: z
-    .string({ message: 'Content is required' })
-    .min(4, { message: 'Content must be at least 4 characters long' }),
+    .string({ error: 'Content is required' })
+    .min(4, { error: 'Content must be at least 4 characters long' }),
+  mediaIds: z
+    .array(z.uuid().max(5, { error: 'Cannot upload more than 5 media files' }))
+    .optional()
+    // insted of setting the mediaIds to undefined if not provided, set it to an empty array
+    .default([]),
 })
 
 export type CreatePostSchemaType = z.infer<typeof createPostSchema>
+
+// Update user schema
+export const updateUserDataSchema = z.object({
+  fullName: z
+    .string({ error: 'Full name is required' })
+    .min(3, { error: 'Full name should be at least 3 characters long.' }),
+  bio: z
+    .string()
+    .max(1000, { error: 'Bio should be at most 1000 characters long.' })
+    .optional(),
+})
+
+export type UpdateUserDataValues = z.infer<typeof updateUserDataSchema>

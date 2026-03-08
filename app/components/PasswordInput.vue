@@ -32,10 +32,14 @@ function togglePassword() {
       @click="togglePassword"
     >
       <Icon
-        v-if="!showPassword" name="fluent:eye-20-regular" size="18"
+        v-if="!showPassword"
+        name="fluent:eye-20-regular"
+        size="18"
       />
       <Icon
-        v-else name="fluent:eye-off-20-regular" size="18"
+        v-else
+        name="fluent:eye-off-20-regular"
+        size="18"
       />
     </button>
   </div>

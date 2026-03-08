@@ -3,10 +3,11 @@ export default defineEventHandler(async (event) => {
     await clearUserSession(event)
     return {
       status: 'success',
-      message: 'User logged out successfully'
+      message: 'User logged out successfully',
     }
-  } catch (error) {
-    console.error('Logout error: ', error);
-    throw createError({ statusCode: 500, statusMessage: 'An error occurred during logout' });
+  }
+  catch (error) {
+    console.error('Logout error: ', error)
+    throw createError({ statusCode: 500, statusMessage: 'An error occurred during logout' })
   }
 })

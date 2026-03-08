@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { NuxtLink } from '#components'
-
 defineProps<{
-  post: PostType
+  postData: PostDataType
 }>()
 
 function relative(from: Date): boolean {
@@ -18,17 +16,34 @@ function relative(from: Date): boolean {
 <template>
   <article class="group/post flex flex-col gap-3 bg-card border rounded-2xl p-6">
     <div class="flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <UserAvatar :avatar-url="post?.authorAvatar" class="sm:inline" />
-        <NuxtLink :to="`/users/${post.authorUsername}`" class="hover:underline">
-          <h1>{{ post.authorName }}</h1>
-          <NuxtTime class="text-sm text-muted-foreground" :datetime="post.postCreatedAt" date-style="long"
-            :relative="relative(new Date(post.postCreatedAt))" />
+      <UserTooltip :user-data="postData.user">
+        <NuxtLink
+          :to="`/users/${postData.user.username}`"
+          class="hover:underline"
+        >
+          <div class="flex items-center gap-3">
+            <UserAvatar
+              :avatar-url="postData.user?.avatar"
+              class="sm:inline"
+            />
+            <div class="flex flex-col">
+              <h1>{{ postData.user.fullName }}</h1>
+              <NuxtTime
+                class="text-sm text-muted-foreground"
+                :datetime="postData.post.createdAt"
+                date-style="long"
+                :relative="relative(new Date(postData.post.createdAt))"
+              />
+            </div>
+          </div>
         </NuxtLink>
-      </div>
+      </UserTooltip>
       <ClientOnly>
-        <DeletePostDialog :post="post">
-          <PostMoreButton :post="post" class="sm:opacity-0 transition-opacity group-hover/post:opacity-100" />
+        <DeletePostDialog :post-data="postData">
+          <PostMoreButton
+            :post-data="postData"
+            class="sm:opacity-0 transition-opacity group-hover/post:opacity-100"
+          />
         </DeletePostDialog>
       </ClientOnly>
     </div>
@@ -36,12 +51,7 @@ function relative(from: Date): boolean {
     <!-- ✅ Post content with clickable hashtags -->
     <div class="flex flex-col gap-3">
       <p class="whitespace-pre-line wrap-break-word">
-        <template v-for="(part, i) in parseContent(post.postContent)" :key="i">
-          <NuxtLink v-if="part.isTag" :to="`/hashtag/${part.text.substring(1)}`" class="text-primary hover:underline">
-            {{ part.text }}
-          </NuxtLink>
-          <span v-else>{{ part.text }}</span>
-        </template>
+        <Linkify :content="postData.post.content" />
       </p>
       <Separator />
     </div>
@@ -49,19 +59,28 @@ function relative(from: Date): boolean {
     <div class="flex justify-start items-center gap-3">
       <!-- Likes -->
       <div class="flex items-center gap-1">
-        <Icon name="fluent:heart-20-regular" class="text-xl" />
+        <Icon
+          name="fluent:heart-20-regular"
+          class="text-xl"
+        />
         <span class="flex items-center">
-          {{ post.likesCount }} likes
+          {{ postData.post.likesCount }} likes
         </span>
       </div>
       <!-- Comments -->
       <div class="flex items-center gap-1">
-        <Icon name="fluent:comment-20-regular" class="text-xl" />
+        <Icon
+          name="fluent:comment-20-regular"
+          class="text-xl"
+        />
         <span class="flex items-center">
-          {{ post.disLikesCount }} comments
+          {{ postData.post.disLikesCount }} comments
         </span>
       </div>
-      <Icon name="fluent:bookmark-20-regular" class="text-xl ml-auto" />
+      <Icon
+        name="fluent:bookmark-20-regular"
+        class="text-xl ml-auto"
+      />
     </div>
   </article>
 </template>

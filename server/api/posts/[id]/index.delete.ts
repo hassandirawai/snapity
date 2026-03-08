@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
     const postDate = await getPostById(postId)
 
-    if (postDate.authorId !== loggedInUser.id) {
+    if (postDate.user.id !== loggedInUser.id) {
       throw createError({
         statusCode: 403,
         statusMessage: 'You are not authorized to delete this post',
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
     await useDrizzle()
       .delete(tables.posts)
-      .where(eq(tables.posts.id, postDate.id))
+      .where(eq(tables.posts.id, postDate.post.id))
 
     return postDate
   }

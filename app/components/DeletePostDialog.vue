@@ -1,10 +1,23 @@
 <script lang="ts" setup>
-defineProps<{
-  post: PostType
+import { toast } from 'vue-sonner'
+
+const props = defineProps<{
+  postData: PostDataType
 }>()
 
-const isOpen = ref(false)
+const isOpen = ref<boolean>(false)
 const { mutate, isPending } = useDeletePostMutation()
+
+function onDelete() {
+  mutate(props.postData.post.id, {
+    onSuccess() {
+      toast.success('Post deleted successfully')
+    },
+    onError() {
+      toast.error('Failed to delete post')
+    },
+  })
+}
 </script>
 
 <template>
@@ -32,28 +45,25 @@ const { mutate, isPending } = useDeletePostMutation()
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
+        <DialogClose as-child>
+          <Button
+            variant="outline"
+            :disabled="isPending"
+          >
+            Cancel
+          </Button>
+        </DialogClose>
         <LoadingButton
           variant="destructive"
           :disabled="isPending"
           :loading="isPending"
-          @click="mutate(post.id, {
-            onSuccess: () => {
-              isOpen = false
-            },
-          })"
+          @click="onDelete"
         >
           Submit
         </LoadingButton>
-        <DialogClose as-child>
-          <Button variant="outline" :disabled="isPending">
-            Cancel
-          </Button>
-        </DialogClose>
       </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
 
-<style>
-
-</style>
+<style></style>

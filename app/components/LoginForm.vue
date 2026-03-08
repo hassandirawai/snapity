@@ -30,11 +30,13 @@ const onSubmit = form.handleSubmit(async (values) => {
       await navigateTo('/')
       toast.success('Logged in successfully')
     }
-  } catch (error: any) {
+  }
+  catch (error: any) {
     console.error('Error:', error.data)
     const errorMessage = error.data || 'Login failed'
     toast.error(errorMessage.data)
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 })
@@ -43,7 +45,10 @@ const onSubmit = form.handleSubmit(async (values) => {
 <template>
   <Card :class="cn('overflow-hidden p-0 gap-0', props.class)">
     <CardContent class="grid md:grid-cols-2 p-0">
-      <form class="relative p-6 md:p-8 flex flex-col gap-6" @submit="onSubmit">
+      <form
+        class="relative p-6 md:p-8 flex flex-col gap-6"
+        @submit="onSubmit"
+      >
         <!-- Form Header -->
         <div class="flex flex-col items-start justify-center">
           <h1 class="text-2xl font-bold">
@@ -54,61 +59,98 @@ const onSubmit = form.handleSubmit(async (values) => {
           </p>
         </div>
         <!-- Form Fields -->
-        <FormField v-slot="{ componentField }" name="username" :validate-on-blur="!form.isFieldDirty">
+        <FormField
+          v-slot="{ componentField }"
+          name="username"
+          :validate-on-blur="!form.isFieldDirty"
+        >
           <FormItem>
             <FormLabel>Username</FormLabel>
             <FormControl>
-              <Input type="text" placeholder="Username" v-bind="componentField" />
+              <Input
+                type="text"
+                placeholder="Username"
+                v-bind="componentField"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         </FormField>
-        <FormField v-slot="{ componentField }" name="password" :validate-on-blur="!form.isFieldDirty">
+        <FormField
+          v-slot="{ componentField }"
+          name="password"
+          :validate-on-blur="!form.isFieldDirty"
+        >
           <FormItem>
             <div class="flex justify-between">
               <FormLabel>Password</FormLabel>
-              <NuxtLink to="/resetpassword" class="text-sm underline-offset-2 hover:underline">
+              <NuxtLink
+                to="/resetpassword"
+                class="text-sm underline-offset-2 hover:underline"
+              >
                 Forgot your password?
               </NuxtLink>
             </div>
             <FormControl>
-              <PasswordInput v-bind="componentField" type="password" placeholder="Password" />
+              <PasswordInput
+                v-bind="componentField"
+                type="password"
+                placeholder="Password"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         </FormField>
-        <LoadingButton type="submit" :loading="isLoading">
+        <LoadingButton
+          type="submit"
+          :loading="isLoading"
+        >
           Login
         </LoadingButton>
         <!-- Text with Divider -->
-        <div
-          class="relative text-sm text-center after:absolute after:w-full after:flex after:border-border after:border-t after:top-1/2 after:z-0">
+        <div class="relative text-sm text-center after:absolute after:w-full after:flex after:border-border after:border-t after:top-1/2 after:z-0">
           <span class="relative z-10 text-muted-foreground bg-card px-2">Or Continue With</span>
         </div>
         <!-- Social Login -->
         <div class="grid grid-cols-3 gap-4">
-          <Button variant="outline" class="w-full text-lg hover:*:text-primary">
+          <Button
+            variant="outline"
+            class="w-full text-lg hover:*:text-primary"
+          >
             <Icon name="mage:apple" />
             <span class="sr-only">Login with Apple</span>
           </Button>
-          <Button variant="outline" class="w-full text-lg hover:*:text-primary">
+          <Button
+            variant="outline"
+            class="w-full text-lg hover:*:text-primary"
+          >
             <Icon name="mage:google" />
             <span class="sr-only">Login with Google</span>
           </Button>
-          <Button variant="outline" class="w-full text-lg hover:*:text-primary">
+          <Button
+            variant="outline"
+            class="w-full text-lg hover:*:text-primary"
+          >
             <Icon name="mage:meta" />
             <span class="sr-only">Login with Meta</span>
           </Button>
         </div>
         <div class="text-center text-sm">
           Don't have an account?
-          <NuxtLink to="/signup" class="underline underline-offset-2">
+          <NuxtLink
+            to="/signup"
+            class="underline underline-offset-2"
+          >
             SignUp
           </NuxtLink>
         </div>
       </form>
       <div class="relative hidden bg-muted md:block">
-        <img src="/sign-up-from-image.jpeg" alt="Image" class="h-full w-full object-cover">
+        <img
+          src="/sign-up-from-image.jpeg"
+          alt="Image"
+          class="h-full w-full object-cover"
+        >
         <div class="absolute inset-0 bg-black/25" />
         <div class="absolute bottom-8 left-8 right-8">
           <p class="text-white text-xl font-medium">

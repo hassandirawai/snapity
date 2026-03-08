@@ -1,6 +1,6 @@
 // shared/types/auth.d.ts
 declare module '#auth-utils' {
-  interface User extends UserType {
+  interface User extends UserSessionType {
     // Add your own fields
   }
 

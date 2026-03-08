@@ -8,8 +8,13 @@ const hashtags = await $fetch('/api/hashtags/trending-hashtags')
       Trending Topics
     </div>
     <div class="flex flex-col gap-3">
-      <NuxtLink v-for="hashtag in hashtags" :key="hashtag.id" :to="`/hashtag/${hashtag.tag}`" class="block"
-        :title="hashtag.tag">
+      <NuxtLink
+        v-for="hashtag in hashtags"
+        :key="hashtag.id"
+        :to="`/hashtag/${hashtag.tag}`"
+        class="block"
+        :title="hashtag.tag"
+      >
         <p class="line-clamp-1 break-all hover:underline hover:cursor-pointer">
           #{{ hashtag.tag }}
         </p>

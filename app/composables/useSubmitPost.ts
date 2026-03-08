@@ -1,8 +1,10 @@
-export async function useSubmitPost(postContent: string) {
-  return await $fetch<PostType>('/api/posts', {
+import type { PostInput } from '../types/post'
+
+export async function useSubmitPost(input: PostInput) {
+  return await $fetch<PostDataType>('/api/posts', {
     method: 'POST',
     body: {
-      content: postContent,
+      input,
     },
   })
 }

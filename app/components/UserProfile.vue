@@ -1,53 +1,69 @@
 <script lang="ts" setup>
-const { user, loggedInUserId } = defineProps<{
-  user: UserProfile
+const { userData, loggedInUserId } = defineProps<{
+  userData: UserDataType
   loggedInUserId: string
 }>()
 
 const followerInfo: FollowerInfo = {
-  followers: user.followersCount,
-  isFollowedByUser: user.followers.includes(loggedInUserId),
+  followers: userData.followersCount,
+  isFollowedByUser: userData.followers.includes(loggedInUserId),
 }
 </script>
 
 <template>
-  <div class="flex flex-col border rounded-2xl items-center p-6 gap-y-6">
-    <UserAvatar :avatar-url="user.avatar" :size="192" />
+  <div class="flex flex-col bg-card border rounded-2xl items-center p-6 gap-y-6">
+    <UserAvatar
+      :avatar-url="userData.avatar"
+      :size="192"
+    />
     <div class="flex w-full justify-between">
       <div class="flex flex-col">
         <h1 class="text-3xl font-bold">
-          {{ user.fullName }}
+          {{ userData.fullName }}
         </h1>
         <p class="text-muted-foreground">
-          @{{ user.username }}
+          @{{ userData.username }}
         </p>
       </div>
       <!-- Since it does not required any seo will render it on the client side -->
       <ClientOnly>
-        <FollowButton v-if="user.id !== loggedInUserId" :user-id="user.id" :initial-state="followerInfo">
+        <FollowButton
+          v-if="userData.id !== loggedInUserId"
+          :user-id="userData.id"
+          :initial-state="followerInfo"
+        >
           Follow
         </FollowButton>
-        <Button v-else variant="secondary">
-          Edit Profile
-        </Button>
+        <EditUserProfileButton
+          v-else
+          :user-data
+        />
       </ClientOnly>
     </div>
     <div class="w-full space-y-3">
-      <p>Member since {{ formatRelativeDate(new Date(user.createdAt)) }}</p>
+      <p>Member since {{ formatRelativeDate(new Date(userData.createdAt)) }}</p>
       <div class="flex gap-x-3">
         <span>
           Posts:
           <span class="font-semibold">
-            {{ user.postsCount }}
+            {{ userData.postsCount }}
           </span>
         </span>
-        <FollowerCount :user-id="user.id" :initial-state="followerInfo" />
+        <FollowerCount
+          :user-id="userData.id"
+          :initial-state="followerInfo"
+        />
       </div>
     </div>
-    <Separator />
-    <p class="w-full">
-      Certificated 10x dev and creator of #Snapity
-    </p>
+    <div
+      v-if="userData.bio"
+      class="w-full space-y-3"
+    >
+      <Separator />
+      <p class="whitespace-pre-line wrap-break-word">
+        <Linkify :content="userData.bio" />
+      </p>
+    </div>
   </div>
 </template>
 

@@ -1,10 +1,7 @@
-import { signUpSchema } from "~/utils/zod-schemas";
-import { createUser, findUserByEmail, findUserByUsername } from "~~/server/utils/queries";
+import { createUser, findUserByEmail, findUserByUsername } from '~~/server/utils/queries'
+import { signUpSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
-
-
-
   const user = await readValidatedBody(event, signUpSchema.parse)
 
   const takenUsername = await findUserByUsername(user.username)
@@ -12,8 +9,8 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 409,
       statusMessage: 'Username already taken',
-      data: "Username already taken"
-    });
+      data: 'Username already taken',
+    })
   }
 
   const takenEmail = await findUserByEmail(user.email)
@@ -21,8 +18,8 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 409,
       statusMessage: 'Email already taken',
-      data: "Email already taken"
-    });
+      data: 'Email already taken',
+    })
   }
 
   const newUser = await createUser(user)
@@ -31,12 +28,12 @@ export default defineEventHandler(async (event) => {
   await setUserSession(event, {
     user: {
       id: newUser.id,
-      avatar: newUser.image,
+      avatar: newUser.avatar,
       username: newUser.username,
       email: newUser.email,
-      fullName: newUser.fullName
+      fullName: newUser.fullName,
     },
-    lastLogin: new Date()
+    lastLogin: new Date(),
   })
 
   return {
@@ -44,10 +41,10 @@ export default defineEventHandler(async (event) => {
     message: 'User created successfully',
     data: {
       id: newUser.id,
-      avatar: newUser.image,
+      avatar: newUser.avatar,
       username: newUser.username,
       email: newUser.email,
-      fullName: newUser.fullName
-    }
+      fullName: newUser.fullName,
+    },
   }
 })

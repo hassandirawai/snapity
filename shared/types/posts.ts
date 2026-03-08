@@ -1,19 +1,26 @@
-export interface PostType {
-  id: string
-  authorId: string
-  authorAvatar: string | null
-  authorName: string
-  authorUsername: string | null
-  postContent: string
-  postCreatedAt: string
-  likesCount: number
-  disLikesCount: number
-  likers: string[]
-  disLikers: string[]
-  hashtags: string[]
+export interface PostDataType {
+  user: {
+    id: string
+    avatar: string | null
+    fullName: string
+    username: string
+    createdAt: Date
+    followers: string[]
+    followersCount: number
+  }
+  post: {
+    id: string
+    content: string
+    createdAt: Date
+    likesCount: number
+    disLikesCount: number
+    likers: string[]
+    disLikers: string[]
+    hashtags: string[]
+  }
 }
 
 export interface PostPageType {
-  posts: PostType[]
-  nextCursor: string | null
+  postsData: PostDataType[]
+  nextCursor: Date | null
 }

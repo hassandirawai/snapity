@@ -16,6 +16,4 @@ const { data } = useFollowerInfo(props.userId, props.initialState)
   </span>
 </template>
 
-<style>
-
-</style>
+<style></style>

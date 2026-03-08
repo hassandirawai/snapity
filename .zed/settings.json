@@ -1,68 +1,46 @@
 {
-  "prettier": {
-    "allowed": false,
-  },
   "format_on_save": "on",
-  "formatter": "language_server",
+  "formatter": {
+    "language_server": {
+      "name": "eslint"
+    }
+  },
   "code_actions_on_format": {
-    "source.fixAll.eslint": true,
+    "source.fixAll.eslint": true
   },
   "languages": {
     "Vue": {
-      "enable_language_server": true,
       "language_servers": [
+        "eslint",
         "volar"
       ],
+      "formatter": {
+        "language_server": {
+          "name": "eslint"
+        }
+      }
     },
     "TypeScript": {
-      "enable_language_server": true,
       "language_servers": [
+        "eslint",
         "typescript-language-server"
       ],
+      "formatter": {
+        "language_server": {
+          "name": "eslint"
+        }
+      }
     },
     "JavaScript": {
-      "enable_language_server": true,
       "language_servers": [
+        "eslint",
         "typescript-language-server"
       ],
-    },
-    "JSON": {
-      "formatter": "language_server",
-    },
-  },
-  "lsp": {
-    "volar": {
-      "settings": {
-        "typescript.tsdk": "node_modules/typescript/lib",
-        "vue.hybridMode": false,
-        "vue.server.petiteVueAutoCompletion": true,
-        "vue.updateImportsOnFileMove.enabled": true,
-      },
-    },
-    "typescript-language-server": {
-      "settings": {
-        "typescript": {
-          "tsdk": "node_modules/typescript/lib",
-          "enablePromptUseWorkspaceTsdk": true,
-        },
-      },
-    },
-    "eslint": {
-      "settings": {
-        "validate": [
-          "javascript",
-          "javascriptreact",
-          "typescript",
-          "typescriptreact",
-          "vue",
-        ],
-      },
-    },
-  },
-  "tab_size": 2,
-  "hard_tabs": false,
-  "indent_guides": {
-    "enabled": true,
-    "coloring": "indent_aware",
-  },
+      "formatter": {
+        "language_server": {
+          "name": "eslint"
+        }
+      }
+    }
+  }
 }

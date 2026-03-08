@@ -13,12 +13,11 @@ export const user = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   fullName: text('full_name').notNull(),
   username: text('username').notNull().unique(),
-  displayUsername: text('display_username'),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').$defaultFn(() => false).notNull(),
   password: text('password').notNull(),
   bio: text('bio'),
-  image: text('image'),
+  avatar: text('avatar'),
   createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
   updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
 })
@@ -84,6 +83,20 @@ export const postHashtagsRelations = relations(postHashtags, ({ one }) => ({
   }),
 }))
 
+export const mediaType = pgEnum('media_type', ['image', 'video'])
+
+export const media = pgTable('media', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  postId: uuid('post_id').references(() => posts.id, { onDelete: 'set null' }),
+  type: mediaType().notNull(),
+  url: text('url').notNull(),
+  uploadedById: uuid('uploaded_by_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  pathname: text('pathname').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(user, {
     fields: [posts.authorId],
@@ -91,6 +104,18 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   }),
   reactions: many(postReactions),
   postHashtags: many(postHashtags),
+  attachments: many(media),
+}))
+
+export const postMediaRelations = relations(media, ({ one }) => ({
+  post: one(posts, {
+    fields: [media.postId],
+    references: [posts.id],
+  }),
+  uploader: one(user, {
+    fields: [media.uploadedById],
+    references: [user.id],
+  }),
 }))
 
 // Follows table
@@ -119,6 +144,7 @@ export const userRelations = relations(user, ({ many }) => ({
   followers: many(follows, {
     relationName: 'userFollowers',
   }),
+  media: many(media),
 }))
 
 // Follows Relations

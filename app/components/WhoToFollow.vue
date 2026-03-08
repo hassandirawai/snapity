@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-
 const { data: users } = await useFetch('/api/users/5/', {
-  method: 'GET'
+  method: 'GET',
 })
 </script>
 
@@ -11,8 +10,15 @@ const { data: users } = await useFetch('/api/users/5/', {
       Who To Follow
     </div>
     <div class="space-y-3">
-      <div v-for="user in users" :key="user.id" class="flex items-center justify-between">
-        <NuxtLink :to="`/users/${user.username}`" class="flex items-center gap-x-3">
+      <div
+        v-for="user in users"
+        :key="user.id"
+        class="flex items-center justify-between"
+      >
+        <NuxtLink
+          :to="`/users/${user.username}`"
+          class="flex items-center gap-x-3"
+        >
           <UserAvatar :avatar-url="user.avatar" />
           <div>
             <p class="line-clamp-1 break-all hover:underline hover:cursor-pointer">
@@ -22,10 +28,13 @@ const { data: users } = await useFetch('/api/users/5/', {
           </div>
         </NuxtLink>
         <ClientOnly>
-          <FollowButton :user-id="user.id" :initial-state="{
-            followers: user.followers.length,
-            isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
-          }" />
+          <FollowButton
+            :user-id="user.id"
+            :initial-state="{
+              followers: user.followers.length,
+              isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
+            }"
+          />
         </ClientOnly>
       </div>
     </div>

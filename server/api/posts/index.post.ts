@@ -1,5 +1,6 @@
 import type { CreatePostSchemaType } from '~/utils/zod-schemas'
-import { eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
+import { media } from '~~/server/db/schema'
 import { createPostSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
@@ -7,31 +8,47 @@ export default defineEventHandler(async (event) => {
     // Check if user is authenticated
     const { user: loggedInUser } = await requireUserSession(event)
 
-
     // Get post data
     const body: CreatePostSchemaType = await readBody(event)
 
     // Validate post data
-    const parsed = createPostSchema.safeParse(body)
+    const { success: isParsed, data: parsedData, error: parseError } = createPostSchema.safeParse(body)
 
-    if (!parsed.success) {
+    if (!isParsed) {
       return {
         statusCode: 400,
-        statusMessage: parsed.error.issues[0].message,
+        statusMessage: parseError.issues[0].message,
       }
     }
 
+    const db = useDrizzle()
+
     // Create post
-    const createdPosts = await useDrizzle()
+    const createdPosts = await db
       .insert(tables.posts)
       .values({
-        content: parsed.data.content,
+        content: parsedData.content,
         authorId: loggedInUser.id,
       })
       .returning()
 
+    // Link uploaded media to the new post
+    if (parsedData.mediaIds.length) {
+      await db
+        .update(media)
+        .set({
+          postId: createdPosts[0].id,
+        })
+        .where(
+          and(
+            inArray(media.id, parsedData.mediaIds),
+            eq(media.uploadedById, loggedInUser.id),
+          ),
+        )
+    }
+
     // Extract hashtags from post
-    const postHashtags = extractHashtags(parsed.data.content)
+    const postHashtags = extractHashtags(parsedData.content)
 
     // Insert hashtags into hashtag table (create if not exist)
     let hashtagRecords = null

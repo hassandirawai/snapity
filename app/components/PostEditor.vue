@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { toast } from 'vue-sonner'
-
-
 const { user: loggedInUser } = useUserSession()
 
 const editor = useEditor({
@@ -18,17 +15,22 @@ const editor = useEditor({
 
 const { mutate, isPending } = useSubmitPostMutation()
 
+const {
+  attachments,
+  handleUploadFiles,
+  isUploading,
+  totalProgress,
+  removeAttachment,
+  reset,
+} = await useMediaUpload()
+
 async function onSubmit() {
   const postContent = editor.value?.getText() || ''
 
-  mutate(postContent, {
+  mutate(postConten, {
     onSuccess: () => {
       editor.value?.commands.clearContent()
-      toast.success('Post created successfully!')
     },
-    onError: () => {
-      toast.error('Failed to create post')
-    }
   })
 }
 
@@ -41,18 +43,29 @@ onBeforeUnmount(() => {
   <ClientOnly>
     <div class="flex flex-col gap-6 bg-card border rounded-2xl p-6">
       <div class="flex gap-6">
-        <UserAvatar :avatar-url="loggedInUser?.avatar" class="hidden sm:inline" />
+        <UserAvatar
+          :avatar-url="loggedInUser?.avatar"
+          class="hidden sm:inline"
+        />
         <div class="w-full max-w-full overflow-x-auto">
-          <TiptapEditorContent :editor="editor"
-            class="max-h-80 w-full max-w-full overflow-y-auto bg-accent rounded-2xl p-3" />
+          <TiptapEditorContent
+            :editor="editor"
+            class="max-h-80 w-full max-w-full overflow-y-auto bg-accent rounded-2xl p-3"
+          />
         </div>
       </div>
+      <AttachmentsPreview :attachments />
       <div class="flex justify-end gap-3">
-        <Button variant="ghost" size="lg" :disabled="!editor?.getText().trim()">
-          <Icon name="fluent:image-add-20-regular" class="text-3xl text-primary" />
-        </Button>
-        <LoadingButton size="lg" :disabled="!editor?.getText().trim() || isPending" :loading="isPending"
-          @click="onSubmit">
+        <UploadAttachmentButton
+          :disabled="isUploading || attachments.length >= 5"
+          @on-files-selected="handleUploadFiles"
+        />
+        <LoadingButton
+          size="lg"
+          :disabled="!editor?.getText().trim() || isPending || !attachments.length"
+          :loading="isPending"
+          @click="onSubmit"
+        >
           Post
         </LoadingButton>
       </div>

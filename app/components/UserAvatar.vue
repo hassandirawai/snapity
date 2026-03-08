@@ -3,18 +3,33 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '~/lib/utils'
 
 const props = withDefaults(defineProps<{
-  avatarUrl: string | null | undefined
+  avatarUrl: string | null
   size?: number | string
   class?: HTMLAttributes['class']
 }>(), {
   size: 48,
 })
+
+const computedAvatarUrl = computed(() => {
+  if (!props.avatarUrl) {
+    return null
+  }
+  if (props.avatarUrl.startsWith('https')) {
+    return props.avatarUrl
+  }
+
+  return `/images/${props.avatarUrl}`
+})
+
+watch(computedAvatarUrl, (value) => {
+  console.warn('computedAvatarUrl:', value)
+})
 </script>
 
 <template>
   <NuxtImg
-    v-if="avatarUrl"
-    :src="avatarUrl"
+    v-if="computedAvatarUrl"
+    :src="computedAvatarUrl"
     alt="User avatar"
     :width="size || 48"
     :height="size || 48"
@@ -30,6 +45,4 @@ const props = withDefaults(defineProps<{
   />
 </template>
 
-<style>
-
-</style>
+<style></style>

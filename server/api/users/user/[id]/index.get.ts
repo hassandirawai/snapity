@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     const users = await db
       .select({
         id: tables.user.id,
-        avatar: tables.user.image,
+        avatar: tables.user.avatar,
         username: tables.user.username,
         fullName: tables.user.fullName,
         followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    return users[0]
+    return await findUserById(users[0].id)
   }
   catch (error) {
     console.warn(error)

@@ -15,9 +15,17 @@ const props = withDefaults(defineProps<LoadingButtonProps>(), {
 </script>
 
 <template>
-  <Button data-slot="button" :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)"
-    :disabled="loading">
-    <Spinner v-if="loading" :size="loadingIconSize" />
+  <Button
+    data-slot="button"
+    :as="as"
+    :as-child="asChild"
+    :class="cn(buttonVariants({ variant, size }), props.class)"
+    :disabled="loading"
+  >
+    <Spinner
+      v-if="loading"
+      :size="loadingIconSize"
+    />
     <slot />
   </Button>
 </template>
