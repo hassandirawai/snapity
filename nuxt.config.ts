@@ -26,8 +26,9 @@ export default defineNuxtConfig({
       driver: 'neon-http',
     },
     blob: {
-      driver: 'fs', // ← explicit filesystem, works with useMultipartUpload
-      dir: '.data/blob',
+      driver: 'vercel-blob',
+      access: 'public',
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     },
   },
 
@@ -47,12 +48,6 @@ export default defineNuxtConfig({
   image: {
     provider: 'vercel',
     screens: {},
-  },
-
-  $production: {
-    image: {
-      provider: 'vercel',
-    },
   },
 
   routeRules: {

@@ -27,7 +27,7 @@ const {
 async function onSubmit() {
   const postContent = editor.value?.getText() || ''
 
-  mutate(postConten, {
+  mutate(postContent, {
     onSuccess: () => {
       editor.value?.commands.clearContent()
     },

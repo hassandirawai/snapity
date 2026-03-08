@@ -5,17 +5,14 @@ export default defineEventHandler(async (event) => {
 
   const db = useDrizzle()
 
-  // Read content type from headers for Vercel Blob compatibility
-  const requestContentType = getHeader(event, 'x-content-type')
-    || getHeader(event, 'content-type')
-    || 'application/octet-stream'
-
   const uploadedFiels = await blob.handleMultipartUpload(event, {
     prefix: 'posts',
     addRandomSuffix: true,
+    contentType: 'image/jpeg',
   })
 
   if (uploadedFiels.action === 'complete') {
+    console.warn('complete', uploadedFiels.data.url)
     const { url, contentType, pathname } = uploadedFiels.data
 
     if (url) {

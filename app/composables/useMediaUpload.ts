@@ -64,6 +64,8 @@ export async function useMediaUpload() {
 
         const uploadedFile = await completed
 
+        console.warn(uploadedFile)
+
         const { mediaId } = await $fetch('/api/media/by-pathname', {
           method: 'GET',
           query: { pathname: uploadedFile?.pathname },
