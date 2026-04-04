@@ -55,6 +55,10 @@ function handleCropped(croppedImage: File) {
   emits('update:avatar', croppedImage)
   previewAvatarUrl.value = URL.createObjectURL(croppedImage)
 }
+
+function isBlob(url: string) {
+  return url.startsWith('blob')
+}
 </script>
 
 <template>
@@ -70,14 +74,21 @@ function handleCropped(croppedImage: File) {
     class="relative group/uploadbutton block w-fit h-fit mx-auto md:mx-0 border-2 border-secondary rounded-full"
     @click="fileInputRef?.click()"
   >
-    <NuxtImg
-      v-if="computedSrc"
+    <img
+      v-if="computedSrc && isBlob(computedSrc)"
       :src="computedSrc"
       alt="User avatar"
       class="aspect-square h-fit flex-none rounded-full object-cover"
       width="148"
       height="148"
-      unoptimized
+    >
+    <NuxtImg
+      v-else-if="computedSrc && !isBlob(computedSrc)"
+      :src="computedSrc"
+      alt="User avatar"
+      class="aspect-square h-fit flex-none rounded-full object-cover"
+      width="148"
+      height="148"
     />
     <NuxtImg
       v-else
@@ -86,7 +97,6 @@ function handleCropped(croppedImage: File) {
       class="aspect-square h-fit flex-none rounded-full object-cover"
       width="148"
       height="148"
-      unoptimized
     />
     <div class="absolute bottom-0 -right-[-10%] size-fit flex bg-black/40 p-1 rounded-full group-hover/uploadbutton:scale-125 transition-transform">
       <Icon

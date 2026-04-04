@@ -34,7 +34,7 @@ const onSubmit = form.handleSubmit(async (values) => {
   mutation.mutate(
     {
       values,
-      avatar: croppedAvatar.value || undefined,
+      avatar: croppedAvatar.value ?? undefined,
     },
     {
       onSuccess: async () => {

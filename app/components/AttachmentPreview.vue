@@ -15,15 +15,14 @@ const src = URL.createObjectURL(attachment.file)
 
 <template>
   <div :class="cn('relative mx-auto size-fit', attachment.isUploading && 'animate-pulse')">
-    <NuxtImg
+    <img
       v-if="attachment.file.type.startsWith('image')"
       :src
       alt="Post image preview"
       width="500"
       height="500"
       class="size-fit max-h-120 rounded-2xl"
-      unoptimized
-    />
+    >
     <video v-else controls class="size-fit max-h-120 rounded-2xl">
       <source :src :type="attachment.file.type">
     </video>
