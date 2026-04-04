@@ -77,6 +77,7 @@ function handleCropped(croppedImage: File) {
       class="aspect-square h-fit flex-none rounded-full object-cover"
       width="148"
       height="148"
+      unoptimized
     />
     <NuxtImg
       v-else
@@ -85,6 +86,7 @@ function handleCropped(croppedImage: File) {
       class="aspect-square h-fit flex-none rounded-full object-cover"
       width="148"
       height="148"
+      unoptimized
     />
     <div class="absolute bottom-0 -right-[-10%] size-fit flex bg-black/40 p-1 rounded-full group-hover/uploadbutton:scale-125 transition-transform">
       <Icon

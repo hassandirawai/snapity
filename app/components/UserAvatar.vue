@@ -39,6 +39,7 @@ const computedAvatarUrl = computed(() => {
     :width="size || 48"
     :height="size || 48"
     :class="cn('aspect-square h-fit flex-none rounded-full object-cover', props.class)"
+    unoptimized
   />
 </template>
 
