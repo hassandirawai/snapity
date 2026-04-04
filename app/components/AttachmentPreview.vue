@@ -22,6 +22,7 @@ const src = URL.createObjectURL(attachment.file)
       width="500"
       height="500"
       class="size-fit max-h-120 rounded-2xl"
+      unoptimized
     />
     <video v-else controls class="size-fit max-h-120 rounded-2xl">
       <source :src :type="attachment.file.type">
