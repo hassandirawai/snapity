@@ -32,13 +32,14 @@ function handleFilesSelected(event: Event) {
   >
   <Button
     variant="ghost"
-    size="lg"
+    size="icon"
     :disabled
+    class="text-primary hover:text-primary"
     @click="fileInputRef?.click()"
   >
     <Icon
       name="fluent:image-add-20-regular"
-      class="text-3xl text-primary"
+      class="text-2xl"
     />
   </Button>
 </template>

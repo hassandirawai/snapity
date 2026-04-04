@@ -1,4 +1,6 @@
 export default defineEventHandler(async (event) => {
+  await requireUserSession(event)
+
   const username = getRouterParam(event, 'username') as string | undefined
 
   if (!username) {

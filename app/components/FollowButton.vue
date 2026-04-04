@@ -8,8 +8,7 @@ interface FollowButtonProps extends ButtonProps {
   initialState: FollowerInfo
 }
 
-const props = withDefaults(defineProps<FollowButtonProps>(), {
-})
+const props = defineProps<FollowButtonProps>()
 
 const queryClient = useQueryClient()
 
@@ -41,8 +40,8 @@ const { mutate } = useMutation({
     const previousState = queryClient.getQueryData<FollowerInfo>(queryKey)
 
     queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
-      followers:
-        (previousState?.followers || 0)
+      followersCount:
+        (previousState?.followersCount || 0)
         + (previousState?.isFollowedByUser ? -1 : 1),
       isFollowedByUser: !previousState?.isFollowedByUser,
     }))
@@ -57,13 +56,15 @@ const { mutate } = useMutation({
 </script>
 
 <template>
-  <Button
-    :class="cn(props.class)"
-    :variant="data.isFollowedByUser ? 'secondary' : 'default'"
-    @click="mutate()"
-  >
-    {{ data.isFollowedByUser ? 'Unfollow' : 'Follow' }}
-  </Button>
+  <ClientOnly>
+    <Button
+      :class="cn(props.class)"
+      :variant="data.isFollowedByUser ? 'secondary' : 'default'"
+      @click="mutate()"
+    >
+      {{ data.isFollowedByUser ? 'Unfollow' : 'Follow' }}
+    </Button>
+  </ClientOnly>
 </template>
 
 <style></style>

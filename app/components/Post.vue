@@ -16,28 +16,40 @@ function relative(from: Date): boolean {
 <template>
   <article class="group/post flex flex-col gap-3 bg-card border rounded-2xl p-6">
     <div class="flex justify-between items-center">
-      <UserTooltip :user-data="postData.user">
-        <NuxtLink
-          :to="`/users/${postData.user.username}`"
-          class="hover:underline"
-        >
-          <div class="flex items-center gap-3">
+      <div class="flex gap-x-3">
+        <UserTooltip :user-data="postData.user">
+          <NuxtLink
+            :to="`/users/${postData.user.username}`"
+            class="hover:underline"
+          >
             <UserAvatar
               :avatar-url="postData.user?.avatar"
               class="sm:inline"
             />
-            <div class="flex flex-col">
-              <h1>{{ postData.user.fullName }}</h1>
-              <NuxtTime
-                class="text-sm text-muted-foreground"
-                :datetime="postData.post.createdAt"
-                date-style="long"
-                :relative="relative(new Date(postData.post.createdAt))"
-              />
-            </div>
-          </div>
-        </NuxtLink>
-      </UserTooltip>
+          </NuxtLink>
+        </UserTooltip>
+        <div class="flex flex-col">
+          <UserTooltip :user-data="postData.user">
+            <NuxtLink
+              :to="`/users/${postData.user.username}`"
+              class="block font-medium hover:underline hover:cursor-pointer"
+            >
+              {{ postData.user.fullName }}
+            </NuxtLink>
+          </UserTooltip>
+          <NuxtLink
+            :to="`/post/${postData.post.id}`"
+            class="hover:underline hover:cursor-pointer"
+          >
+            <NuxtTime
+              class="text-sm text-muted-foreground"
+              :datetime="postData.post.createdAt"
+              date-style="long"
+              :relative="relative(new Date(postData.post.createdAt))"
+            />
+          </NuxtLink>
+        </div>
+      </div>
       <ClientOnly>
         <DeletePostDialog :post-data="postData">
           <PostMoreButton
@@ -53,12 +65,18 @@ function relative(from: Date): boolean {
       <p class="whitespace-pre-line wrap-break-word">
         <Linkify :content="postData.post.content" />
       </p>
+
+      <!-- Attachments -->
+      <MediaPreviews
+        v-if="postData.post.attachments"
+        :attachments="postData.post.attachments"
+      />
       <Separator />
     </div>
 
     <div class="flex justify-start items-center gap-3">
       <!-- Likes -->
-      <div class="flex items-center gap-1">
+      <Button variant="ghost">
         <Icon
           name="fluent:heart-20-regular"
           class="text-xl"
@@ -66,21 +84,23 @@ function relative(from: Date): boolean {
         <span class="flex items-center">
           {{ postData.post.likesCount }} likes
         </span>
-      </div>
+      </Button>
       <!-- Comments -->
-      <div class="flex items-center gap-1">
+      <Button variant="ghost">
         <Icon
           name="fluent:comment-20-regular"
           class="text-xl"
         />
         <span class="flex items-center">
-          {{ postData.post.disLikesCount }} comments
+          2 comments
         </span>
-      </div>
-      <Icon
-        name="fluent:bookmark-20-regular"
-        class="text-xl ml-auto"
-      />
+      </Button>
+      <Button variant="ghost" class="ml-auto">
+        <Icon
+          name="fluent:bookmark-20-regular"
+          class="text-xl"
+        />
+      </Button>
     </div>
   </article>
 </template>

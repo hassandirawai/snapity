@@ -39,7 +39,8 @@ export const createPostSchema = z.object({
     .string({ error: 'Content is required' })
     .min(4, { error: 'Content must be at least 4 characters long' }),
   mediaIds: z
-    .array(z.uuid().max(5, { error: 'Cannot upload more than 5 media files' }))
+    .array(z.uuid())
+    .max(5, { error: 'Cannot upload more than 5 media files' })
     .optional()
     // insted of setting the mediaIds to undefined if not provided, set it to an empty array
     .default([]),

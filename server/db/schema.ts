@@ -34,7 +34,7 @@ export const posts = pgTable('post', {
 })
 
 // Reaction enum-types
-export const reactionTypeEnum = pgEnum('reaction_type_enum', ['like', 'dislike'])
+export const reactionTypeEnum = pgEnum('reaction_type_enum', ['LIKE', 'DISLIKE'])
 // Post reactions table
 export const postReactions = pgTable('post_reaction', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -83,7 +83,7 @@ export const postHashtagsRelations = relations(postHashtags, ({ one }) => ({
   }),
 }))
 
-export const mediaType = pgEnum('media_type', ['image', 'video'])
+export const mediaType = pgEnum('media_type', ['IMAGE', 'VIDEO'])
 
 export const media = pgTable('media', {
   id: uuid('id').defaultRandom().primaryKey(),

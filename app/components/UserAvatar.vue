@@ -3,7 +3,7 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '~/lib/utils'
 
 const props = withDefaults(defineProps<{
-  avatarUrl: string | null
+  avatarUrl: string | null | undefined
   size?: number | string
   class?: HTMLAttributes['class']
 }>(), {
@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<{
 })
 
 const computedAvatarUrl = computed(() => {
+  // console.warn('computedAvatarUrl:', props.avatarUrl)
   if (!props.avatarUrl) {
     return null
   }
@@ -19,10 +20,6 @@ const computedAvatarUrl = computed(() => {
   }
 
   return `/images/${props.avatarUrl}`
-})
-
-watch(computedAvatarUrl, (value) => {
-  console.warn('computedAvatarUrl:', value)
 })
 </script>
 

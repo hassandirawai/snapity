@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (uploadedFiels.action === 'complete') {
-    console.warn('complete', uploadedFiels.data.url)
+    console.warn('complete upload:', uploadedFiels.data.url)
     const { url, contentType, pathname } = uploadedFiels.data
 
     if (url) {
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
         .values({
           url,
           pathname,
-          type: contentType?.startsWith('video/') ? 'video' : 'image',
+          type: contentType?.startsWith('video/') ? 'VIDEO' : 'IMAGE',
           uploadedById: loggedInUser.id,
         })
         .returning()

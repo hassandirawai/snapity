@@ -13,6 +13,8 @@ export function useSubmitPostMutation() {
         queryKey: ['posts-feed'],
       }
 
+      console.warn('PostSubmitMutation:onSuccess:', createdPost.post.content)
+
       await queryClient.cancelQueries({ queryKey: ['posts-feed'] })
 
       queryClient.setQueriesData<InfiniteData<PostPageType, Date | null>>(
@@ -47,7 +49,8 @@ export function useSubmitPostMutation() {
 
       toast.success('Post created successfully')
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Failed to create post', error.message)
       toast.error('Failed to create post')
     },
   })
@@ -83,6 +86,8 @@ export function useDeletePostMutation() {
           }
         },
       )
+
+      await refreshNuxtData(`post_page-${postData.post.id}`)
     },
   })
 
@@ -105,8 +110,8 @@ export function useUpdateProfileMutation() {
         queryKey: ['posts-feed'],
       }
 
-      const userTooltipQueryFilter: InvalidateQueryFilters = {
-        queryKey: ['user-data', updatedUser.username],
+      const userDataQueryFilter: InvalidateQueryFilters = {
+        queryKey: ['user', updatedUser.username],
       }
 
       // console.error('mutation:uploadAvatar', uploadedAvatar?.avatar)
@@ -143,8 +148,22 @@ export function useUpdateProfileMutation() {
         },
       )
 
-      await refreshNuxtData(`user_profile_${updatedUser.username}`)
-      await queryClinet.invalidateQueries(userTooltipQueryFilter)
+      queryClinet.setQueryData<UserDataType>(
+        ['user', updatedUser.username],
+        (oldData) => {
+          if (!oldData) {
+            return
+          }
+
+          return {
+            ...oldData, // ✅ keep existing data
+            ...updatedUser, // ✅ overwrite only provided fields
+            avatar: uploadedAvatar?.avatar || oldData.avatar,
+            bio: updatedUser.bio ?? oldData.bio, // ✅ FIX
+          }
+        },
+      )
+      // await refreshNuxtData([`user_profile-${updatedUser.username}`])
       const { fetch: fetchUserSession } = useUserSession()
       await fetchUserSession()
     },

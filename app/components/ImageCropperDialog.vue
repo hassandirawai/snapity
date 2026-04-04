@@ -44,7 +44,7 @@ function handleCrop() {
   }, 'image/webp')
 }
 
-function deafultSize({ imageSize }: { imageSize: ImageSize }) {
+function defaultSize({ imageSize }: { imageSize: ImageSize }) {
   if (!imageSize.width || !imageSize.height) {
     return { width: 200, height: 200 }
   }
@@ -88,17 +88,17 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
           :src="src"
           :stencil-component="CircleStencil"
           :stencil-props="{
-            aspectRatio: 1,
+            aspectRatio: 4 / 5,
             movable: false,
             scalable: false,
             lines: {},
             handlers: {},
             previewClass: 'avatar-cropper-stencil',
           }"
-          :min-width="150"
-          :min-height="150"
+          :min-width="200"
+          :min-height="200"
           :stencil-size="stencilSize"
-          :default-size="deafultSize"
+          :default-size="defaultSize"
           :debounce="false"
           background-class="avatar-cropper-background"
           foreground-class="avatar-cropper-foreground"

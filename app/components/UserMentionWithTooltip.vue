@@ -5,8 +5,8 @@ const props = defineProps<{
   username: string
 }>()
 
-const { data: userData, isLoading } = useQuery({
-  queryKey: ['user-data', props.username],
+const { data: userData, isLoading: _isLoading } = useQuery({
+  queryKey: ['user', props.username],
   queryFn: async () => {
     const userData = await $fetch<UserDataType>(`/api/users/user/username/${props.username}`)
 
@@ -33,27 +33,30 @@ const { data: userData, isLoading } = useQuery({
 </script>
 
 <template>
-  <div v-if="isLoading">
-    <Spinner />
-  </div>
-  <div v-else>
-    <div v-if="!userData">
+  <ClientOnly>
+    <NuxtLink
+      v-if="!userData"
+      :to="`/users/${props.username}`"
+      class="text-primary hover:underline"
+    >
+      @{{ props.username }}
+    </NuxtLink>
+    <UserTooltip
+      v-else
+      :user-data="userData"
+    >
       <NuxtLink
         :to="`/users/${props.username}`"
         class="text-primary hover:underline"
       >
         @{{ props.username }}
       </NuxtLink>
-    </div>
-    <div v-else>
-      <UserTooltip :user-data="userData">
-        <NuxtLink
-          :to="`/users/${props.username}`"
-          class="text-primary hover:underline"
-        >
-          @{{ props.username }}
-        </NuxtLink>
-      </UserTooltip>
-    </div>
-  </div>
+    </UserTooltip>
+
+    <template #fallback>
+      <div class="w-65">
+        <Skeleton />
+      </div>
+    </template>
+  </ClientOnly>
 </template>

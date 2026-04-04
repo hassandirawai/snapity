@@ -1,28 +1,54 @@
 <script lang="ts" setup>
-const route = useRoute()
+import { useQuery } from '@tanstack/vue-query'
 
-const { data: userData } = await useAsyncData(`user_profile_${route.params.username}`, async () => {
-  try {
-    return await $fetch<UserDataType>(`/api/users/user/username/${route.params.username}`, {
-      method: 'GET',
-    })
-  }
-  catch (error: any) {
-    throw createError({
-      statusCode: error.statusCode,
-      message: 'The user could not be found.',
-    })
-  }
+const { params } = useRoute()
+
+const { data: fetchedUserData } = await useAsyncData(
+  `user-${params.username}`,
+  async () => {
+    try {
+      return await $fetch<UserDataType>(`/api/users/user/username/${params.username}`, {
+        method: 'GET',
+      })
+    }
+    catch (error: any) {
+      throw createError({
+        statusCode: error.statusCode,
+        message: 'The user could not be found.',
+      })
+    }
+  },
+)
+
+const { data: userData } = useQuery({
+  queryKey: computed(() => ['user', fetchedUserData.value?.username]),
+  queryFn: async () => {
+    try {
+      return await $fetch<UserDataType>(`/api/users/user/username/${params.username}`, {
+        method: 'GET',
+      })
+    }
+    catch (error: any) {
+      throw createError({
+        statusCode: error.statusCode,
+        message: 'The user could not be found.',
+      })
+    }
+  },
+  initialData: () => fetchedUserData.value,
+  staleTime: Infinity,
 })
 
 const { user: loggedInUser } = useUserSession()
 
-if (userData.value) {
-  useHead({
-    title: `${userData.value?.fullName} (@${userData.value?.username})`,
-    titleTemplate: '%s | Snapity',
-  })
-}
+watchEffect(() => {
+  if (userData.value) {
+    useHead({
+      title: `${userData.value?.fullName} (@${userData.value?.username})`,
+      titleTemplate: '%s | Snapity',
+    })
+  }
+})
 </script>
 
 <template>

@@ -31,7 +31,7 @@ export async function useMediaUpload() {
     }
 
     if (attachments.value.length + files.length > 5) {
-      toast.error('Maximum attachment limit reached')
+      toast.error('You can only upload up to 5 attachments')
       return
     }
 
@@ -58,21 +58,29 @@ export async function useMediaUpload() {
           return
         }
 
-        watch(fileProgress, (newValue) => {
-          attachment.uploadProgress = newValue
+        // Use watchEffect BEFORE awaiting completed
+        const stopWatcher = watchEffect(() => {
+          attachment.uploadProgress = fileProgress.value
+          // console.log('Upload progress:', fileProgress.value)
         })
 
         const uploadedFile = await completed
 
-        console.warn(uploadedFile)
+        if (!uploadedFile) {
+          return
+        }
+
+        console.log('useMediaUpload:uploadedFile:', uploadedFile.pathname)
 
         const { mediaId } = await $fetch('/api/media/by-pathname', {
           method: 'GET',
-          query: { pathname: uploadedFile?.pathname },
+          query: { pathname: uploadedFile.pathname },
         })
 
         attachment.mediaId = mediaId
         attachment.isUploading = false
+
+        stopWatcher()
       }
       catch (error: any) {
         attachments.value = attachments.value.filter(attachment => attachment.file.name !== file.name)

@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import { follows, posts, user } from '../../server/db/schema'
 
 export interface FollowerInfo {
-  followers: number
+  followersCount: number
   isFollowedByUser: boolean
 }
 
@@ -28,9 +28,9 @@ export function userDataSelect() {
     fullName: user.fullName,
     bio: user.bio,
     createdAt: user.createdAt,
-    followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN ${follows.followerId} END)`,
-    followersCount: sql<number>`COUNT(DISTINCT CASE WHEN ${user.id} = ${follows.followingId} THEN 1 END)`,
-    postsCount: sql<number>`COUNT(${posts.id})`,
+    followers: sql<string[]>`ARRAY_AGG(${follows.followerId})`,
+    followersCount: sql<number>`COUNT(${follows.followingId})::int`,
+    postsCount: sql<number>`COUNT(${posts.id})::int`,
   } satisfies Record<keyof UserDataType, any>
 }
 

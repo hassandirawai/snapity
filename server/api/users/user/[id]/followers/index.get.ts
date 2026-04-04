@@ -1,46 +1,40 @@
 import type { FollowerInfo } from '~~/shared/types/users'
-import { desc, eq, or, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
+import { follows, user } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const userId = getRouterParam(event, 'id') as string | undefined
+  const userId = getRouterParam(event, 'id') as string | undefined
 
-    const { user: loggedInUser } = await requireUserSession(event)
+  const { user: loggedInUser } = await requireUserSession(event)
 
-    if (!userId) {
-      throw createError('User ID is required')
-    }
-
-    const users = await useDrizzle()
-      .select({
-        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
-        isFollowedByUser: sql<boolean>`BOOL_OR(${tables.user.id} = ${tables.follows.followingId} AND ${tables.follows.followerId} = ${loggedInUser.id})`,
-      })
-      .from(tables.user)
-      .leftJoin(tables.follows, or(eq(tables.user.id, tables.follows.followerId), eq(tables.user.id, tables.follows.followingId)))
-      .where(eq(tables.user.id, userId))
-      .groupBy(tables.user.id)
-      .orderBy(desc(tables.user.fullName))
-
-    if (!users[0]) {
-      throw createError({
-        statusCode: 404,
-        message: 'User not found',
-      })
-    }
-
-    const data: FollowerInfo = {
-      followers: users[0].followers.length,
-      isFollowedByUser: users[0].isFollowedByUser,
-    }
-
-    return data
+  if (!userId) {
+    throw createError('User ID is required')
   }
-  catch (error) {
-    console.warn(error)
+
+  const usersData = await useDrizzle()
+    .select({
+      followersCount: sql<number>`COUNT(${follows.followerId})::int`,
+      isFollowedByUser: sql<boolean>`BOOL_OR(${follows.followerId} = ${loggedInUser.id})`,
+    })
+    .from(tables.user)
+    .leftJoin(follows, eq(user.id, follows.followingId))
+    .where(eq(user.id, userId))
+    .groupBy(user.id)
+    .orderBy(desc(user.fullName))
+
+  if (!usersData[0]) {
     throw createError({
-      statusCode: 500,
-      message: 'Internal server error',
+      statusCode: 404,
+      message: 'User not found',
     })
   }
+
+  console.error(typeof usersData[0].followersCount)
+
+  const followerInfoData: FollowerInfo = {
+    followersCount: usersData[0].followersCount,
+    isFollowedByUser: usersData[0].isFollowedByUser,
+  }
+
+  return followerInfoData
 })

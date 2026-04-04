@@ -24,30 +24,19 @@ export default defineNuxtConfig({
     db: {
       dialect: 'postgresql',
       driver: 'neon-http',
+      applyMigrationsDuringBuild: false,
     },
-    blob: {
-      driver: 'vercel-blob',
-      access: 'public',
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    },
-  },
-
-  $production: {
-    hub: {
-      blob: {
-        driver: 'vercel-blob',
-        access: 'public',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      },
-    },
-    image: {
-      provider: 'vercel',
-    },
+    blob: true,
   },
 
   image: {
-    provider: 'vercel',
-    screens: {},
+    provider: 'none',
+  },
+
+  $production: {
+    image: {
+      provider: 'cloudflare',
+    },
   },
 
   routeRules: {
@@ -63,7 +52,7 @@ export default defineNuxtConfig({
     '/search': {
       ssr: false,
     },
-    '/reastpassword': {
+    '/resetpassord': {
       ssr: false,
     },
   },

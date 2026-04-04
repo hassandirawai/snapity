@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-const { data: users } = await useFetch('/api/users/5/', {
+const { data: usersData } = await useFetch<UserDataType[]>('/api/users/5/', {
   method: 'GET',
 })
+
+const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
@@ -11,28 +13,30 @@ const { data: users } = await useFetch('/api/users/5/', {
     </div>
     <div class="space-y-3">
       <div
-        v-for="user in users"
-        :key="user.id"
+        v-for="userData in usersData"
+        :key="userData.id"
         class="flex items-center justify-between"
       >
-        <NuxtLink
-          :to="`/users/${user.username}`"
-          class="flex items-center gap-x-3"
-        >
-          <UserAvatar :avatar-url="user.avatar" />
-          <div>
-            <p class="line-clamp-1 break-all hover:underline hover:cursor-pointer">
-              {{ user.name }}
-            </p>
-            <span class="text-muted-foreground line-clamp-1 break-all">@{{ user.username }}</span>
-          </div>
-        </NuxtLink>
+        <UserTooltip :user-data="userData">
+          <NuxtLink
+            :to="`/users/${userData.username}`"
+            class="flex items-center gap-x-3"
+          >
+            <UserAvatar :avatar-url="userData.avatar" />
+            <div>
+              <p class="line-clamp-1 break-all hover:underline hover:cursor-pointer">
+                {{ userData.fullName }}
+              </p>
+              <span class="text-muted-foreground line-clamp-1 break-all">@{{ userData.username }}</span>
+            </div>
+          </NuxtLink>
+        </UserTooltip>
         <ClientOnly>
           <FollowButton
-            :user-id="user.id"
+            :user-id="userData.id"
             :initial-state="{
-              followers: user.followers.length,
-              isFollowedByUser: user.followers.some((followerId) => followerId === user.id),
+              followersCount: userData.followersCount,
+              isFollowedByUser: userData.followers.includes(loggedInUser?.id || ''),
             }"
           />
         </ClientOnly>

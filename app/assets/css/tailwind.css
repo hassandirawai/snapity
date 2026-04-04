@@ -156,15 +156,19 @@
 
 @layer components {
   /* Image cropper styles */
-  .avatar-cropper .avatar-cropper-background {
-    background-color: white;
-  }
-
-  .avatar-cropper .avatar-cropper-foreground {
-    background-color: red;
-  }
-
   .avatar-cropper .avatar-cropper-stencil {
-    @apply border-4 border-primary;
+    @apply border-4 border-primary rounded-2xl;
+  }
+
+  .vue-advanced-cropper__image-wrapper {
+    display: none;
+  }
+
+  .vue-advanced-cropper__foreground, .vue-advanced-cropper__background {
+    display: none;
+  }
+
+  .vue-preview, .vue-preview--fill, .vue-rectangle-stencil__preview, .avatar-cropper-stencil {
+    @apply w-96 h-96;
   }
 }

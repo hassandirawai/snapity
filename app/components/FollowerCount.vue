@@ -11,7 +11,7 @@ const { data } = useFollowerInfo(props.userId, props.initialState)
   <span>
     Followers:
     <span class="font-semibold">
-      {{ data.followers }}
+      {{ data.followersCount }}
     </span>
   </span>
 </template>

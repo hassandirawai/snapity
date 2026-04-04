@@ -1,57 +1,12 @@
-import { and, desc, eq, ne, notExists, sql } from 'drizzle-orm'
+import { getUsers } from '~~/server/utils/queries'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const queryLimit = getRouterParam(event, 'limit')
+  const queryLimit = getRouterParam(event, 'limit') as number | undefined
 
-    const { user: loggedInUser } = await requireUserSession(event)
+  const { user: loggedInUser } = await requireUserSession(event)
 
-    const db = useDrizzle()
-
-    const users = await db
-      .select({
-        id: tables.user.id,
-        avatar: tables.user.avatar,
-        username: tables.user.username,
-        name: tables.user.fullName,
-        followers: sql<string[]>`ARRAY_AGG(DISTINCT CASE WHEN ${tables.user.id} = ${tables.follows.followingId} THEN ${tables.follows.followerId} END)`,
-      })
-      .from(tables.user)
-      .leftJoin(tables.follows, eq(tables.user.id, tables.follows.followingId))
-      .where(
-        and(
-          ne(tables.user.id, loggedInUser.id),
-          notExists(
-            db
-              .select()
-              .from(tables.follows)
-              .where(
-                and(
-                  eq(tables.follows.followingId, tables.user.id),
-                  eq(tables.follows.followerId, loggedInUser.id),
-                ),
-              ),
-          ),
-        ),
-      )
-      .groupBy(tables.user.id)
-      .orderBy(desc(tables.user.id))
-      .limit(Number(queryLimit))
-
-    if (!users.length) {
-      throw createError({
-        statusCode: 404,
-        message: 'No users found',
-      })
-    }
-
-    return users
-  }
-  catch (error) {
-    console.log(error)
-    throw createError({
-      statusCode: 500,
-      message: 'Internal server error',
-    })
-  }
+  return await getUsers({
+    limit: queryLimit,
+    loggedInUserId: loggedInUser.id,
+  })
 })

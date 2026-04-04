@@ -18,7 +18,10 @@ export default defineEventHandler(async (event) => {
     .where(eq(media.pathname, pathname as string))
 
   if (!reultsData.length) {
-    throw createError({ statusCode: 404, statusMessage: 'Media not found' })
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Media not found',
+    })
   }
 
   return { mediaId: reultsData[0].id }

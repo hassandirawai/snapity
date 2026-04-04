@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { useInfiniteQuery } from '@tanstack/vue-query'
 
-const { user: loggedInUser } = useUserSession()
-
 const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status, refetch } = useInfiniteQuery({
   queryKey: ['posts-feed', 'following-feed'],
   queryFn: async ({ pageParam }) => {

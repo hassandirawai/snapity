@@ -30,6 +30,15 @@ export default defineEventHandler(async (event) => {
     },
   })
 
+  if (!uploadedFiles) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'No file uploaded',
+    })
+  }
+
+  console.warn(uploadedFiles)
+
   const filePathname = uploadedFiles[0].pathname
 
   await setUserSession(event, {
