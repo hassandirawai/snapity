@@ -26,7 +26,14 @@ export default defineNuxtConfig({
       driver: 'neon-http',
       applyMigrationsDuringBuild: false,
     },
-    blob: true,
+    blob: {
+      driver: 's3',
+      accessKeyId: import.meta.env.S3_ACCESS_KEY_ID, // defaults to S3_ACCESS_KEY_ID
+      secretAccessKey: import.meta.env.S3_SECRET_ACCESS_KEY, // defaults to S3_SECRET_ACCESS_KEY
+      bucket: import.meta.env.S3_BUCKET, // defaults to S3_BUCKET
+      region: import.meta.env.S3_REGION, // defaults to S3_REGION or 'auto'
+      endpoint: import.meta.env.S3_ENDPOINT, // optional, defaults to S3_ENDPOINT
+    },
   },
 
   image: {
