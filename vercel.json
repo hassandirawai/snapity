@@ -1,5 +1,5 @@
 {
-  "corns": [
+  "crons": [
     {
       "path": "/api/corn/clear-media",
       "schedule": "0 21 * * *"

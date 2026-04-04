@@ -46,28 +46,30 @@ watchEffect(() => {
 </script>
 
 <template>
-  <main
-    v-if="loggedInUser"
-    class="flex w-full gap-x-6"
-  >
+  <main class="flex w-full gap-x-6">
     <div class="w-full gap-y-6">
-      <Post
-        v-if="postData"
-        :post-data
-      />
+      <Post v-if="postData" :post-data="postData" />
     </div>
-    <Suspense>
+    <ClientOnly>
       <UserInfoSidebar
         v-if="userData"
         :user-data="userData"
       />
       <template #fallback>
-        <div class="space-y-1.5">
-          <Skeleton class="h-4 w-100" />
-          <Skeleton class="h-4 w-90" />
+        <div class="sticky top-[5.54rem] w-72 lg:w-80 h-fit hidden md:block flex-none">
+          <div class="flex flex-col gap-6 p-6 bg-card border rounded-2xl">
+            <Skeleton class="h-6 w-32" />
+            <div class="flex items-center gap-3">
+              <Skeleton class="size-10 rounded-full" />
+              <div class="space-y-1.5">
+                <Skeleton class="h-4 w-32" />
+                <Skeleton class="h-4 w-24" />
+              </div>
+            </div>
+          </div>
         </div>
       </template>
-    </Suspense>
+    </ClientOnly>
   </main>
 </template>
 

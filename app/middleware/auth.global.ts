@@ -2,16 +2,16 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const isAuthRoute = ['/login', '/signup'].includes(to.path)
   const isHome = to.path === '/'
 
-  const session = useUserSession()
+  const { loggedIn, fetch: fetchUserSession } = useUserSession()
 
   if (import.meta.client) {
     // Fetch user session if does not exist
-    await session.fetch()
+    await fetchUserSession()
   }
 
-  if (isHome && !session.loggedIn.value)
+  if (isHome && !loggedIn.value)
     return navigateTo('/login')
 
-  if (isAuthRoute && session.loggedIn.value)
+  if (isAuthRoute && loggedIn.value)
     return navigateTo('/')
 })
