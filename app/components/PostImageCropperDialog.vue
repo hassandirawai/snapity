@@ -274,7 +274,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="max-w-xl gap-4">
+    <DialogContent class="max-w-fit gap-4">
       <DialogHeader>
         <DialogTitle>Crop Images</DialogTitle>
         <DialogDescription>
@@ -298,7 +298,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
       </div>
 
       <!-- Main cropper area for the active image -->
-      <div :class="cn('relative flex justify-center w-72 sm:w-96 h-96 mx-auto', `aspect-${selectedRatio?.ratio}`)">
+      <div :class="cn('relative flex justify-center w-78 sm:w-96 h-96 mx-auto', `aspect-${selectedRatio?.ratio}`)">
         <Cropper
           v-if="imageEntries[activeEntryIndex]"
           :key="selectedRatio"
