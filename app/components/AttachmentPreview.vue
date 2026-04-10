@@ -28,10 +28,11 @@ const src = URL.createObjectURL(attachment.file)
     </video>
     <Button
       variant="ghost"
-      class="absolute left-3 top-3 p-2.5 rounded-full bg-foreground text-background"
+      size="icon"
+      class="absolute left-3 top-3 rounded-full bg-destructive text-background"
       @click="emits('onRemoveAttachmentClicked', attachment)"
     >
-      <Icon name="fluent:dismiss-24-filled" class="text-lg" />
+      <Icon name="fluent:dismiss-24-filled" class="text-xl" />
     </Button>
   </div>
 </template>

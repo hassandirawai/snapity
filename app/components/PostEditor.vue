@@ -38,7 +38,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, {
       return
     }
 
-    handleUploadFilesServer(files)
+    handleUploadFilesClient(files)
   },
 })
 
@@ -47,7 +47,7 @@ function onPaste(event: ClipboardEvent) {
     .filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'))
 
   if (files.length) {
-    handleUploadFilesServer(files)
+    handleUploadFilesClient(files)
   }
 }
 

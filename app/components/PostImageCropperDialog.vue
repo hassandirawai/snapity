@@ -333,7 +333,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
           class="relative flex-none cursor-pointer"
           @click="handleSavePreviousCroppedImageOnSwitch(index)"
         >
-          <NuxtImg
+          <img
             :src="imageEntry.thumbnailSrc"
             alt="Thumbnail"
             width="72"
@@ -344,12 +344,12 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
                 ? 'ring-2 ring-primary ring-offset-2'
                 : 'opacity-60 hover:opacity-90',
             ]"
-          />
+          >
           <!-- Remove button -->
           <Button
             variant="ghost"
             size="icon"
-            class="absolute -right-1.5 -top-1.5 size-4.5 rounded-full bg-foreground text-background"
+            class="absolute -right-1.5 -top-1.5 size-4.5 rounded-full bg-destructive text-background"
             @click.stop="removeImageEntry(index)"
           >
             <Icon name="fluent:dismiss-12-filled" class="text-xs" />
