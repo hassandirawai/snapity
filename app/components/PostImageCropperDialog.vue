@@ -2,7 +2,6 @@
 import type { Boundaries, ImageSize } from 'vue-advanced-cropper'
 import { Cropper, RectangleStencil } from 'vue-advanced-cropper'
 import { toast } from 'vue-sonner'
-import { cn } from '~/lib/utils'
 import 'vue-advanced-cropper/dist/style.css'
 
 const { files, open } = defineProps<{
@@ -17,6 +16,9 @@ const emit = defineEmits<{
 }>()
 
 const cropperRef = ref<InstanceType<typeof Cropper> | null>(null)
+const cropperContainerRef = ref<HTMLElement | null>(null)
+
+const { width: containerWidth } = useElementSize(cropperContainerRef)
 
 const ratioOptions = [
   { label: '4:5', ratio: 4 / 5, icon: 'fluent:phone-20-regular' },
@@ -38,6 +40,10 @@ interface ImageEntry {
 const imageEntries = ref<ImageEntry[]>([])
 const activeEntryIndex = ref<number>(0)
 
+const cropperRenderKey = computed(
+  () => `${selectedRatio.value?.label}-${activeEntryIndex.value}-${Math.round(containerWidth.value)}`,
+)
+
 watch(() => files, (newFiles) => {
   imageEntries.value = newFiles.map(file => ({
     id: crypto.randomUUID(),
@@ -47,7 +53,6 @@ watch(() => files, (newFiles) => {
     cropped: false,
     croppedFile: null,
   }))
-
   activeEntryIndex.value = 0
 })
 
@@ -66,45 +71,43 @@ watch(selectedRatio, () => {
 })
 
 async function handleSavePreviousCroppedImageOnSwitch(index: number) {
-  if (index === activeEntryIndex.value) {
+  if (index === activeEntryIndex.value)
     return
-  }
-
   await handleCrop()
   activeEntryIndex.value = index
 }
 
 function handleCrop(index?: number): Promise<void> {
-  return new Promise((reslove, _reject) => {
+  return new Promise((resolve) => {
     const cropperResult = cropperRef.value?.getResult()
-    if (!cropperResult?.canvas)
+    if (!cropperResult?.canvas) {
+      resolve()
       return
+    }
 
     cropperResult.canvas.toBlob((blob) => {
       if (!blob) {
-        reslove()
+        resolve()
         return
       }
 
-      const file = new File([blob], `attachmentImage.webp`, {
-        type: 'image/webp',
-      })
-
+      const file = new File([blob], 'attachmentImage.webp', { type: 'image/webp' })
       const activeImageEntry = imageEntries.value[index ?? activeEntryIndex.value]
+
       if (!activeImageEntry) {
-        reslove()
+        resolve()
         return
       }
 
       activeImageEntry.croppedFile = file
       activeImageEntry.cropped = true
-      reslove()
+      resolve()
     }, 'image/webp')
   })
 }
 
 function handleAutoCrop(file: File, ratio: number): Promise<File> {
-  return new Promise((reslove, reject) => {
+  return new Promise((resolve, reject) => {
     const img = new Image()
     const url = URL.createObjectURL(file)
 
@@ -122,7 +125,7 @@ function handleAutoCrop(file: File, ratio: number): Promise<File> {
         srcX = (img.width - srcWidth) / 2
       }
       else {
-        srcHeight = (srcWidth / ratio)
+        srcHeight = srcWidth / ratio
         srcY = (img.height - srcHeight) / 2
       }
 
@@ -131,17 +134,15 @@ function handleAutoCrop(file: File, ratio: number): Promise<File> {
       canvas.height = Math.round(srcHeight)
       const ctx = canvas.getContext('2d')
 
-      if (!ctx) {
+      if (!ctx)
         return
-      }
 
       ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, 0, 0, canvas.width, canvas.height)
 
       canvas.toBlob((blob) => {
-        if (!blob) {
+        if (!blob)
           return
-        }
-        reslove(new File([blob], 'attachmentImage.webp', { type: 'image/webp' }))
+        resolve(new File([blob], 'attachmentImage.webp', { type: 'image/webp' }))
       }, 'image/webp')
     }
 
@@ -151,39 +152,35 @@ function handleAutoCrop(file: File, ratio: number): Promise<File> {
 }
 
 function removeImageEntry(index: number) {
-  const imageEntryToBeRemoved = imageEntries.value[index]
-
-  if (!imageEntryToBeRemoved) {
+  const entry = imageEntries.value[index]
+  if (!entry)
     return
-  }
 
-  URL.revokeObjectURL(imageEntryToBeRemoved.thumbnailSrc)
+  URL.revokeObjectURL(entry.thumbnailSrc)
   imageEntries.value.splice(index, 1)
 
   if (!imageEntries.value.length) {
     handleCloseDialog()
+    return
   }
 
   activeEntryIndex.value = Math.min(activeEntryIndex.value, imageEntries.value.length - 1)
 }
 
-const isProcessing = ref<boolean>(false)
+const isProcessing = ref(false)
 
 async function handleSubmit() {
   isProcessing.value = true
-
   try {
     await handleCrop()
 
     const ratio = selectedRatio.value?.ratio
-
-    if (!ratio) {
+    if (!ratio)
       return
-    }
 
     const results = await Promise.all(
       imageEntries.value.map(entry =>
-        (entry.cropped && entry.croppedFile)
+        entry.cropped && entry.croppedFile
           ? Promise.resolve(entry.croppedFile)
           : handleAutoCrop(entry.file, ratio),
       ),
@@ -193,7 +190,6 @@ async function handleSubmit() {
     handleCloseDialog()
   }
   catch (error: any) {
-    isProcessing.value = false
     toast.error(error.message)
   }
   finally {
@@ -211,37 +207,22 @@ function handleCloseDialog() {
     URL.revokeObjectURL(entry.src)
     URL.revokeObjectURL(entry.thumbnailSrc)
   })
-
   emit('update:open', false)
   emit('close')
 }
 
 function defaultSize({ imageSize }: { imageSize: ImageSize }) {
-  if (!imageSize.width || !imageSize.height) {
+  if (!imageSize.width || !imageSize.height)
     return { width: 300, height: 375 }
-  }
 
   const ratio = selectedRatio.value?.ratio
+  if (!ratio)
+    return { width: 300, height: 375 }
 
-  if (!ratio) {
-    return {
-      width: 300,
-      height: 375,
-    }
+  if (imageSize.width / imageSize.height > ratio) {
+    return { width: imageSize.height * ratio, height: imageSize.height }
   }
-
-  if ((imageSize.width / imageSize.height) > ratio) {
-    return {
-      width: imageSize.height * ratio,
-      height: imageSize.height,
-    }
-  }
-  else {
-    return {
-      width: imageSize.width,
-      height: imageSize.width / ratio,
-    }
-  }
+  return { width: imageSize.width, height: imageSize.width / ratio }
 }
 
 function stencilSize({ boundaries }: { boundaries: Boundaries }) {
@@ -249,42 +230,28 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
     return { width: 300, height: 375 }
 
   const ratio = selectedRatio.value?.ratio
+  if (!ratio)
+    return { width: 300, height: 375 }
 
-  if (!ratio) {
-    return {
-      width: 300,
-      height: 375,
-    }
+  if (boundaries.width / boundaries.height > ratio) {
+    return { width: boundaries.height * ratio, height: boundaries.height }
   }
-
-  if ((boundaries.width / boundaries.height) > ratio) {
-    return {
-      width: boundaries.height * ratio,
-      height: boundaries.height,
-    }
-  }
-  else {
-    return {
-      width: boundaries.width,
-      height: boundaries.width / ratio,
-    }
-  }
+  return { width: boundaries.width, height: boundaries.width / ratio }
 }
 </script>
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="max-w-fit gap-4">
+    <DialogContent class="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-4 sm:p-6">
       <DialogHeader>
         <DialogTitle>Crop Images</DialogTitle>
         <DialogDescription>
-          Select a photo below, choose an aspect ratio, then crop. Untouched
-          photos will be center-cropped automatically when you click Done.
+          Select a photo below, choose an aspect ratio, then crop.
         </DialogDescription>
       </DialogHeader>
 
-      <!-- Shared aspect ratio selector -->
-      <div class="flex items-center justify-center gap-x-3">
+      <!-- Aspect ratio selector -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         <Button
           v-for="ratioOption in ratioOptions"
           :key="ratioOption.label"
@@ -297,14 +264,17 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
         </Button>
       </div>
 
-      <!-- Main cropper area for the active image -->
-      <div :class="cn('relative flex justify-center w-78 sm:w-96 h-96 mx-auto', `aspect-${selectedRatio?.ratio}`)">
+      <!-- Cropper -->
+      <div
+        ref="cropperContainerRef"
+        class="relative mx-auto flex w-full max-w-md flex-1 justify-center overflow-hidden rounded-2xl"
+        :style="{ aspectRatio: String(selectedRatio?.ratio ?? 4 / 5), minHeight: 'min(18rem, 45dvh)' }"
+      >
         <Cropper
           v-if="imageEntries[activeEntryIndex]"
-          :key="selectedRatio"
+          :key="cropperRenderKey"
           ref="cropperRef"
-          class="avatar-cropper"
-          image-class="avatar-cropper-image-wrapper"
+          class="avatar-cropper size-full"
           :src="imageEntries[activeEntryIndex]?.src"
           :stencil-component="RectangleStencil"
           :stencil-props="{
@@ -316,8 +286,8 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
             handlers: {},
             previewClass: 'avatar-cropper-stencil',
           }"
-          :min-width="200"
-          :min-height="200"
+          :min-width="10"
+          :min-height="10"
           :stencil-size="stencilSize"
           :default-size="defaultSize"
           :debounce="false"
@@ -326,7 +296,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
       </div>
 
       <!-- Thumbnail strip -->
-      <div class="flex gap-x-3 p-3">
+      <div class="flex gap-3 px-1 py-2">
         <div
           v-for="(imageEntry, index) in imageEntries"
           :key="imageEntry.id"
@@ -339,13 +309,8 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
             width="72"
             height="72"
             class="size-18 rounded-2xl object-cover transition-all"
-            :class="[
-              activeEntryIndex === index
-                ? 'ring-2 ring-primary ring-offset-2'
-                : 'opacity-60 hover:opacity-90',
-            ]"
+            :class="activeEntryIndex === index ? 'ring-2 ring-primary ring-offset-2' : 'opacity-60 hover:opacity-90'"
           >
-          <!-- Remove button -->
           <Button
             variant="ghost"
             size="icon"
@@ -357,7 +322,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
         </div>
       </div>
 
-      <DialogFooter>
+      <DialogFooter class="mt-auto flex-col-reverse gap-2 sm:flex-row">
         <Button variant="outline" :disabled="isProcessing" @click="handleCloseDialog">
           Cancel
         </Button>
@@ -368,6 +333,3 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
     </DialogContent>
   </Dialog>
 </template>
-
-<style>
-</style>
