@@ -19,14 +19,14 @@ function onError() {
     :key="src"
     v-slot="{ isLoaded, imgAttrs, src: loadedSrc }"
     :src
-    :alt
-    :class="props.class"
     custom
   >
     <img
       v-if="isLoaded"
       v-bind="imgAttrs"
       :src="loadedSrc"
+      :alt
+      :class="props.class"
       @error="onError"
     >
 

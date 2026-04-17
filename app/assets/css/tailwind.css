@@ -156,6 +156,7 @@
 
 @layer components {
   /* Image cropper styles */
+
   .avatar-cropper .avatar-cropper-stencil {
     @apply border-4 border-primary rounded-2xl;
   }
@@ -168,7 +169,9 @@
     display: none;
   }
 
+  /*
   .vue-preview, .vue-preview--fill, .vue-rectangle-stencil__preview, .avatar-cropper-stencil {
     @apply w-96 h-96;
   }
+  */
 }

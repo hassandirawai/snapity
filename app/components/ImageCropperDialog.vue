@@ -73,7 +73,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="max-w-fit">
+    <DialogContent>
       <DialogHeader>
         <DialogTitle> Crop Avatar </DialogTitle>
         <DialogDescription>

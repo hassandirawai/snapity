@@ -3,7 +3,6 @@ import type { HTMLAttributes } from 'vue'
 
 const props = defineProps<{
   src: string
-  alt?: string
   width?: number | string
   height?: number | string
   class?: HTMLAttributes['class']
