@@ -12,7 +12,7 @@ const props = defineProps<FollowButtonProps>()
 
 const queryClient = useQueryClient()
 
-const { data } = useFollowerInfo(props.userId, props.initialState)
+const { data: followerData } = useFollowerInfo(props.userId, props.initialState)
 
 const queryKey = ['follower-info', props.userId]
 
@@ -20,7 +20,7 @@ const { mutate } = useMutation({
   mutationFn: async () => {
     // console.log(data.value.isFollowedByUser)
 
-    if (!data.value.isFollowedByUser) {
+    if (!followerData.value.isFollowedByUser) {
       return await $fetch(`/api/users/user/${props.userId}/followers`, {
         method: 'DELETE',
       })
@@ -36,15 +36,23 @@ const { mutate } = useMutation({
       queryKey,
     })
 
-    // Get current state of data in case any error occurs with further mutation
     const previousState = queryClient.getQueryData<FollowerInfo>(queryKey)
 
-    queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
-      followersCount:
-        (previousState?.followersCount || 0)
-        + (previousState?.isFollowedByUser ? -1 : 1),
-      isFollowedByUser: !previousState?.isFollowedByUser,
-    }))
+    queryClient.setQueryData<FollowerInfo>(
+      queryKey,
+      (oldState) => {
+        if (!oldState) {
+          return oldState
+        }
+
+        return {
+          followersCount:
+            (oldState.followersCount)
+            + (oldState.isFollowedByUser ? -1 : 1),
+          isFollowedByUser: !oldState.isFollowedByUser,
+        }
+      },
+    )
 
     return { previousState }
   },
@@ -59,10 +67,10 @@ const { mutate } = useMutation({
   <ClientOnly>
     <Button
       :class="cn(props.class)"
-      :variant="data.isFollowedByUser ? 'secondary' : 'default'"
+      :variant="followerData.isFollowedByUser ? 'secondary' : 'default'"
       @click="mutate()"
     >
-      {{ data.isFollowedByUser ? 'Unfollow' : 'Follow' }}
+      {{ followerData.isFollowedByUser ? 'Unfollow' : 'Follow' }}
     </Button>
   </ClientOnly>
 </template>

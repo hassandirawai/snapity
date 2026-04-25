@@ -6,12 +6,12 @@ export default defineEventHandler(async (_event) => {
       .select({
         id: tables.hashtags.id,
         tag: tables.hashtags.tag,
-        postsCount: sql<number>`COUNT(${tables.postHashtags.postId})`.as('postsCount'),
+        postsCount: sql<number>`COUNT(${tables.postHashtag.postId})`.as('postsCount'),
       })
       .from(tables.hashtags)
-      .innerJoin(tables.postHashtags, eq(tables.hashtags.id, tables.postHashtags.hashtagId))
+      .innerJoin(tables.postHashtag, eq(tables.hashtags.id, tables.postHashtag.hashtagId))
       .groupBy(tables.hashtags.id)
-      .orderBy(sql`COUNT(${tables.postHashtags.postId}) DESC`)
+      .orderBy(sql`COUNT(${tables.postHashtag.postId}) DESC`)
 
     if (!hashtags.length) {
       throw createError({

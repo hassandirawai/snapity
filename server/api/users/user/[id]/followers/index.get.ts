@@ -1,4 +1,4 @@
-import type { FollowerInfo } from '~~/shared/types/users'
+import type { FollowerInfo } from '~~/shared/types/user'
 import { desc, eq, sql } from 'drizzle-orm'
 import { follows, user } from '~~/server/db/schema'
 
@@ -13,8 +13,8 @@ export default defineEventHandler(async (event) => {
 
   const usersData = await useDrizzle()
     .select({
-      followersCount: sql<number>`COUNT(${follows.followerId})::int`,
-      isFollowedByUser: sql<boolean>`BOOL_OR(${follows.followerId} = ${loggedInUser.id})`,
+      followersCount: sql<number>`COUNT(${follows.followerId})::int`.as('followers_count'),
+      isFollowedByUser: sql<boolean>`BOOL_OR(${follows.followerId} = ${loggedInUser.id})`.as('is_followed_by_user'),
     })
     .from(tables.user)
     .leftJoin(follows, eq(user.id, follows.followingId))

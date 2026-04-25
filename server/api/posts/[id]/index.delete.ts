@@ -23,8 +23,8 @@ export default defineEventHandler(async (event) => {
     }
 
     await useDrizzle()
-      .delete(tables.posts)
-      .where(eq(tables.posts.id, postDate.post.id))
+      .delete(tables.post)
+      .where(eq(tables.post.id, postDate.post.id))
 
     return postDate
   }

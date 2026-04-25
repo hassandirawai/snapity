@@ -110,7 +110,7 @@ export function useUpdateProfileMutation() {
         queryKey: ['posts-feed'],
       }
 
-      const userDataQueryFilter: InvalidateQueryFilters = {
+      const _userDataQueryFilter: InvalidateQueryFilters = {
         queryKey: ['user', updatedUser.username],
       }
 
@@ -148,6 +148,7 @@ export function useUpdateProfileMutation() {
         },
       )
 
+      /*
       queryClinet.setQueryData<UserDataType>(
         ['user', updatedUser.username],
         (oldData) => {
@@ -163,7 +164,9 @@ export function useUpdateProfileMutation() {
           }
         },
       )
-      // await refreshNuxtData([`user_profile-${updatedUser.username}`])
+      */
+      // await refreshNuxtData([`user-${updatedUser.username}`])
+      await refreshNuxtData()
       const { fetch: fetchUserSession } = useUserSession()
       await fetchUserSession()
     },

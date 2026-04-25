@@ -54,9 +54,12 @@ const { data: userData, isLoading: _isLoading } = useQuery({
     </UserTooltip>
 
     <template #fallback>
-      <div class="w-65">
-        <Skeleton />
-      </div>
+      <NuxtLink
+        :to="`/users/${props.username}`"
+        class="text-primary hover:underline"
+      >
+        @{{ props.username }}
+      </NuxtLink>
     </template>
   </ClientOnly>
 </template>

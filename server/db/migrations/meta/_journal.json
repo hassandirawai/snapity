@@ -15,6 +15,27 @@
       "when": 1773453700966,
       "tag": "0001_foamy_sugar_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776531620223,
+      "tag": "0002_square_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776535390593,
+      "tag": "0003_colorful_titanium_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777125393981,
+      "tag": "0004_rare_kabuki",
+      "breakpoints": true
     }
   ]
 }

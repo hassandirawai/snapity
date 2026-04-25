@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { useQuery } from '@tanstack/vue-query'
-
 const { params } = useRoute()
 
-const { user: loggedInUser } = useUserSession()
+const { user: _loggedInUser } = useUserSession()
 
 const { data: postData } = await useAsyncData(
   `post_page-${params.id}`,
@@ -23,18 +21,20 @@ const { data: postData } = await useAsyncData(
   },
 )
 
-const username = computed(() => postData.value?.user?.username)
+// const username = computed(() => postData.value?.user?.username)
 
+/*
 const { data: userData } = useQuery({
   queryKey: computed(() => ['user', username.value]),
   queryFn: () => $fetch<UserDataType>(`/api/users/user/username/${username.value}`),
   initialData: () => postData.value?.user,
   enabled: computed(() => !!username.value),
 })
+*/
 
 watchEffect(() => {
-  console.warn('postData:', postData.value)
-  console.warn('userData:', userData.value)
+  // console.warn('postData:', postData.value)
+  // console.warn('userData:', userData.value)
 
   if (postData.value?.user) {
     useHead({
@@ -52,8 +52,8 @@ watchEffect(() => {
     </div>
     <ClientOnly>
       <UserInfoSidebar
-        v-if="userData"
-        :user-data="userData"
+        v-if="postData"
+        :user-data="postData.user"
       />
       <template #fallback>
         <div class="sticky top-[5.54rem] w-72 lg:w-80 h-fit hidden md:block flex-none">

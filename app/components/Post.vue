@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-defineProps<{
+const _props = defineProps<{
   postData: PostDataType
 }>()
 
@@ -11,6 +11,8 @@ function relative(from: Date): boolean {
 
   return false
 }
+
+const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
@@ -76,15 +78,13 @@ function relative(from: Date): boolean {
 
     <div class="flex justify-start items-center gap-3">
       <!-- Likes -->
-      <Button variant="ghost">
-        <Icon
-          name="fluent:heart-20-regular"
-          class="text-xl"
-        />
-        <span class="flex items-center">
-          {{ postData.post.likesCount }} likes
-        </span>
-      </Button>
+      <LikeButton
+        :post-id="postData.post.id"
+        :initial-state="{
+          likesCount: postData.post.likesCount,
+          isLikedByUser: postData.post.likes.some(userId => userId === loggedInUser?.id),
+        }"
+      />
       <!-- Comments -->
       <Button variant="ghost">
         <Icon
@@ -95,12 +95,13 @@ function relative(from: Date): boolean {
           2 comments
         </span>
       </Button>
-      <Button variant="ghost" class="ml-auto">
-        <Icon
-          name="fluent:bookmark-20-regular"
-          class="text-xl"
-        />
-      </Button>
+      <BookmarkButton
+        class="ml-auto"
+        :post-id="postData.post.id"
+        :initial-state="{
+          isBookmarkedByUser: postData.post.bookmarks.some(userId => userId === loggedInUser?.id),
+        }"
+      />
     </div>
   </article>
 </template>

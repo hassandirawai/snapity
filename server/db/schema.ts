@@ -23,7 +23,7 @@ export const user = pgTable('user', {
 })
 
 // Post table
-export const posts = pgTable('post', {
+export const post = pgTable('post', {
   id: uuid('id').primaryKey().defaultRandom(),
   authorId: uuid('author_id')
     .notNull()
@@ -34,20 +34,58 @@ export const posts = pgTable('post', {
 })
 
 // Reaction enum-types
-export const reactionTypeEnum = pgEnum('reaction_type_enum', ['LIKE', 'DISLIKE'])
+// export const reactionTypeEnum = pgEnum('reaction_type_enum', ['LIKE', 'DISLIKE'])
+
 // Post reactions table
-export const postReactions = pgTable('post_reaction', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  reactionType: reactionTypeEnum('reaction_type').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const like = pgTable('like', {
   userId: uuid('user_id')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   postId: uuid('post_id')
     .notNull()
-    .references(() => posts.id, { onDelete: 'cascade' }),
-}, table => [unique('reaction_post_user_unique').on(table.userId, table.postId)])
+    .references(() => post.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => [
+  // Unique constraint to ensure a user can't like the same post more than once
+  unique('like_user_post_unique').on(table.userId, table.postId),
+])
+
+export const likeRelations = relations(like, ({ one }) => ({
+  post: one(post, {
+    fields: [like.postId],
+    references: [post.id],
+  }),
+  user: one(user, {
+    fields: [like.userId],
+    references: [user.id],
+  }),
+}))
+
+export const bookmark = pgTable('bookmark', {
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  postId: uuid('post_id')
+    .notNull()
+    .references(() => post.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => [
+  // Unique constraint to ensure a user can't bookmark the same post more than once
+  unique('bookmark_user_post_unique').on(table.userId, table.postId),
+])
+
+export const bookmarkRelations = relations(bookmark, ({ one }) => ({
+  user: one(user, {
+    fields: [bookmark.userId],
+    references: [user.id],
+  }),
+  post: one(post, {
+    fields: [bookmark.postId],
+    references: [post.id],
+  }),
+}))
 
 // Hashtags
 export const hashtags = pgTable('hashtag', {
@@ -57,10 +95,10 @@ export const hashtags = pgTable('hashtag', {
 })
 
 // Post Hashtags - Pivot Table
-export const postHashtags = pgTable('post_hashtag', {
+export const postHashtag = pgTable('post_hashtag', {
   postId: uuid('post_id')
     .notNull()
-    .references(() => posts.id, { onDelete: 'cascade' }),
+    .references(() => post.id, { onDelete: 'cascade' }),
   hashtagId: uuid('hashtag_id')
     .notNull()
     .references(() => hashtags.id, { onDelete: 'cascade' }),
@@ -68,17 +106,17 @@ export const postHashtags = pgTable('post_hashtag', {
 
 // Hashtags Relations
 export const hashtagsRelations = relations(hashtags, ({ many }) => ({
-  postHashtags: many(postHashtags),
+  postHashtags: many(postHashtag),
 }))
 
 // Post Hashtags Relations
-export const postHashtagsRelations = relations(postHashtags, ({ one }) => ({
-  post: one(posts, {
-    fields: [postHashtags.postId],
-    references: [posts.id],
+export const postHashtagsRelations = relations(postHashtag, ({ one }) => ({
+  post: one(post, {
+    fields: [postHashtag.postId],
+    references: [post.id],
   }),
   hashtag: one(hashtags, {
-    fields: [postHashtags.hashtagId],
+    fields: [postHashtag.hashtagId],
     references: [hashtags.id],
   }),
 }))
@@ -87,7 +125,7 @@ export const mediaType = pgEnum('media_type', ['IMAGE', 'VIDEO'])
 
 export const media = pgTable('media', {
   id: uuid('id').defaultRandom().primaryKey(),
-  postId: uuid('post_id').references(() => posts.id, { onDelete: 'set null' }),
+  postId: uuid('post_id').references(() => post.id, { onDelete: 'set null' }),
   type: mediaType().notNull(),
   url: text('url').notNull(),
   uploadedById: uuid('uploaded_by_id')
@@ -97,20 +135,21 @@ export const media = pgTable('media', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const postsRelations = relations(posts, ({ one, many }) => ({
+export const postRelations = relations(post, ({ one, many }) => ({
   author: one(user, {
-    fields: [posts.authorId],
+    fields: [post.authorId],
     references: [user.id],
   }),
-  reactions: many(postReactions),
-  postHashtags: many(postHashtags),
+  postHashtags: many(postHashtag),
   attachments: many(media),
+  likes: many(like),
+  bookmark: many(post),
 }))
 
 export const postMediaRelations = relations(media, ({ one }) => ({
-  post: one(posts, {
+  post: one(post, {
     fields: [media.postId],
-    references: [posts.id],
+    references: [post.id],
   }),
   uploader: one(user, {
     fields: [media.uploadedById],
@@ -134,8 +173,7 @@ export const follows = pgTable('follow', {
 
 // User Relations
 export const userRelations = relations(user, ({ many }) => ({
-  posts: many(posts),
-  reactions: many(postReactions),
+  posts: many(post),
   // People this user is following (where user.id = follower_id)
   following: many(follows, {
     relationName: 'userFollowing',
@@ -145,6 +183,8 @@ export const userRelations = relations(user, ({ many }) => ({
     relationName: 'userFollowers',
   }),
   media: many(media),
+  likedPosts: many(like),
+  bookmark: many(bookmark),
 }))
 
 // Follows Relations
@@ -160,16 +200,5 @@ export const followsRelations = relations(follows, ({ one }) => ({
     fields: [follows.followingId],
     references: [user.id],
     relationName: 'userFollowers',
-  }),
-}))
-
-export const postReactionsRelations = relations(postReactions, ({ one }) => ({
-  post: one(posts, {
-    fields: [postReactions.postId],
-    references: [posts.id],
-  }),
-  user: one(user, {
-    fields: [postReactions.userId],
-    references: [user.id],
   }),
 }))

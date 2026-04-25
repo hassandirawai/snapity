@@ -242,7 +242,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-4 sm:p-6">
+    <DialogContent class="flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-2xl flex-col overflow-hidden p-4 sm:p-6">
       <DialogHeader>
         <DialogTitle>Crop Images</DialogTitle>
         <DialogDescription>

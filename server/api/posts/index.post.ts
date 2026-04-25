@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
   // Create post
   const createdPosts = await db
-    .insert(tables.posts)
+    .insert(tables.post)
     .values({
       content: parsedData.content,
       authorId: loggedInUser.id,
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
   // Adding post and hashtag data to post_hashtags table
   if (hashtagRecords) {
     await useDrizzle()
-      .insert(tables.postHashtags)
+      .insert(tables.postHashtag)
       .values(hashtagRecords.map(hashtag => ({
         postId: createdPosts[0].id,
         hashtagId: hashtag.id,

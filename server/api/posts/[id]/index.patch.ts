@@ -8,13 +8,13 @@ export default defineEventHandler(async (event) => {
     const { data: post } = createPostSchema.safeParse(await readBody(event))
 
     const updatedPost = await useDrizzle()
-      .update(tables.posts)
+      .update(tables.post)
       .set({
         content: post?.content,
       })
-      .where(and(eq(tables.posts.id, postId), eq(tables.posts.authorId, user.id)))
+      .where(and(eq(tables.post.id, postId), eq(tables.post.authorId, user.id)))
       .returning({
-        updatedContent: tables.posts.content,
+        updatedContent: tables.post.content,
       })
 
     return updatedPost[0]
