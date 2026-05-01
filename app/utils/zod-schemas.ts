@@ -59,4 +59,12 @@ export const updateUserDataSchema = z.object({
     .optional(),
 })
 
+// Update user values type
 export type UpdateUserDataValues = z.infer<typeof updateUserDataSchema>
+
+// Create comment schema
+export const createCommentSchema = z.object({
+  content: z
+    .string({ error: 'Content is required' })
+    .min(1, { error: 'Content must be at least 1 character long' }),
+})

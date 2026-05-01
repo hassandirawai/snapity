@@ -6,7 +6,7 @@ const { userData, loggedInUserId } = defineProps<{
 
 const followerInfo: FollowerInfo = {
   followersCount: userData.followersCount,
-  isFollowedByUser: userData.followers.includes(loggedInUserId),
+  isFollowedByUser: userData.isFollowedByUser,
 }
 </script>
 

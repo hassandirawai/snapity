@@ -1,57 +1,60 @@
 import type { PostDataType } from '~~/shared/types/post'
 import type { UserDataType } from '~~/shared/types/user'
 import type { CreateUser } from '~/utils/zod-schemas'
-import { and, desc, eq, lt, ne, notExists, sql } from 'drizzle-orm'
+import { and, desc, eq, lt, ne, notExists } from 'drizzle-orm'
 import { postDataSelect } from '~~/shared/types/post'
 import { userDataSelect } from '~~/shared/types/user'
-import { bookmark, follows, hashtags, like, media, post, postHashtag, user } from '../db/schema'
+import { bookmark, follows, hashtags, media, post, postHashtag, user } from '../db/schema'
 
 // Get user by username
-export async function findUserByUsername(username: string, withPassword?: boolean) {
+export async function findUserByUsername(params: {
+  username: string
+  withPassword: true
+  loggedInUserId?: string
+}): Promise<UserDataType & { password: string }>
+
+export async function findUserByUsername(params: {
+  username: string
+  withPassword?: false
+  loggedInUserId?: string
+}): Promise<UserDataType>
+
+export async function findUserByUsername({
+  username,
+  withPassword,
+  loggedInUserId,
+}: {
+  username: string
+  withPassword?: boolean
+  loggedInUserId?: string
+}): Promise<(UserDataType & { password?: string }) | undefined> {
   const db = useDrizzle()
 
-  let data
+  const data = await db
+    .select({
+      ...userDataSelect(loggedInUserId),
+      ...(withPassword ? { password: user.password } : {}),
+    })
+    .from(user)
+    .where(eq(user.username, username))
 
-  if (withPassword) {
-    data = await db
-      .select({
-        ...userDataSelect(),
-        password: withPassword ? user.password : sql<string>`''`,
-      })
-      .from(user)
-      .leftJoin(follows, eq(user.id, follows.followingId))
-      .leftJoin(post, eq(user.id, post.authorId))
-      .where(
-        eq(user.username, username),
-      )
-      .groupBy(tables.user.id)
-      .orderBy(desc(tables.user.id))
-  }
-  else {
-    data = await db
-      .select(userDataSelect())
-      .from(user)
-      .leftJoin(follows, eq(user.id, follows.followingId))
-      .leftJoin(post, eq(user.id, post.authorId))
-      .where(
-        eq(user.username, username),
-      )
-      .groupBy(tables.user.id)
-      .orderBy(desc(tables.user.id))
+  if (!data[0]) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'User not found',
+    })
   }
 
   return data[0]
 }
 
 // Get user by id
-export async function findUserById(id: string): Promise<UserDataType> {
+export async function findUserById(id: string, loggedInUserId?: string): Promise<UserDataType> {
   const db = useDrizzle()
 
   const data = await db
-    .select(userDataSelect())
+    .select(userDataSelect(loggedInUserId))
     .from(user)
-    .leftJoin(follows, eq(user.id, follows.followingId))
-    .leftJoin(post, eq(user.id, post.authorId))
     .where(
       eq(user.id, id),
     )
@@ -90,10 +93,9 @@ export async function getUsers({
   const db = useDrizzle()
 
   const users = await db
-    .select(userDataSelect())
+    .select(userDataSelect(loggedInUserId))
     .from(tables.user)
     .leftJoin(follows, eq(user.id, follows.followingId))
-    .leftJoin(post, eq(user.id, post.authorId))
     .where(
       and(
         ne(tables.user.id, loggedInUserId),
@@ -154,24 +156,23 @@ export async function createUser(userData: CreateUser) {
 export async function getForYouFeedPosts({
   pageSize,
   cursorDate,
+  loggedInUserId,
 }: {
   pageSize: number
   cursorDate?: Date
+  loggedInUserId?: string
 }): Promise<PostDataType[]> {
   const db = useDrizzle()
 
   // Get posts
   const postsData = await db
-    .select(postDataSelect())
+    .select(postDataSelect(loggedInUserId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
-    .leftJoin(follows, eq(user.id, follows.followingId))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
-    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
+    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(cursorDate ? lt(post.createdAt, cursorDate) : undefined)
     .orderBy(desc(post.createdAt))
     .limit(pageSize + 1)
@@ -187,28 +188,26 @@ export async function getForYouFeedPosts({
 }
 
 export async function getFollowerFeedPosts({
-  loggedInUserId,
   pageSize,
   cursorDate,
+  loggedInUserId,
 }: {
-  loggedInUserId: string
   pageSize: number
   cursorDate?: Date
+  loggedInUserId: string
 }): Promise<PostDataType[]> {
   const db = useDrizzle()
 
   // Get posts
   const postsData = await db
-    .select(postDataSelect())
+    .select(postDataSelect(loggedInUserId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
     .leftJoin(follows, eq(follows.followingId, user.id))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
-    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
+    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(
       and(
         cursorDate ? lt(post.createdAt, cursorDate) : undefined,
@@ -248,16 +247,13 @@ export async function getUserPosts({
 
   // Get posts
   const postsData = await db
-    .select(postDataSelect())
+    .select(postDataSelect(userId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
-    .leftJoin(follows, eq(follows.followingId, user.id))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
-    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
+    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
     .where(
       and(
         cursorDate ? lt(post.createdAt, cursorDate) : undefined,
@@ -295,16 +291,14 @@ export async function getBookmarksFeedPosts({
 
   // Get posts
   const postsData = await db
-    .select(postDataSelect())
+    .select(postDataSelect(userId))
     .from(bookmark)
     .leftJoin(post, eq(post.id, bookmark.postId))
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
-    .leftJoin(follows, eq(follows.followingId, user.id))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .groupBy(post.id, post.authorId, post.content, user.username, user.fullName, user.bio, user.avatar, user.createdAt, bookmark.createdAt)
+    .groupBy(post.id, post.authorId, post.content, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt, bookmark.createdAt)
     .where(
       and(
         cursorDate ? lt(bookmark.createdAt, cursorDate) : undefined,
@@ -328,41 +322,36 @@ export async function getBookmarksFeedPosts({
 }
 
 // Get posts with reactions and hashtags
-export async function getPosts():
+export async function getPosts(loggedInUserId?: string):
 Promise<PostDataType[]> {
   const db = useDrizzle()
 
   // Get posts
   return await db
-    .select(postDataSelect())
+    .select(postDataSelect(loggedInUserId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
     .groupBy(post.id, post.authorId, user.avatar, user.fullName, user.username, post.content, post.createdAt)
     .orderBy(desc(post.createdAt))
 }
 
-export async function getPostsByHashtag(tag: string):
+export async function getPostsByHashtag(tag: string, loggedInUserId?: string):
 Promise<PostDataType[]> {
   const db = useDrizzle()
 
   // Get posts
   return await db
-    .select(postDataSelect())
+    .select(postDataSelect(loggedInUserId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
-    .leftJoin(follows, eq(user.id, follows.followingId))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
     .where(eq(hashtags.tag, tag))
-    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
+    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
 }
 
 export async function getPostById(id: string): Promise<PostDataType> {
@@ -375,10 +364,7 @@ export async function getPostById(id: string): Promise<PostDataType> {
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
-    .leftJoin(follows, eq(user.id, follows.followingId))
     .leftJoin(media, eq(media.postId, post.id))
-    .leftJoin(like, eq(like.postId, post.id))
-    .leftJoin(bookmark, eq(bookmark.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(eq(post.id, id))
 

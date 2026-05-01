@@ -4,7 +4,11 @@ import { loginSchema } from '~/utils/zod-schemas'
 export default defineEventHandler(async (event) => {
   const { username, password } = await readValidatedBody(event, body => loginSchema.parse(body))
 
-  const user = await findUserByUsername(username, true)
+  const user = await findUserByUsername({
+    username,
+    withPassword: true,
+    loggedInUserId: '',
+  })
 
   if (!user) {
     throw createError({

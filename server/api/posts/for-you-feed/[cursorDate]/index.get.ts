@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const cursorDate = cursorDateParam ? new Date(cursorDateParam) : undefined
     const pageSize = 5
 
-    await requireUserSession(event)
+    const { user: loggedInUser } = await requireUserSession(event)
 
     // console.log(cursorDate)
     // await new Promise(r => setTimeout(r, 2000))
@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     const postData = await getForYouFeedPosts({
       pageSize,
       cursorDate,
+      loggedInUserId: loggedInUser.id,
     })
 
     const postPage: PostPageType = {

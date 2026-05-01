@@ -36,6 +36,13 @@
       "when": 1777125393981,
       "tag": "0004_rare_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777647555745,
+      "tag": "0005_fancy_mentallo",
+      "breakpoints": true
     }
   ]
 }

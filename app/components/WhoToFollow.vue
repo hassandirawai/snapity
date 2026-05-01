@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-const { data: usersData } = await useFetch<UserDataType[]>('/api/users/5/', {
+const { data: usersData } = useFetch<UserDataType[]>('/api/users/5/', {
   method: 'GET',
 })
-
-const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
@@ -36,7 +34,7 @@ const { user: loggedInUser } = useUserSession()
             :user-id="userData.id"
             :initial-state="{
               followersCount: userData.followersCount,
-              isFollowedByUser: userData.followers.includes(loggedInUser?.id || ''),
+              isFollowedByUser: userData.isFollowedByUser,
             }"
           />
         </ClientOnly>

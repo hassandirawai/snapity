@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const hashtags = await $fetch('/api/hashtags/trending-hashtags')
+const { data: hashtags } = useFetch('/api/hashtags/trending-hashtags', {
+  method: 'GET',
+})
 </script>
 
 <template>

@@ -1,20 +1,22 @@
 import { sql } from 'drizzle-orm'
 import { follows, post, user } from '../../server/db/schema'
 
+const userAlias = user
+
 export interface UserDataType {
   id: string
   avatar: string | null
   username: string
-  email?: string | null
+  email: string
   fullName: string
   bio?: string | null
   createdAt: Date
-  followers: string[]
   followersCount: number
-  postsCount?: number
+  isFollowedByUser?: boolean
+  postsCount: number
 }
 
-export function userDataSelect() {
+export function userDataSelect(loggedInUserId?: string) {
   return {
     id: user.id,
     avatar: user.avatar,
@@ -23,10 +25,22 @@ export function userDataSelect() {
     fullName: user.fullName,
     bio: user.bio,
     createdAt: user.createdAt,
-    followers: sql<string[]>`ARRAY_AGG(${follows.followerId})`,
-    followersCount: sql<number>`COUNT(${follows.followingId})::int`,
-    postsCount: sql<number>`COUNT(${post.id})::int`,
-  } satisfies Record<keyof UserDataType, any>
+    followersCount: sql<number>`(
+      SELECT COUNT(*) from ${follows}
+      WHERE ${follows.followingId} = ${user.id}
+    )::int`.as('followers_count'),
+    ...(loggedInUserId && {
+      isFollowedByUser: sql<boolean>`EXISTS (
+        SELECT 1 FROM ${follows}
+        WHERE ${follows.followingId} = ${user.id}
+        AND ${follows.followerId} = ${loggedInUserId}
+      )`.as('is_followed_by_user'),
+    }),
+    postsCount: sql<number>`(
+      SELECT COUNT(*) from ${post}
+      WHERE ${post.authorId} = "user"."id"
+    )::int`.as('posts_count'),
+  }
 }
 
 export interface UserSessionType {
@@ -39,15 +53,15 @@ export interface UserSessionType {
 
 export interface FollowerInfo {
   followersCount: number
-  isFollowedByUser: boolean
+  isFollowedByUser?: boolean
 }
 
 export interface LikeInfo {
   likesCount: number
   // Useful for displaying like or dislike button to the user
-  isLikedByUser: boolean
+  isLikedByUser?: boolean
 }
 
 export interface BookmarkInfo {
-  isBookmarkedByUser: boolean
+  isBookmarkedByUser?: boolean
 }

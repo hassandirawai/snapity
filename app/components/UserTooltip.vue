@@ -22,7 +22,7 @@ const { user: loggedInUser } = useUserSession()
 
 const followerInfo = computed<FollowerInfo>(() => ({
   followersCount: props.userData.followersCount,
-  isFollowedByUser: props.userData.followers.includes(loggedInUser.value?.id || ''),
+  isFollowedByUser: props.userData.isFollowedByUser,
 }))
 </script>
 

@@ -36,7 +36,7 @@ export const post = pgTable('post', {
 // Reaction enum-types
 // export const reactionTypeEnum = pgEnum('reaction_type_enum', ['LIKE', 'DISLIKE'])
 
-// Post reactions table
+// Post likes table
 export const like = pgTable('like', {
   userId: uuid('user_id')
     .notNull()
@@ -86,6 +86,32 @@ export const bookmarkRelations = relations(bookmark, ({ one }) => ({
     references: [post.id],
   }),
 }))
+
+export const comment = pgTable('comment', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  postId: uuid('post_id')
+    .notNull()
+    .references(() => post.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const commentRelations = relations(comment, ({ one }) => ({
+  post: one(post, {
+    fields: [comment.postId],
+    references: [post.id],
+  }),
+  user: one(user, {
+    fields: [comment.userId],
+    references: [user.id],
+  }),
+}))
+
+/* ------------------------------------------------------ */
 
 // Hashtags
 export const hashtags = pgTable('hashtag', {
@@ -143,7 +169,8 @@ export const postRelations = relations(post, ({ one, many }) => ({
   postHashtags: many(postHashtag),
   attachments: many(media),
   likes: many(like),
-  bookmark: many(post),
+  bookmark: many(bookmark),
+  comments: many(comment),
 }))
 
 export const postMediaRelations = relations(media, ({ one }) => ({
@@ -185,6 +212,7 @@ export const userRelations = relations(user, ({ many }) => ({
   media: many(media),
   likedPosts: many(like),
   bookmark: many(bookmark),
+  comments: many(comment),
 }))
 
 // Follows Relations

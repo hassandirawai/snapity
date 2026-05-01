@@ -82,7 +82,7 @@ const { user: loggedInUser } = useUserSession()
         :post-id="postData.post.id"
         :initial-state="{
           likesCount: postData.post.likesCount,
-          isLikedByUser: postData.post.likes.some(userId => userId === loggedInUser?.id),
+          isLikedByUser: postData.post.isLikedByUser,
         }"
       />
       <!-- Comments -->
@@ -99,7 +99,7 @@ const { user: loggedInUser } = useUserSession()
         class="ml-auto"
         :post-id="postData.post.id"
         :initial-state="{
-          isBookmarkedByUser: postData.post.bookmarks.some(userId => userId === loggedInUser?.id),
+          isBookmarkedByUser: postData.post.isBookmarkedByUser,
         }"
       />
     </div>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { params } = useRoute()
 
-const { data: fetchedUserData } = await useAsyncData(
+const { data: fetchedUserData } = useAsyncData(
   `user-${params.username}`,
   async () => {
     try {
@@ -18,27 +18,6 @@ const { data: fetchedUserData } = await useAsyncData(
     }
   },
 )
-
-/*
-const { data: userData } = useQuery({
-  queryKey: ['user', params.username],
-  queryFn: async () => {
-    try {
-      return await $fetch<UserDataType>(`/api/users/user/username/${params.username}`, {
-        method: 'GET',
-      })
-    }
-    catch (error: any) {
-      throw createError({
-        statusCode: error.statusCode,
-        message: 'The user could not be found.',
-      })
-    }
-  },
-  // initialData: () => fetchedUserData.value,
-  staleTime: Infinity,
-})
-*/
 
 const { user: loggedInUser } = useUserSession()
 
