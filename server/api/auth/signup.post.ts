@@ -1,13 +1,14 @@
-import { createUser, findUserByEmail, findUserByUsername } from '~~/server/utils/queries'
+import { createUser, findUserByEmail } from '~~/server/utils/queries'
 import { signUpSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
-  const user = await readValidatedBody(event, signUpSchema.parse)
+  const parsedUser = await readValidatedBody(event, signUpSchema.parse)
 
-  const takenUsername = await findUserByUsername({
-    username: user.username,
+  const data = await findUserByUsername({
+    username: parsedUser.username,
   })
-  if (takenUsername) {
+
+  if (data) {
     throw createError({
       statusCode: 409,
       statusMessage: 'Username already taken',
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const takenEmail = await findUserByEmail(user.email)
+  const takenEmail = await findUserByEmail(parsedUser.email)
   if (takenEmail) {
     throw createError({
       statusCode: 409,
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const newUser = await createUser(user)
+  const newUser = await createUser(parsedUser)
 
   // Set user session
   await setUserSession(event, {

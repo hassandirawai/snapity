@@ -36,13 +36,6 @@ export async function findUserByUsername({
     .from(user)
     .where(eq(user.username, username))
 
-  if (!data[0]) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'User not found',
-    })
-  }
-
   return data[0]
 }
 
