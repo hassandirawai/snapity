@@ -4,7 +4,9 @@ import { signUpSchema } from '~/utils/zod-schemas'
 export default defineEventHandler(async (event) => {
   const user = await readValidatedBody(event, signUpSchema.parse)
 
-  const takenUsername = await findUserByUsername(user.username)
+  const takenUsername = await findUserByUsername({
+    username: user.username,
+  })
   if (takenUsername) {
     throw createError({
       statusCode: 409,
