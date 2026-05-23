@@ -1,8 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { follows, post, user } from '../../server/db/schema'
 
-const userAlias = user
-
 export interface UserDataType {
   id: string
   avatar: string | null
@@ -49,19 +47,4 @@ export interface UserSessionType {
   fullName: string | null
   username: string
   email: string
-}
-
-export interface FollowerInfo {
-  followersCount: number
-  isFollowedByUser?: boolean
-}
-
-export interface LikeInfo {
-  likesCount: number
-  // Useful for displaying like or dislike button to the user
-  isLikedByUser?: boolean
-}
-
-export interface BookmarkInfo {
-  isBookmarkedByUser?: boolean
 }

@@ -1,0 +1,2 @@
+ALTER TABLE "notification" ADD COLUMN "comment_id" uuid;--> statement-breakpoint
+ALTER TABLE "notification" ADD CONSTRAINT "notification_comment_id_comment_id_fk" FOREIGN KEY ("comment_id") REFERENCES "public"."comment"("id") ON DELETE cascade ON UPDATE no action;

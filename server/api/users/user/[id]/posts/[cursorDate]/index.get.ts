@@ -26,9 +26,9 @@ export default defineEventHandler(async (event) => {
       cursorDate,
     })
 
-    const postPage: PostPageType = {
+    const postPage: PostsPageType = {
       postsData: postData.slice(0, pageSize),
-      nextCursor: postData.length > pageSize ? postData[pageSize].post.createdAt : null,
+      nextCursor: postData.length > pageSize ? postData[pageSize - 1].post.createdAt : null,
     }
 
     return postPage

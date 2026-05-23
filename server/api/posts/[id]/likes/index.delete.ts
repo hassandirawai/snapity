@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm'
-import { like, post } from '~~/server/db/schema'
+import { like, notification, post } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   // Check if user is authenticated
@@ -31,6 +31,16 @@ export default defineEventHandler(async (event) => {
   const data = await db
     .delete(like)
     .where(and(eq(like.userId, loggedInUser.id), eq(like.postId, postId)))
+
+  await db
+    .delete(notification)
+    .where(
+      and(
+        eq(notification.postId, postId),
+        eq(notification.issuerId, loggedInUser.id),
+        eq(notification.type, 'LIKE'),
+      ),
+    )
 
   return { deleted: !!data.rowCount }
 })

@@ -68,3 +68,5 @@ export const createCommentSchema = z.object({
     .string({ error: 'Content is required' })
     .min(1, { error: 'Content must be at least 1 character long' }),
 })
+
+export type CreateCommentSchemaType = z.infer<typeof createCommentSchema>

@@ -1,6 +1,6 @@
 import type { UserDataType } from './user'
 import { sql } from 'drizzle-orm'
-import { bookmark, hashtags, like, media, post } from '~~/server/db/schema'
+import { bookmark, comment, hashtags, like, media, post } from '~~/server/db/schema'
 import { userDataSelect } from './user'
 
 export interface PostDataType {
@@ -14,6 +14,7 @@ export interface PostDataType {
     likesCount: number
     isLikedByUser?: boolean
     isBookmarkedByUser: boolean
+    commentsCount: number
   }
 }
 
@@ -27,7 +28,7 @@ export interface MediaType {
   createdAt: Date
 }
 
-export interface PostPageType {
+export interface PostsPageType {
   postsData: PostDataType[]
   nextCursor: Date | null
 }
@@ -65,9 +66,59 @@ export function postDataSelect(loggedInUserId?: string) {
           AND ${bookmark.userId} = ${loggedInUserId}
         )`.as('is_bookmarked_by_user'),
       }),
+      commentsCount: sql<number>`(
+        SELECT COUNT(*) FROM ${comment}
+        WHERE ${comment.postId} = ${post.id}
+        )::int`.as('comments_count'),
     },
     user: {
       ...userDataSelect(loggedInUserId),
     },
   }
+}
+
+export interface FollowerInfo {
+  followersCount: number
+  isFollowedByUser?: boolean
+}
+
+export interface LikeInfo {
+  likesCount: number
+  // Useful for displaying like or dislike button to the user
+  isLikedByUser?: boolean
+}
+
+export interface BookmarkInfo {
+  isBookmarkedByUser?: boolean
+}
+
+export interface CommentDataType {
+  comment: {
+    id: string
+    content: string
+    createdAt: Date
+    updatedAt: Date
+    postId: string
+  }
+  user: UserDataType
+}
+
+export function commentDataSelect(loggedInUserId?: string) {
+  return {
+    comment: {
+      id: comment.id,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      updatedAt: comment.updatedAt,
+      postId: comment.postId,
+    },
+    user: {
+      ...userDataSelect(loggedInUserId),
+    },
+  }
+}
+
+export interface CommentsPageType {
+  commentsData: CommentDataType[]
+  nextCursor: Date | null
 }

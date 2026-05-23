@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { like, post } from '~~/server/db/schema'
+import { like, notification, post } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   // Check if user is authenticated
@@ -17,7 +17,9 @@ export default defineEventHandler(async (event) => {
   const db = useDrizzle()
 
   const postData = await db
-    .select()
+    .select({
+      authorId: post.authorId,
+    })
     .from(post)
     .where(eq(post.id, postId))
 
@@ -28,13 +30,23 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const data = await db
+  const likesData = await db
     .insert(like)
     .values({
       userId: loggedInUser.id,
       postId,
     })
-    .returning()
 
-  return data
+  if (loggedInUser.id !== postData[0].authorId) {
+    await db
+      .insert(notification)
+      .values({
+        issuerId: loggedInUser.id,
+        recipientId: postData[0].authorId,
+        postId,
+        type: 'LIKE',
+      })
+  }
+
+  return { created: !!likesData.rowCount }
 })

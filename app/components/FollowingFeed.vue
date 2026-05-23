@@ -9,7 +9,7 @@ const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status,
       : `/api/posts/following-feed/:cursorDate`
 
     const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
-    return await $fetch<PostPageType>(url, { headers })
+    return await $fetch<PostsPageType>(url, { headers })
   },
   getNextPageParam: lastPage => lastPage.nextCursor,
   initialPageParam: null as Date | null,

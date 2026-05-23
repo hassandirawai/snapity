@@ -100,7 +100,86 @@ export const comment = pgTable('comment', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const commentRelations = relations(comment, ({ one }) => ({
+export const mention = pgTable('mention', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  issuerId: uuid('issuer_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  mentionedUserId: uuid('mentioned_user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  postId: uuid('post_id')
+    .references(() => post.id, { onDelete: 'cascade' }),
+  commentId: uuid('comment_id')
+    .references(() => comment.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const notificationType = pgEnum(
+  'notification_type',
+  ['LIKE', 'COMMENT', 'MENTION', 'FOLLOW'],
+)
+export const notification = pgTable('notification', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  issuerId: uuid('issuer_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  recipientId: uuid('recipient_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  postId: uuid('post_id')
+    .references(() => post.id, { onDelete: 'cascade' }),
+  commentId: uuid('comment_id')
+    .references(() => comment.id, { onDelete: 'cascade' }),
+  mentionId: uuid('mention_id')
+    .references(() => mention.id, { onDelete: 'cascade' }),
+  type: notificationType('type').notNull(),
+  isRead: boolean('is_read').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+export const notificationRelations = relations(notification, ({ one }) => ({
+  issuer: one(user, {
+    fields: [notification.issuerId],
+    references: [user.id],
+    relationName: 'userIssuerNotification',
+  }),
+  recipient: one(user, {
+    fields: [notification.recipientId],
+    references: [user.id],
+    relationName: 'userRecipientNotification',
+  }),
+  post: one(post, {
+    fields: [notification.postId],
+    references: [post.id],
+  }),
+  comment: one(comment, {
+    fields: [notification.commentId],
+    references: [comment.id],
+  }),
+}))
+
+export const mentionRelations = relations(mention, ({ one }) => ({
+  issuer: one(user, {
+    fields: [mention.issuerId],
+    references: [user.id],
+    relationName: 'mentionIssuer',
+  }),
+  mentionedUser: one(user, {
+    fields: [mention.mentionedUserId],
+    references: [user.id],
+    relationName: 'mentionedUser',
+  }),
+  post: one(post, {
+    fields: [mention.postId],
+    references: [post.id],
+  }),
+  comment: one(comment, {
+    fields: [mention.commentId],
+    references: [comment.id],
+  }),
+}))
+
+export const commentRelations = relations(comment, ({ one, many }) => ({
   post: one(post, {
     fields: [comment.postId],
     references: [post.id],
@@ -109,6 +188,8 @@ export const commentRelations = relations(comment, ({ one }) => ({
     fields: [comment.userId],
     references: [user.id],
   }),
+  linkedNotifications: many(notification),
+  mentions: many(mention),
 }))
 
 /* ------------------------------------------------------ */
@@ -171,6 +252,8 @@ export const postRelations = relations(post, ({ one, many }) => ({
   likes: many(like),
   bookmark: many(bookmark),
   comments: many(comment),
+  linkedNotifications: many(notification),
+  mentions: many(mention),
 }))
 
 export const postMediaRelations = relations(media, ({ one }) => ({
@@ -213,6 +296,18 @@ export const userRelations = relations(user, ({ many }) => ({
   likedPosts: many(like),
   bookmark: many(bookmark),
   comments: many(comment),
+  receivedNotifications: many(notification, {
+    relationName: 'userRecipientNotification',
+  }),
+  issuerNotifications: many(notification, {
+    relationName: 'userIssuerNotification',
+  }),
+  issuedMentions: many(mention, {
+    relationName: 'mentionIssuer',
+  }),
+  receivedMentions: many(mention, {
+    relationName: 'mentionedUser',
+  }),
 }))
 
 // Follows Relations

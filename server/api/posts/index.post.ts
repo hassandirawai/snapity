@@ -1,6 +1,6 @@
 import type { CreatePostSchemaType } from '~/utils/zod-schemas'
 import { and, eq, inArray } from 'drizzle-orm'
-import { media } from '~~/server/db/schema'
+import { media, mention, notification, user } from '~~/server/db/schema'
 import { createPostSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   // Validate post data
   const { success: isParsed, data: parsedData, error: parseError } = createPostSchema.safeParse(body)
 
-  console.warn('createPostSchema.safeParse:', parseError)
+  // console.warn('createPostSchema.safeParse:', parseError)
 
   if (!isParsed) {
     return {
@@ -52,6 +52,42 @@ export default defineEventHandler(async (event) => {
           inArray(media.id, parsedData.mediaIds),
           eq(media.uploadedById, loggedInUser.id),
         ),
+      )
+  }
+
+  // Extract mentions from post
+  const postUsersMention = extractMentionedUsers(createdPosts[0].content)
+  const usernames = [...new Set(postUsersMention?.map(mention => mention.slice(1)))]
+
+  const mentionedUsers = await db
+    .select()
+    .from(user)
+    .where(
+      inArray(user.username, usernames ?? []),
+    )
+
+  if (mentionedUsers.length) {
+    const mentionData = await db
+      .insert(mention)
+      .values(
+        mentionedUsers.map(user => ({
+          issuerId: loggedInUser.id,
+          mentionedUserId: user.id,
+          postId: createdPosts[0].id,
+        })),
+      )
+      .returning()
+
+    await db
+      .insert(notification)
+      .values(
+        mentionedUsers.map((user, index) => ({
+          issuerId: loggedInUser.id,
+          recipientId: user.id,
+          postId: createdPosts[0].id,
+          mentionId: mentionData[index].id,
+          type: 'MENTION' as const,
+        })),
       )
   }
 

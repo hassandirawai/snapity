@@ -9,7 +9,7 @@ const props = defineProps<{
   // Whether the load more posts request is in progress
   isFetchingNextPage?: boolean
   // Load more posts
-  onLoadMore: () => Promise<InfiniteQueryObserverResult<InfiniteData<PostPageType, unknown>, Error>>
+  onLoadMore: () => Promise<InfiniteQueryObserverResult<InfiniteData<PostsPageType | NotificationsPageType, unknown>, Error>>
 }>()
 
 // Infinite scroll

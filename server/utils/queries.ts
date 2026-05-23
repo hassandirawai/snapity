@@ -1,10 +1,8 @@
-import type { PostDataType } from '~~/shared/types/post'
+import type { CommentDataType, PostDataType } from '~~/shared/types/post'
 import type { UserDataType } from '~~/shared/types/user'
 import type { CreateUser } from '~/utils/zod-schemas'
 import { and, desc, eq, lt, ne, notExists } from 'drizzle-orm'
-import { postDataSelect } from '~~/shared/types/post'
-import { userDataSelect } from '~~/shared/types/user'
-import { bookmark, follows, hashtags, media, post, postHashtag, user } from '../db/schema'
+import { bookmark, comment, follows, hashtags, media, notification, post, postHashtag, user } from '../db/schema'
 
 // Get user by username
 export async function findUserByUsername(params: {
@@ -187,6 +185,37 @@ export async function getForYouFeedPosts({
   return postsData
 }
 
+export async function getCommentsFeed({
+  pageSize,
+  cursorDate,
+  loggedInUserId,
+  postId,
+}: {
+  pageSize: number
+  cursorDate?: Date
+  loggedInUserId?: string
+  postId: string
+}): Promise<CommentDataType[]> {
+  const db = useDrizzle()
+
+  const commentsData = await db
+    .select(commentDataSelect(loggedInUserId))
+    .from(comment)
+    .innerJoin(user, eq(comment.userId, user.id))
+    .where(
+      and(
+        cursorDate ? lt(comment.createdAt, cursorDate) : undefined,
+        eq(comment.postId, postId),
+      ),
+    )
+    .orderBy(
+      desc(comment.createdAt),
+    )
+    .limit(pageSize + 1)
+
+  return commentsData
+}
+
 export async function getFollowerFeedPosts({
   pageSize,
   cursorDate,
@@ -278,7 +307,7 @@ export async function getUserPosts({
 }
 
 // Get bookmark feed posts
-export async function getBookmarksFeedPosts({
+export async function getBookmarksFeed({
   userId,
   pageSize,
   cursorDate,
@@ -365,7 +394,7 @@ export async function getPostById(id: string): Promise<PostDataType> {
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
     .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
-    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
+    .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(eq(post.id, id))
 
   if (!postData[0]) {
@@ -376,4 +405,57 @@ export async function getPostById(id: string): Promise<PostDataType> {
   }
 
   return postData[0]
+}
+
+export async function getCommentById(commentId: string):
+Promise<CommentDataType> {
+  const db = useDrizzle()
+
+  const commentData = await db
+    .select(commentDataSelect())
+    .from(comment)
+    .where(eq(comment.id, commentId))
+    .innerJoin(user, eq(comment.userId, user.id))
+
+  if (!commentData[0]) {
+    throw createError({
+      statusCode: 404,
+      message: 'Comment not found',
+    })
+  }
+
+  return commentData[0]
+}
+
+export async function getNotificationsForUser({
+  loggedInUserId,
+  pageSize,
+  cursorDate,
+}: {
+  loggedInUserId: string
+  pageSize: number
+  cursorDate?: Date
+}):
+Promise<NotificationDataType[]> {
+  const db = useDrizzle()
+
+  const notificationData = await db
+    .select(notificationDataSelect())
+    .from(notification)
+    .innerJoin(user, eq(notification.issuerId, user.id))
+    .leftJoin(post, eq(notification.postId, post.id))
+    .leftJoin(comment, eq(notification.commentId, comment.id))
+    .where(
+      and(
+        cursorDate ? lt(notification.createdAt, cursorDate) : undefined,
+        eq(
+          notification.recipientId,
+          loggedInUserId,
+        ),
+      ),
+    )
+    .orderBy(desc(notification.createdAt))
+    .limit(pageSize + 1)
+
+  return notificationData
 }

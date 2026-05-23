@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useInfiniteQuery, useQueryClient } from '@tanstack/vue-query'
+import { useInfiniteQuery } from '@tanstack/vue-query'
 
 // Fetch the posts for the for-you feed
 const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
@@ -10,7 +10,7 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
         ? `/api/posts/for-you-feed/${pageParam}`
         : '/api/posts/for-you-feed/:cursorDate'
 
-      return await $fetch<PostPageType>(url)
+      return await $fetch<PostsPageType>(url)
     },
     initialPageParam: null as Date | null,
     getNextPageParam: lastPage => lastPage.nextCursor,
@@ -18,27 +18,6 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
 
 // Flatten the pages of posts into a single array
 const postsData = computed(() => data.value?.pages.flatMap(page => page.postsData) ?? [])
-
-const queryClient = useQueryClient()
-
-watchEffect(() => {
-  if (!postsData.value.length) {
-    return
-  }
-
-  postsData.value.forEach(({ user: userData }) => {
-    const existingUserCache = queryClient.getQueryData<UserDataType>(['user', userData.username])
-
-    if (!existingUserCache) {
-      return
-    }
-
-    queryClient.setQueryData<UserDataType>(
-      ['user', userData.username],
-      userData,
-    )
-  })
-})
 </script>
 
 <template>

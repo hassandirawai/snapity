@@ -3,6 +3,8 @@ const _props = defineProps<{
   postData: PostDataType
 }>()
 
+const showComments = ref<boolean>(false)
+
 function relative(from: Date): boolean {
   const currentTime = new Date()
   const computerOldestTime = 24 * 60 * 60 * 1000
@@ -11,8 +13,6 @@ function relative(from: Date): boolean {
 
   return false
 }
-
-const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
@@ -76,7 +76,7 @@ const { user: loggedInUser } = useUserSession()
       <Separator />
     </div>
 
-    <div class="flex justify-start items-center gap-3">
+    <div class="flex justify-start items-center gap-6">
       <!-- Likes -->
       <LikeButton
         :post-id="postData.post.id"
@@ -86,15 +86,10 @@ const { user: loggedInUser } = useUserSession()
         }"
       />
       <!-- Comments -->
-      <Button variant="ghost">
-        <Icon
-          name="fluent:comment-20-regular"
-          class="text-xl"
-        />
-        <span class="flex items-center">
-          2 comments
-        </span>
-      </Button>
+      <CommentButton
+        :post-data
+        @show-comments="showComments = !showComments"
+      />
       <BookmarkButton
         class="ml-auto"
         :post-id="postData.post.id"
@@ -103,5 +98,10 @@ const { user: loggedInUser } = useUserSession()
         }"
       />
     </div>
+
+    <CommentsFeed
+      v-if="showComments"
+      :post-data="postData"
+    />
   </article>
 </template>

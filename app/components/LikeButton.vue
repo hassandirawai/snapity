@@ -75,18 +75,18 @@ const { mutate } = useMutation({
 
 <template>
   <ClientOnly>
-    <Button
-      :class="cn(props.class)"
-      variant="ghost"
+    <button
+      :class="cn('flex items-center gap-2', props.class)"
       @click="mutate(likeData)"
     >
       <Icon
         :name="likeData.isLikedByUser ? 'fluent:heart-20-filled' : 'fluent:heart-20-regular'"
         :class="cn('text-xl', likeData.isLikedByUser && 'text-red-500')"
       />
-      <span class="flex items-center">
-        {{ likeData.likesCount }} likes
+      <span class="flex gap-x-1">
+        {{ likeData.likesCount }}
+        <span class="hidden sm:inline"> likes</span>
       </span>
-    </Button>
+    </button>
   </ClientOnly>
 </template>

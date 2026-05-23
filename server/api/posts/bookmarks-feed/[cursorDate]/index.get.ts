@@ -1,4 +1,4 @@
-import { getBookmarksFeedPosts } from '~~/server/utils/queries'
+import { getBookmarksFeed } from '~~/server/utils/queries'
 
 export default defineEventHandler(async (event) => {
   const cursorDateParam = getRouterParam(event, 'cursorDate')
@@ -11,15 +11,15 @@ export default defineEventHandler(async (event) => {
 
   // await new Promise(r => setTimeout(r, 2000))
 
-  const postData = await getBookmarksFeedPosts({
+  const postData = await getBookmarksFeed({
     userId: loggedInUser.id,
     pageSize,
     cursorDate,
   })
 
-  const postPage: PostPageType = {
+  const postPage: PostsPageType = {
     postsData: postData.slice(0, pageSize),
-    nextCursor: postData.length > pageSize ? postData[pageSize].post.createdAt : null,
+    nextCursor: postData.length > pageSize ? postData[pageSize - 1].post.createdAt : null,
   }
 
   return postPage

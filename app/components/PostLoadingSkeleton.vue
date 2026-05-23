@@ -6,7 +6,7 @@
   <div class="w-full  flex flex-col gap-3 bg-card border rounded-2xl p-6">
     <div class="flex items-center gap-3">
       <!-- User Avatar -->
-      <Skeleton class="hidden sm:inline size-12 rounded-full" />
+      <Skeleton class="hidden sm:block size-12 shrink-0 rounded-full" />
       <div class="space-y-1.5">
         <Skeleton class="h-4 w-62.5" />
         <Skeleton class="h-4 w-62.5" />

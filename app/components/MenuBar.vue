@@ -5,6 +5,8 @@ import { cn } from '~/lib/utils'
 const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
+
+const { data: notificationsCountInfo } = await useFetch<NotificationsCountInfoType>('/api/notifications/unread-count')
 </script>
 
 <template>
@@ -23,20 +25,7 @@ const props = defineProps<{
         <span class="hidden lg:inline">Home</span>
       </NuxtLink>
     </Button>
-    <Button
-      variant="ghost"
-      title="Notifications"
-      class="flex items-center justify-start gap-3"
-      as-child
-    >
-      <NuxtLink to="/notifications">
-        <Icon
-          name="fluent:alert-20-regular"
-          class="text-xl"
-        />
-        <span class="hidden lg:inline">Notifications</span>
-      </NuxtLink>
-    </Button>
+    <NotificationsButton :initial-state="notificationsCountInfo" />
     <Button
       variant="ghost"
       title="Messages"

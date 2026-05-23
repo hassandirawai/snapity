@@ -1,4 +1,4 @@
-import { follows } from '~~/server/db/schema'
+import { follows, notification } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   const { user: loggedInUser } = await requireUserSession(event)
@@ -27,6 +27,14 @@ export default defineEventHandler(async (event) => {
       followingId,
     })
     .onConflictDoNothing()
+
+  await db
+    .insert(notification)
+    .values({
+      issuerId: loggedInUser.id,
+      recipientId: followingId,
+      type: 'FOLLOW',
+    })
 
   return {
     followerId,

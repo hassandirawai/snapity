@@ -22,7 +22,7 @@ function handleCopy() {
 
 <template>
   <DropdownMenu>
-    <DropdownMenuTrigger>
+    <DropdownMenuTrigger as-child>
       <Button
         size="icon"
         variant="ghost"

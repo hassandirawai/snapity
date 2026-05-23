@@ -1,34 +1,25 @@
 import { getForYouFeedPosts } from '~~/server/utils/queries'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const cursorDateParam = getRouterParam(event, 'cursorDate')
-    const cursorDate = cursorDateParam ? new Date(cursorDateParam) : undefined
-    const pageSize = 5
+  const cursorDateParam = getRouterParam(event, 'cursorDate')
+  const cursorDate = cursorDateParam ? new Date(cursorDateParam) : undefined
+  const pageSize = 5
 
-    const { user: loggedInUser } = await requireUserSession(event)
+  const { user: loggedInUser } = await requireUserSession(event)
 
-    // console.log(cursorDate)
-    // await new Promise(r => setTimeout(r, 2000))
+  // console.log(cursorDate)
+  // await new Promise(r => setTimeout(r, 2000))
 
-    const postData = await getForYouFeedPosts({
-      pageSize,
-      cursorDate,
-      loggedInUserId: loggedInUser.id,
-    })
+  const postData = await getForYouFeedPosts({
+    pageSize,
+    cursorDate,
+    loggedInUserId: loggedInUser.id,
+  })
 
-    const postPage: PostPageType = {
-      postsData: postData.slice(0, pageSize),
-      nextCursor: postData.length > pageSize ? postData[pageSize].post.createdAt : null,
-    }
-
-    return postPage
+  const postPage: PostsPageType = {
+    postsData: postData.slice(0, pageSize),
+    nextCursor: postData.length > pageSize ? postData[pageSize - 1].post.createdAt : null,
   }
-  catch (error) {
-    console.warn(error)
-    throw createError({
-      statusCode: 500,
-      message: 'Internal server error',
-    })
-  }
+
+  return postPage
 })

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { NuxtLink } from '#components'
 
-const props = defineProps<{ content: string }>()
+const props = defineProps<{
+  content: string
+  postId?: string
+}>()
 
 const parts = computed(() => {
   return props.content.split(

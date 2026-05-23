@@ -1,28 +1,33 @@
 import { and, eq } from 'drizzle-orm'
-import { follows } from '~~/server/db/schema'
+import { follows, notification } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const { user: loggedInUser } = await requireUserSession(event)
+  const { user: loggedInUser } = await requireUserSession(event)
 
-    const followingId = getRouterParam(event, 'id') as string | undefined
+  const followingId = getRouterParam(event, 'id') as string | undefined
 
-    if (!followingId) {
-      throw createError({
-        statusCode: 400,
-        message: 'User ID is required',
-      })
-    }
-
-    return await useDrizzle()
-      .delete(follows)
-      .where(and(eq(follows.followerId, loggedInUser.id), eq(follows.followingId, followingId)))
-  }
-  catch (error) {
-    console.warn(error)
+  if (!followingId) {
     throw createError({
-      statusCode: 500,
-      message: 'Internal server error',
+      statusCode: 400,
+      message: 'User ID is required',
     })
   }
+
+  const db = useDrizzle()
+
+  const result = await db
+    .delete(follows)
+    .where(and(eq(follows.followerId, loggedInUser.id), eq(follows.followingId, followingId)))
+
+  await db
+    .delete(notification)
+    .where(
+      and(
+        eq(notification.issuerId, loggedInUser.id),
+        eq(notification.recipientId, followingId),
+        eq(notification.type, 'FOLLOW'),
+      ),
+    )
+
+  return { deleted: !!result.rowCount }
 })

@@ -9,13 +9,13 @@ const { user: loggedInUser } = useUserSession()
 
 // Fetch the posts for the for-you feed
 const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status } = useInfiniteQuery({
-  queryKey: ['posts-feed', 'user-posts', props.userId],
+  queryKey: ['posts-feed', 'user-posts-feed', props.userId],
   queryFn: async ({ pageParam }) => {
     const url = pageParam
       ? `/api/users/user/${props.userId}/posts/${pageParam}`
       : `/api/users/user/${props.userId}/posts/:cursorDate`
 
-    return await $fetch<PostPageType>(url)
+    return await $fetch<PostsPageType>(url)
   },
   getNextPageParam: lastPage => lastPage.nextCursor,
   initialPageParam: null as Date | null,
