@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonProps } from './ui/button/Button.vue'
+import type { ButtonProps } from '../ui/button/Button.vue'
 import { cn } from '~/lib/utils'
 
 interface CommentButtonProps extends ButtonProps {

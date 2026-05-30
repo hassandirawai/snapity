@@ -25,7 +25,7 @@ const { data: notificationsCountInfo } = await useFetch<NotificationsCountInfoTy
         <span class="hidden lg:inline">Home</span>
       </NuxtLink>
     </Button>
-    <NotificationsButton :initial-state="notificationsCountInfo" />
+    <NotificationsReadButton :initial-state="notificationsCountInfo ?? { unreadCount: 0 }" />
     <Button
       variant="ghost"
       title="Messages"

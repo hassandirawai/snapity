@@ -48,7 +48,7 @@ watchEffect(() => {
 <template>
   <main class="flex w-full gap-x-6">
     <div class="w-full gap-y-6">
-      <Post v-if="postData" :post-data="postData" />
+      <PostsItem v-if="postData" :post-data="postData" />
     </div>
     <ClientOnly>
       <UserInfoSidebar

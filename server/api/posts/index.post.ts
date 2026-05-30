@@ -1,6 +1,6 @@
 import type { CreatePostSchemaType } from '~/utils/zod-schemas'
 import { and, eq, inArray } from 'drizzle-orm'
-import { media, mention, notification, user } from '~~/server/db/schema'
+import { hashtags, media, mention, notification, user } from '~~/server/db/schema'
 import { createPostSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   const createdPosts = await db
     .insert(tables.post)
     .values({
-      content: parsedData.content,
+      content: parsedData.postContent,
       authorId: loggedInUser.id,
     })
     .returning()
@@ -57,13 +57,14 @@ export default defineEventHandler(async (event) => {
 
   // Extract mentions from post
   const postUsersMention = extractMentionedUsers(createdPosts[0].content)
-  const usernames = [...new Set(postUsersMention?.map(mention => mention.slice(1)))]
+  const mentionedUsersIds = [...new Set(postUsersMention)]
+    .filter(id => id !== loggedInUser.id)
 
   const mentionedUsers = await db
     .select()
     .from(user)
     .where(
-      inArray(user.username, usernames ?? []),
+      inArray(user.id, mentionedUsersIds),
     )
 
   if (mentionedUsers.length) {
@@ -92,38 +93,44 @@ export default defineEventHandler(async (event) => {
   }
 
   // Extract hashtags from post
-  const postHashtags = extractHashtags(parsedData.content)
+  const postHashtags = extractHashtags(parsedData.postContent)
 
   // Insert hashtags into hashtag table (create if not exist)
-  let hashtagRecords = null
-  if (postHashtags) {
-    hashtagRecords = await Promise.all(
-      postHashtags.map(async (hashtag) => {
-        // Check if hashtag already exists in DB
-        const [existing] = await useDrizzle()
-          .select()
-          .from(tables.hashtags)
-          .where(eq(tables.hashtags.tag, hashtag))
+  let hashtagRecords: typeof hashtags.$inferSelect[] = []
+  if (postHashtags.length) {
+    const existingHashtags = await db
+      .select()
+      .from(hashtags)
+      .where(
+        inArray(
+          hashtags.tag,
+          postHashtags,
+        ),
+      )
 
-        // If hashtag exists, return it
-        if (existing)
-          return existing
-
-        // If hashtag doesn't exist, create it
-        const [inserted] = await useDrizzle()
-          .insert(tables.hashtags)
-          .values({ tag: hashtag })
-          .returning()
-
-        // Return created hashtags
-        return inserted
-      }),
+    const existingTags = new Set(
+      existingHashtags.map(hashtag => hashtag.tag),
     )
+
+    const newTags = postHashtags.filter(tag => !existingTags.has(tag))
+
+    const newCreatedHastags = newTags.length
+      ? await db
+          .insert(hashtags)
+          .values(newTags.map(tag => ({ tag })))
+          .onConflictDoNothing()
+          .returning()
+      : []
+
+    hashtagRecords = [
+      ...existingHashtags,
+      ...newCreatedHastags,
+    ]
   }
 
   // Adding post and hashtag data to post_hashtags table
-  if (hashtagRecords) {
-    await useDrizzle()
+  if (hashtagRecords.length) {
+    await db
       .insert(tables.postHashtag)
       .values(hashtagRecords.map(hashtag => ({
         postId: createdPosts[0].id,
@@ -132,14 +139,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get created post data with reactions and hashtags
-  const post = await getPostById(createdPosts[0].id)
+  const postData = await getPostById(createdPosts[0].id)
 
-  if (!post) {
+  if (!postData) {
     throw createError({
       statusCode: 404,
       message: 'Post not found',
     })
   }
 
-  return post
+  return postData
 })

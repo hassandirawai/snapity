@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonProps } from './ui/button/Button.vue'
+import type { ButtonProps } from '../ui/button/Button.vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { cn } from '~/lib/utils'
 

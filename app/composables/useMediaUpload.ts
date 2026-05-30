@@ -1,7 +1,7 @@
 import type { Attachment } from '~/types/post'
 import { toast } from 'vue-sonner'
 
-export async function useMediaUpload() {
+export function useMediaUpload() {
   const attachments = ref<Attachment[]>([])
 
   const mpu = useMultipartUpload('/api/posts/attachments', {
@@ -70,7 +70,7 @@ export async function useMediaUpload() {
           return
         }
 
-        console.log('useMediaUpload:uploadedFile:', uploadedFile.pathname)
+        console.warn('useMediaUpload:uploadedFile:', uploadedFile.pathname)
 
         const { mediaId } = await $fetch('/api/media/by-pathname', {
           method: 'GET',

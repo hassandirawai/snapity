@@ -78,17 +78,12 @@ watch(isOpen, (value) => {
 </script>
 
 <template>
-  <Dialog
-    v-model:open="isOpen"
-    @update:open="() => {
-
-    }"
-  >
+  <Dialog v-model:open="isOpen">
     <DialogTrigger as-child>
       <slot />
     </DialogTrigger>
     <DialogContent
-      class="gap-9"
+      class="gap-9 sm:max-w-md"
       @pointer-down-outside="onPointerDownOutside"
     >
       <DialogHeader>

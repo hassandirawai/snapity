@@ -1,3 +1,4 @@
+import type { JSONContent } from '@tiptap/vue-3'
 import type { UserDataType } from './user'
 import { sql } from 'drizzle-orm'
 import { bookmark, comment, hashtags, like, media, post } from '~~/server/db/schema'
@@ -7,10 +8,10 @@ export interface PostDataType {
   user: UserDataType
   post: {
     id: string
-    content: string
+    content: JSONContent
     createdAt: Date
     hashtags: string[]
-    attachments: MediaType[]
+    attachments?: MediaType[]
     likesCount: number
     isLikedByUser?: boolean
     isBookmarkedByUser: boolean
@@ -95,7 +96,7 @@ export interface BookmarkInfo {
 export interface CommentDataType {
   comment: {
     id: string
-    content: string
+    content: JSONContent
     createdAt: Date
     updatedAt: Date
     postId: string

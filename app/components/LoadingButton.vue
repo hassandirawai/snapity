@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ButtonProps } from './ui/button/Button.vue'
 import { cn } from '~/lib/utils'
-import { buttonVariants } from './ui/button'
 
 interface LoadingButtonProps extends ButtonProps {
   loading?: boolean
@@ -16,17 +15,15 @@ const props = withDefaults(defineProps<LoadingButtonProps>(), {
 
 <template>
   <Button
-    data-slot="button"
-    :as="as"
-    :as-child="asChild"
-    :class="cn(buttonVariants({ variant, size }), props.class)"
-    :disabled="loading"
+    :variant="variant"
+    :size="size"
+    :class="cn(props.class)"
   >
     <Spinner
       v-if="loading"
       :size="loadingIconSize"
     />
-    <slot />
+    <slot v-if="!loading" />
   </Button>
 </template>
 

@@ -1,50 +1,55 @@
 <script setup lang="ts">
+import type { JSONContent } from '@tiptap/core'
 import { NuxtLink } from '#components'
 
 const props = defineProps<{
-  content: string
+  content: JSONContent | string
   postId?: string
 }>()
 
 const parts = computed(() => {
-  return props.content.split(
+  if (typeof props.content === 'string') {
+    return props.content.split(
+      /(https?:\/\/\S+|@\w+|#\w+)/g,
+    ).filter(item => Boolean(item))
+  }
+
+  return extractText(props.content).split(
     /(https?:\/\/\S+|@\w+|#\w+)/g,
   ).filter(item => Boolean(item))
 })
 </script>
 
 <template>
-  <span>
-    <template
-      v-for="(part, index) in parts"
-      :key="`${part}-${index}`"
+  <template
+    v-for="(part, index) in parts"
+    :key="`${part}-${index}`"
+  >
+    <a
+      v-if="part.startsWith('http')"
+      :href="part"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-primary underline"
     >
-      <a
-        v-if="part.startsWith('http')"
-        :href="part"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-primary underline"
-      >
-        {{ part }}
-      </a>
+      {{ part }}
+    </a>
 
-      <UserMentionWithTooltip
-        v-else-if="part.startsWith('@')"
-        :username="part.slice(1)"
-      />
+    <UserMentionWithTooltip
+      v-else-if="part.startsWith('@')"
+      :username="part.slice(1)"
+    />
 
-      <NuxtLink
-        v-else-if="part.startsWith('#')"
-        :to="`/hashtag/${part.slice(1)}`"
-        class="text-primary hover:underline"
-      >
-        {{ part }}
-      </NuxtLink>
+    <NuxtLink
+      v-else-if="part.startsWith('#')"
+      :to="`/hashtag/${part.slice(1)}`"
+      class="text-primary hover:underline"
+    >
+      {{ part }}
+    </NuxtLink>
 
-      <span v-else>
-        {{ part }}
-      </span>
-    </template>
-  </span>
+    <span v-else>
+      {{ part }}
+    </span>
+  </template>
 </template>

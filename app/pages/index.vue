@@ -8,7 +8,12 @@ useSeoMeta({
 <template>
   <main class="flex w-full min-w-0 gap-6">
     <div class="w-full flex flex-col space-y-6">
-      <PostEditor />
+      <ClientOnly>
+        <PostsEditor />
+        <template #fallback>
+          <div class="bg-card border rounded-2xl p-6 h-32 animate-pulse" />
+        </template>
+      </ClientOnly>
       <div>
         <Tabs default-value="for-you-feed">
           <TabsList class="w-full">

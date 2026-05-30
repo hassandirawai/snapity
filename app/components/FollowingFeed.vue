@@ -40,7 +40,7 @@ onBeforeMount(async () => {
     :has-next-page="hasNextPage"
     @load-more="fetchNextPage"
   >
-    <Post
+    <PostsItem
       v-for="postData in postsData"
       :key="postData.post.id"
       :post-data="postData"

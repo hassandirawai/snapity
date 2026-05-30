@@ -189,15 +189,3 @@ const onSubmit = form.handleSubmit(async (values) => {
     </CardContent>
   </Card>
 </template>
-
-<style>
-.x1::after {
-  top: 50%;
-  width: 100%;
-  z-index: 0;
-  display: flex;
-  justify-content: center;
-  border-top: 1px solid gray;
-  content: '';
-}
-</style>

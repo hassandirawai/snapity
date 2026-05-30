@@ -3,8 +3,11 @@
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import "tw-animate-css";
 @import "shadcn-vue/tailwind.css";
+
+@theme {
+  --breakpoint-xs: 30rem;   /* 480px */
+}
 
 @custom-variant dark (&:is(.dark *));
 

@@ -36,8 +36,11 @@ function handleCopy() {
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DialogTrigger as-child>
-        <DropdownMenuItem v-if="loggedInUser?.id === props.postData.user.id">
+      <DialogTrigger
+        v-if="loggedInUser?.id === props.postData.user.id"
+        as-child
+      >
+        <DropdownMenuItem>
           <span class="flex gap-3 items-center text-destructive">
             <Icon
               name="fluent:delete-20-regular"

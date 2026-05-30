@@ -35,9 +35,10 @@ export const loginSchema = z.object({
 
 // Create post schema
 export const createPostSchema = z.object({
-  content: z
-    .string({ error: 'Content is required' })
-    .min(4, { error: 'Content must be at least 4 characters long' }),
+  postContent: z.object({
+    type: z.literal('doc'),
+    content: z.array(z.any()),
+  }),
   mediaIds: z
     .array(z.uuid())
     .max(5, { error: 'Cannot upload more than 5 media files' })
@@ -64,9 +65,19 @@ export type UpdateUserDataValues = z.infer<typeof updateUserDataSchema>
 
 // Create comment schema
 export const createCommentSchema = z.object({
-  content: z
-    .string({ error: 'Content is required' })
-    .min(1, { error: 'Content must be at least 1 character long' }),
+  type: z.literal('doc'),
+  content: z.array(
+    z.object({
+      type: z.string(),
+    }).loose(),
+  ),
 })
 
 export type CreateCommentSchemaType = z.infer<typeof createCommentSchema>
+
+// Search schema
+export const searchSchema = z.object({
+  query: z.string().trim().min(1).max(50),
+})
+
+export type SearchSchemaType = z.infer<typeof searchSchema>

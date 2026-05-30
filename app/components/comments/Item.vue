@@ -54,15 +54,15 @@ const { user: loggedInUser } = useUserSession()
     </div>
 
     <ClientOnly>
-      <DeleteCommentDialog
+      <CommentsDeleteDialog
         v-if="loggedInUser?.id === commentData.user.id"
         :comment-data
       >
-        <CommentMoreButton
+        <CommentsMoreButton
           :comment-data
           class="ms-auto sm:opacity-0 transition-opacity group-hover/comment:opacity-100"
         />
-      </DeleteCommentDialog>
+      </CommentsDeleteDialog>
     </ClientOnly>
   </div>
 </template>

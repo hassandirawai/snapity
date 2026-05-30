@@ -53,12 +53,12 @@ function relative(from: Date): boolean {
         </div>
       </div>
       <ClientOnly>
-        <DeletePostDialog :post-data="postData">
-          <PostMoreButton
+        <PostsDeleteDialog :post-data="postData">
+          <PostsMoreButton
             :post-data="postData"
             class="sm:opacity-0 transition-opacity group-hover/post:opacity-100"
           />
-        </DeletePostDialog>
+        </PostsDeleteDialog>
       </ClientOnly>
     </div>
 
@@ -78,7 +78,7 @@ function relative(from: Date): boolean {
 
     <div class="flex justify-start items-center gap-6">
       <!-- Likes -->
-      <LikeButton
+      <PostsLikeButton
         :post-id="postData.post.id"
         :initial-state="{
           likesCount: postData.post.likesCount,
@@ -86,11 +86,11 @@ function relative(from: Date): boolean {
         }"
       />
       <!-- Comments -->
-      <CommentButton
+      <PostsCommentButton
         :post-data
         @show-comments="showComments = !showComments"
       />
-      <BookmarkButton
+      <PostsBookmarkButton
         class="ml-auto"
         :post-id="postData.post.id"
         :initial-state="{
@@ -105,3 +105,10 @@ function relative(from: Date): boolean {
     />
   </article>
 </template>
+
+<style>
+.tiptap-content .mention {
+  color: hsl(var(--primary));
+  font-weight: 500;
+}
+</style>

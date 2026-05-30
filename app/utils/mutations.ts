@@ -1,4 +1,5 @@
 import type { InfiniteData, InvalidateQueryFilters, QueryFilters, QueryKey } from '@tanstack/vue-query'
+import type { JSONContent } from '@tiptap/core'
 import type { CommentDataType, CommentsPageType } from '~~/shared/types/post'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { toast } from 'vue-sonner'
@@ -221,7 +222,7 @@ export function useSubmitCommentMutation(postId: string) {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async (commentContent: string) => {
+    mutationFn: async (commentContent: JSONContent) => {
       return await $fetch<CommentDataType>(`/api/posts/${postId}/comments`, {
         method: 'POST',
         body: { commentContent },

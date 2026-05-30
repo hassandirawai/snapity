@@ -45,7 +45,7 @@ const postsData = computed(() => data.value?.pages.flatMap(page => page.postsDat
     :loading="isFetchingNextPage"
     @load-more="fetchNextPage"
   >
-    <Post
+    <PostsItem
       v-for="postData in postsData"
       :key="postData.post.id"
       :post-data="postData"

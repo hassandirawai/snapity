@@ -10,7 +10,7 @@ const { data: userData, isLoading: _isLoading } = useQuery({
   queryFn: async () => {
     const userData = await $fetch<UserDataType>(`/api/users/user/username/${props.username}`)
 
-    console.warn('userData:', userData.bio)
+    // console.warn(`${props.username}-userData:`, userData.username)
     return userData
   },
   retry: (failureCount, error) => {
@@ -47,7 +47,7 @@ const { data: userData, isLoading: _isLoading } = useQuery({
     >
       <NuxtLink
         :to="`/users/${props.username}`"
-        class="text-primary hover:underline"
+        class="mention rounded-md bg-primary/10 px-1 py-0.5 text-primary font-medium cursor-pointer"
       >
         @{{ props.username }}
       </NuxtLink>

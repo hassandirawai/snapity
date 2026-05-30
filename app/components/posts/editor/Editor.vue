@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import Placeholder from '@tiptap/extension-placeholder'
+import StarterKit from '@tiptap/starter-kit'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { toast } from 'vue-sonner'
 import { cn } from '~/lib/utils'
 
@@ -6,13 +9,36 @@ const { user: loggedInUser } = useUserSession()
 
 const editor = useEditor({
   extensions: [
-    TiptapStarterKit.configure({
-      bold: false,
-      italic: false,
-    }),
-    TiptapPlaceholder.configure({
+    StarterKit
+      .extend({
+        addKeyboardShortcuts() {
+          return {
+            Backspace: () => {
+              const { editor } = this
+              nextTick(() => {
+                if (editor.isEmpty) {
+                  editor.commands.focus('end')
+                  return true
+                }
+              })
+            },
+          }
+        },
+      })
+      .configure({
+        bold: false,
+        italic: false,
+        heading: false,
+        codeBlock: false,
+        horizontalRule: false,
+        blockquote: false,
+        bulletList: false,
+      }),
+    Placeholder.configure({
       placeholder: 'Write your post content here',
     }),
+    createMentionExtension(),
+    // createHashtagExtenstion() will keep it pending for now,
   ],
 })
 
@@ -65,12 +91,21 @@ function handleUploadFilesClient(files: File[]) {
 }
 
 async function onSubmit() {
-  const postContent = editor.value?.getText() || ''
+  const postContent = editor.value?.getJSON()
+
+  if (!postContent) {
+    toast.error('Post content is empty')
+    return
+  }
+
+  /*
+  console.warn('Post content:', postContent)
 
   console.warn('Post attachmets:', ...attachments.value.map(attachment => attachment.mediaId).filter(Boolean) as string[])
+  */
 
   mutate({
-    content: postContent,
+    postContent,
     mediaIds: attachments.value.map(attachment => attachment.mediaId).filter(Boolean) as string[],
   }, {
     onSuccess: () => {
@@ -86,10 +121,6 @@ async function onSubmit() {
 onBeforeUnmount(() => {
   unref(editor)?.destroy()
 })
-
-watchEffect(() => {
-  // console.warn(...attachments.value)
-})
 </script>
 
 <template>
@@ -102,12 +133,14 @@ watchEffect(() => {
         :avatar-url="loggedInUser!.avatar"
         class="hidden sm:inline"
       />
-      <div class="w-full max-w-full overflow-x-auto">
-        <TiptapEditorContent
+      <div class="relative w-full max-w-full overflow-x-auto">
+        <EditorContent
           :editor="editor"
           :class="cn('max-h-80 w-full max-w-full overflow-y-auto bg-accent rounded-2xl p-3', isOverDropZone && 'border-2 border-dashed border-primary')"
           @paste="onPaste"
         />
+
+        <MentionList />
       </div>
     </div>
     <AttachmentPreviews
@@ -128,7 +161,7 @@ watchEffect(() => {
       />
       <LoadingButton
         size="lg"
-        :disabled="!editor?.getText().trim() || isUploading"
+        :disabled="editor?.isEmpty || isUploading"
         :loading="isPending"
         @click="onSubmit"
       >
@@ -136,11 +169,12 @@ watchEffect(() => {
       </LoadingButton>
     </div>
   </div>
-  <PostImageCropperDialog
+  <PostsEditorImageCropperDialog
     v-model:open="isCropDialogOpen"
     :files="croppedFiles"
     @cropped="handleUploadFilesServer"
   />
 </template>
 
-<style></style>
+<style>
+</style>

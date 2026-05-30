@@ -73,7 +73,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent>
+    <DialogContent class="sm:max-w-md">
       <DialogHeader>
         <DialogTitle> Crop Avatar </DialogTitle>
         <DialogDescription>
@@ -81,7 +81,7 @@ function stencilSize({ boundaries }: { boundaries: Boundaries }) {
           selection, click "Crop" to finalize your avatar.
         </DialogDescription>
       </DialogHeader>
-      <div class="relative flex justify-center w-72 sm:w-96 h-96 mx-auto">
+      <div class="relative flex justify-center w-72 xs:w-[20rem] sm:w-96 h-96 mx-auto">
         <Cropper
           v-if="src"
           ref="cropperRef"

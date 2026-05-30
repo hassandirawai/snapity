@@ -22,7 +22,7 @@ const postsData = computed(() => data.value?.pages.flatMap(page => page.postsDat
 
 <template>
   <!-- Show loading skeleton while fetching posts -->
-  <PostsLoadingSkeleton v-if="status === 'pending'" />
+  <PostsLoadingSkeletons v-if="status === 'pending'" />
   <!-- Show message if no posts are available -->
   <p
     v-else-if="status === 'success' && !postsData.length && !hasNextPage"
@@ -38,7 +38,7 @@ const postsData = computed(() => data.value?.pages.flatMap(page => page.postsDat
     :loading="isFetchingNextPage"
     @load-more="fetchNextPage"
   >
-    <Post
+    <PostsItem
       v-for="postData in postsData"
       :key="postData.post.id"
       :post-data="postData"

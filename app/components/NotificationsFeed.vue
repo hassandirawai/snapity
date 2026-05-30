@@ -46,7 +46,7 @@ onMounted(() => {
 
 <template>
   <!-- Show loading skeleton while fetching posts -->
-  <NotificationsLoadingSkeleton v-if="status === 'pending'" />
+  <NotificationsLoadingSkeletons v-if="status === 'pending'" />
   <!-- Show message if no posts are available -->
   <p
     v-else-if="status === 'success' && !notificationsData.length && !hasNextPage"
@@ -62,7 +62,7 @@ onMounted(() => {
     :loading="isFetchingNextPage"
     @load-more="fetchNextPage"
   >
-    <Notification
+    <NotificationsItem
       v-for="notificationData in notificationsData"
       :key="notificationData.id"
       :notification-data="notificationData"

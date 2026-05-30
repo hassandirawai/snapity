@@ -1,3 +1,5 @@
+import type { JSONContent } from '@tiptap/vue-3'
+
 export interface Attachment {
   id: string
   file: File
@@ -7,6 +9,6 @@ export interface Attachment {
 }
 
 export interface PostInput {
-  content: string
+  postContent: JSONContent
   mediaIds: string[]
 }

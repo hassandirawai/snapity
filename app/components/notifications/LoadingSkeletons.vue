@@ -4,9 +4,9 @@
 
 <template>
   <div class="space-y-6">
-    <PostLoadingSkeleton />
-    <PostLoadingSkeleton />
-    <PostLoadingSkeleton />
+    <NotificationsLoadingSkeleton />
+    <NotificationsLoadingSkeleton />
+    <NotificationsLoadingSkeleton />
   </div>
 </template>
 

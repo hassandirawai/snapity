@@ -31,7 +31,7 @@ function onDelete() {
   >
     <slot />
     <DialogContent
-      @pointer-down-outside="(event) => {
+      @pointer-down-outside="(event: any) => {
         // Block closing via outside click while pending
         if (isPending) event.preventDefault()
       }"

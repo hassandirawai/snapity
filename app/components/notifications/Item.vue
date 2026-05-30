@@ -78,25 +78,25 @@ const { message, icon, class: notificationClass, herf } = notificationTypeMap[pr
           v-if="notificationData.type === 'LIKE' && notificationData.post"
           class="line-clamp-3 whitespace-pre-line text-muted-foreground"
         >
-          {{ notificationData.post.content }}
+          <Linkify :content="notificationData.post.content" />
         </div>
         <div
           v-if="notificationData.type === 'COMMENT' && notificationData.comment"
           class="line-clamp-3 whitespace-pre-line text-muted-foreground"
         >
-          {{ notificationData.comment.content }}
+          <Linkify :content="notificationData.comment.content" />
         </div>
         <div
           v-if="notificationData.type === 'MENTION' && notificationData.post && !notificationData.comment"
           class="line-clamp-3 whitespace-pre-line text-muted-foreground"
         >
-          {{ notificationData.post.content }}
+          <Linkify :content="notificationData.post.content" />
         </div>
         <div
           v-if="notificationData.type === 'MENTION' && notificationData.comment"
           class="line-clamp-3 whitespace-pre-line text-muted-foreground"
         >
-          {{ notificationData.comment.content }}
+          <Linkify :content="notificationData.comment.content" />
         </div>
       </div>
     </article>

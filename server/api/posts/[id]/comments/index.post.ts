@@ -1,4 +1,4 @@
-import type { CommentDataType } from '~~/shared/types/post'
+import type { JSONContent } from '@tiptap/core'
 import { eq, inArray } from 'drizzle-orm'
 import { comment, mention, notification, user } from '~~/server/db/schema'
 import { createCommentSchema } from '~/utils/zod-schemas'
@@ -8,9 +8,16 @@ export default defineEventHandler(async (event) => {
 
   const postId = getRouterParam(event, 'id') as string
 
-  const { commentContent }: { commentContent: string } = await readBody(event)
+  const { commentContent }: { commentContent: JSONContent } = await readBody(event)
 
-  const { content: parsedCommentContent } = createCommentSchema.parse({ content: commentContent })
+  const { data: parsedCommentContent, success: isParsed, error: parseError } = createCommentSchema.safeParse(commentContent)
+
+  if (!isParsed) {
+    return {
+      statusCode: 400,
+      statusMessage: parseError.issues[0].message,
+    }
+  }
 
   const postData = await getPostById(postId)
 
@@ -38,14 +45,14 @@ export default defineEventHandler(async (event) => {
 
     // Extract mentions from comment
     const postUsersMention = extractMentionedUsers(createdComment[0].content)
-    const usernames = [...new Set(postUsersMention?.map(mention => mention.slice(1)))]
-      .filter(username => username !== postData.user.username)
+    const mentionedUsersIds = [...new Set(postUsersMention)]
+      .filter(id => id !== loggedInUser.id)
 
     const mentionedUsers = await db
       .select()
       .from(user)
       .where(
-        inArray(user.username, usernames ?? []),
+        inArray(user.id, mentionedUsersIds),
       )
 
     if (mentionedUsers.length) {

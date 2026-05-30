@@ -1,6 +1,8 @@
+import type { JSONContent } from '@tiptap/core'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -28,7 +30,9 @@ export const post = pgTable('post', {
   authorId: uuid('author_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  content: text('content').notNull(),
+  content: jsonb('content')
+    .$type<JSONContent>()
+    .notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -95,7 +99,9 @@ export const comment = pgTable('comment', {
   postId: uuid('post_id')
     .notNull()
     .references(() => post.id, { onDelete: 'cascade' }),
-  content: text('content').notNull(),
+  content: jsonb('content')
+    .$type<JSONContent>()
+    .notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })

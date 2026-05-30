@@ -7,7 +7,7 @@ const { data: postsData } = await useFetch<PostDataType[]>(`/api/posts/hashtag/$
   <main class="flex w-full gap-x-6">
     <div class="w-full flex flex-col gap-6 overflow-y-hidden">
       <div class="space-y-6">
-        <Post
+        <PostsItem
           v-for="postData in postsData"
           :key="postData.post.id"
           :post-data="postData"

@@ -6,7 +6,6 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@nuxtjs/color-mode',
     '@vueuse/nuxt',
-    'nuxt-tiptap-editor',
     'nuxt-auth-utils',
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',

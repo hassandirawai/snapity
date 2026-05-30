@@ -31,9 +31,9 @@ const commentsData = computed<CommentDataType[]>(() => commentsPage.value?.pages
 
 <template>
   <div class="space-y-3">
-    <CommentInput :post-data />
+    <CommentsEditor :post-data />
     <div class="divide-y">
-      <Comment v-for="commentData in commentsData" :key="commentData.comment.id" :comment-data="commentData" />
+      <CommentsItem v-for="commentData in commentsData" :key="commentData.comment.id" :comment-data="commentData" />
     </div>
     <div
       v-if="status === 'pending'"
