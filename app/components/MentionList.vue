@@ -41,6 +41,21 @@ onUnmounted(() => {
   window.removeEventListener('scroll', updatePosition, true)
   window.removeEventListener('resize', updatePosition, true)
 })
+
+watch(
+  () => [
+    state.value.isLoading,
+    state.value.items.length,
+  ],
+  async () => {
+    if (!state.value.isOpen) {
+      return
+    }
+
+    await nextTick()
+    updatePosition()
+  },
+)
 </script>
 
 <template>
