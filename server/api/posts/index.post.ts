@@ -1,6 +1,6 @@
 import type { CreatePostSchemaType } from '~/utils/zod-schemas'
 import { and, eq, inArray } from 'drizzle-orm'
-import { hashtags, media, mention, notification, user } from '~~/server/db/schema'
+import { hashtag, media, mention, notification, postHashtag, user } from '~~/server/db/schema'
 import { createPostSchema } from '~/utils/zod-schemas'
 
 export default defineEventHandler(async (event) => {
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   if (!isParsed) {
     return {
       statusCode: 400,
-      statusMessage: parseError.issues[0].message,
+      statusMessage: parseError.issues[0]?.message,
     }
   }
 
@@ -33,7 +33,9 @@ export default defineEventHandler(async (event) => {
     })
     .returning()
 
-  if (!createdPosts) {
+  const createdPost = createdPosts[0]
+
+  if (!createdPost) {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to create post',
@@ -45,7 +47,7 @@ export default defineEventHandler(async (event) => {
     await db
       .update(media)
       .set({
-        postId: createdPosts[0].id,
+        postId: createdPost.id,
       })
       .where(
         and(
@@ -56,7 +58,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Extract mentions from post
-  const postUsersMention = extractMentionedUsers(createdPosts[0].content)
+  const postUsersMention = extractMentionedUsers(createdPost.content)
   const mentionedUsersIds = [...new Set(postUsersMention)]
     .filter(id => id !== loggedInUser.id)
 
@@ -74,36 +76,38 @@ export default defineEventHandler(async (event) => {
         mentionedUsers.map(user => ({
           issuerId: loggedInUser.id,
           mentionedUserId: user.id,
-          postId: createdPosts[0].id,
+          postId: createdPost.id,
         })),
       )
       .returning()
 
-    await db
-      .insert(notification)
-      .values(
-        mentionedUsers.map((user, index) => ({
-          issuerId: loggedInUser.id,
-          recipientId: user.id,
-          postId: createdPosts[0].id,
-          mentionId: mentionData[index].id,
-          type: 'MENTION' as const,
-        })),
-      )
+    if (mentionData.length) {
+      await db
+        .insert(notification)
+        .values(
+          mentionData.map(mention => ({
+            issuerId: loggedInUser.id,
+            recipientId: mention.mentionedUserId,
+            postId: createdPost.id,
+            mentionId: mention.id,
+            type: 'MENTION' as const,
+          })),
+        )
+    }
   }
 
   // Extract hashtags from post
   const postHashtags = extractHashtags(parsedData.postContent)
 
   // Insert hashtags into hashtag table (create if not exist)
-  let hashtagRecords: typeof hashtags.$inferSelect[] = []
+  let hashtagRecords: typeof hashtag.$inferSelect[] = []
   if (postHashtags.length) {
     const existingHashtags = await db
       .select()
-      .from(hashtags)
+      .from(hashtag)
       .where(
         inArray(
-          hashtags.tag,
+          hashtag.tag,
           postHashtags,
         ),
       )
@@ -116,7 +120,7 @@ export default defineEventHandler(async (event) => {
 
     const newCreatedHastags = newTags.length
       ? await db
-          .insert(hashtags)
+          .insert(hashtag)
           .values(newTags.map(tag => ({ tag })))
           .onConflictDoNothing()
           .returning()
@@ -131,15 +135,15 @@ export default defineEventHandler(async (event) => {
   // Adding post and hashtag data to post_hashtags table
   if (hashtagRecords.length) {
     await db
-      .insert(tables.postHashtag)
+      .insert(postHashtag)
       .values(hashtagRecords.map(hashtag => ({
-        postId: createdPosts[0].id,
+        postId: createdPost.id,
         hashtagId: hashtag.id,
       })))
   }
 
   // Get created post data with reactions and hashtags
-  const postData = await getPostById(createdPosts[0].id)
+  const postData = await getPostById(createdPost.id)
 
   if (!postData) {
     throw createError({

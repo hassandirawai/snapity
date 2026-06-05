@@ -1,32 +1,24 @@
 import { eq, sql } from 'drizzle-orm'
+import { hashtag, postHashtag } from '~~/server/db/schema'
 
 export default defineEventHandler(async (_event) => {
-  try {
-    const hashtags = await useDrizzle()
-      .select({
-        id: tables.hashtags.id,
-        tag: tables.hashtags.tag,
-        postsCount: sql<number>`COUNT(${tables.postHashtag.postId})`.as('postsCount'),
-      })
-      .from(tables.hashtags)
-      .innerJoin(tables.postHashtag, eq(tables.hashtags.id, tables.postHashtag.hashtagId))
-      .groupBy(tables.hashtags.id)
-      .orderBy(sql`COUNT(${tables.postHashtag.postId}) DESC`)
+  const hashtags = await useDrizzle()
+    .select({
+      id: hashtag.id,
+      tag: hashtag.tag,
+      postsCount: sql<number>`COUNT(${postHashtag.postId})`.as('postsCount'),
+    })
+    .from(hashtag)
+    .innerJoin(postHashtag, eq(hashtag.id, postHashtag.hashtagId))
+    .groupBy(hashtag.id)
+    .orderBy(sql`COUNT(${postHashtag.postId}) DESC`)
 
-    if (!hashtags.length) {
-      throw createError({
-        statusCode: 404,
-        message: 'No hashtags found',
-      })
-    }
-
-    return hashtags
-  }
-  catch (error) {
-    console.warn(error)
+  if (!hashtags.length) {
     throw createError({
-      statusCode: 500,
-      message: 'Internal server error',
+      statusCode: 404,
+      message: 'No hashtags found',
     })
   }
+
+  return hashtags
 })

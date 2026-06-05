@@ -2,7 +2,7 @@ import type { CommentDataType, PostDataType } from '~~/shared/types/post'
 import type { UserDataType } from '~~/shared/types/user'
 import type { CreateUser } from '~/utils/zod-schemas'
 import { and, desc, eq, lt, ne, notExists } from 'drizzle-orm'
-import { bookmark, comment, follows, hashtags, media, notification, post, postHashtag, user } from '../db/schema'
+import { bookmark, comment, follows, hashtag, media, notification, post, postHashtag, user } from '../db/schema'
 
 // Get user by username
 export async function findUserByUsername(params: {
@@ -161,7 +161,7 @@ export async function getForYouFeedPosts({
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(cursorDate ? lt(post.createdAt, cursorDate) : undefined)
@@ -226,7 +226,7 @@ export async function getFollowerFeedPosts({
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(follows, eq(follows.followingId, user.id))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
@@ -273,7 +273,7 @@ export async function getUserPosts({
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
     .where(
@@ -318,7 +318,7 @@ export async function getBookmarksFeed({
     .leftJoin(post, eq(post.id, bookmark.postId))
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt, bookmark.createdAt)
     .where(
@@ -354,7 +354,7 @@ Promise<PostDataType[]> {
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, user.avatar, user.fullName, user.username, post.content, post.createdAt)
     .orderBy(desc(post.createdAt))
@@ -370,9 +370,9 @@ Promise<PostDataType[]> {
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
-    .where(eq(hashtags.tag, tag))
+    .where(eq(hashtag.tag, tag))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.username, user.fullName, user.bio, user.avatar, user.createdAt)
 }
 
@@ -385,7 +385,7 @@ export async function getPostById(id: string): Promise<PostDataType> {
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))
-    .leftJoin(hashtags, eq(hashtags.id, postHashtag.hashtagId))
+    .leftJoin(hashtag, eq(hashtag.id, postHashtag.hashtagId))
     .leftJoin(media, eq(media.postId, post.id))
     .groupBy(post.id, post.authorId, post.content, post.createdAt, user.id, user.avatar, user.fullName, user.username, user.createdAt, user.bio)
     .where(eq(post.id, id))

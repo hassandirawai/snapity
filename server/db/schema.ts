@@ -201,7 +201,7 @@ export const commentRelations = relations(comment, ({ one, many }) => ({
 /* ------------------------------------------------------ */
 
 // Hashtags
-export const hashtags = pgTable('hashtag', {
+export const hashtag = pgTable('hashtag', {
   id: uuid('id').defaultRandom().primaryKey(),
   tag: text('tag').unique().notNull(),
   createdAt: timestamp('created_at').defaultNow(),
@@ -214,11 +214,11 @@ export const postHashtag = pgTable('post_hashtag', {
     .references(() => post.id, { onDelete: 'cascade' }),
   hashtagId: uuid('hashtag_id')
     .notNull()
-    .references(() => hashtags.id, { onDelete: 'cascade' }),
+    .references(() => hashtag.id, { onDelete: 'cascade' }),
 })
 
 // Hashtags Relations
-export const hashtagsRelations = relations(hashtags, ({ many }) => ({
+export const hashtagsRelations = relations(hashtag, ({ many }) => ({
   postHashtags: many(postHashtag),
 }))
 
@@ -228,9 +228,9 @@ export const postHashtagsRelations = relations(postHashtag, ({ one }) => ({
     fields: [postHashtag.postId],
     references: [post.id],
   }),
-  hashtag: one(hashtags, {
+  hashtag: one(hashtag, {
     fields: [postHashtag.hashtagId],
-    references: [hashtags.id],
+    references: [hashtag.id],
   }),
 }))
 

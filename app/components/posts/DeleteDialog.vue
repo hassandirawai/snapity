@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { toast } from 'vue-sonner'
-
 const props = defineProps<{
   postData: PostDataType
 }>()
@@ -9,14 +7,7 @@ const isOpen = ref<boolean>(false)
 const { mutate, isPending } = useDeletePostMutation()
 
 function onDelete() {
-  mutate(props.postData.post.id, {
-    onSuccess() {
-      toast.success('Post deleted successfully')
-    },
-    onError() {
-      toast.error('Failed to delete post')
-    },
-  })
+  mutate(props.postData.post.id)
 }
 </script>
 

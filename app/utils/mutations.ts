@@ -97,6 +97,12 @@ export function useDeletePostMutation() {
       )
 
       await refreshNuxtData(`post_page-${postData.post.id}`)
+
+      toast.success('Post deleted successfully')
+    },
+
+    onError: () => {
+      toast.error('Failed to delete post')
     },
   })
 

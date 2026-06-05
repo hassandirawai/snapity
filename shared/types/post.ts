@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/vue-3'
 import type { UserDataType } from './user'
 import { sql } from 'drizzle-orm'
-import { bookmark, comment, hashtags, like, media, post } from '~~/server/db/schema'
+import { bookmark, comment, hashtag, like, media, post } from '~~/server/db/schema'
 import { userDataSelect } from './user'
 
 export interface PostDataType {
@@ -40,7 +40,7 @@ export function postDataSelect(loggedInUserId?: string) {
       id: post.id,
       content: post.content,
       createdAt: post.createdAt,
-      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtags.tag})`.as('hashtags'),
+      hashtags: sql<string[]>`ARRAY_AGG(DISTINCT ${hashtag.tag})`.as('hashtags'),
       attachments: sql<MediaType[]>`
         JSON_AGG(
           DISTINCT JSONB_BUILD_OBJECT(

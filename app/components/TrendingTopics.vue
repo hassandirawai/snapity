@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { data: hashtags } = useFetch('/api/hashtags/trending-hashtags', {
+const hashtags = await $fetch('/api/hashtags/trending-hashtags', {
   method: 'GET',
 })
 </script>
@@ -9,7 +9,10 @@ const { data: hashtags } = useFetch('/api/hashtags/trending-hashtags', {
     <div class="text-lg font-bold">
       Trending Topics
     </div>
-    <div class="flex flex-col gap-3">
+    <div
+      v-if="hashtags.length"
+      class="flex flex-col gap-3"
+    >
       <NuxtLink
         v-for="hashtag in hashtags"
         :key="hashtag.id"
@@ -24,6 +27,9 @@ const { data: hashtags } = useFetch('/api/hashtags/trending-hashtags', {
           {{ formatNumber(hashtag.postsCount) }}
           {{ hashtag.postsCount < 2 ? 'post' : 'posts' }} </span>
       </NuxtLink>
+    </div>
+    <div v-else>
+      <p>No trending hashtags yet.</p>
     </div>
   </div>
 </template>
