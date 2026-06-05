@@ -51,7 +51,7 @@ const {
   totalProgress,
   removeAttachment,
   reset: resetMediaUpload,
-} = await useMediaUpload()
+} = useMediaUpload()
 
 const dropZoneRef = useTemplateRef('dropZoneRef')
 
@@ -81,7 +81,7 @@ const croppedFiles = ref<File[]>([])
 const isCropDialogOpen = ref<boolean>(false)
 
 function handleUploadFilesClient(files: File[]) {
-  if (files[0]?.type.startsWith('video/')) {
+  if (files[0]?.type.startsWith('video/') || files[0]?.type.startsWith('image/gif')) {
     handleUploadFilesServer(files)
     return
   }

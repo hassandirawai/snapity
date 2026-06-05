@@ -92,6 +92,7 @@ export function createMentionExtension() {
             state.value.selectedIndex = 0
             state.value.x = cursorPosition.left
             state.value.y = cursorPosition.bottom + 8
+            state.value.getReferenceRect = clientRect ?? null
 
             state.value.command = ({ id, username }: MentionItem) => {
               if (!range) {
@@ -138,6 +139,7 @@ export function createMentionExtension() {
 
             state.value.x = cursorPosition.left
             state.value.y = cursorPosition.bottom + 8
+            state.value.getReferenceRect = clientRect ?? null
           },
           onKeyDown({ event }) {
             if (event.key === 'Escape') {
@@ -183,6 +185,7 @@ export function createMentionExtension() {
           onExit() {
             state.value.isOpen = false
             state.value.selectedIndex = 0
+            state.value.getReferenceRect = null
             state.value.items = []
           },
         }),

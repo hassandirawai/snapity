@@ -8,6 +8,7 @@ export interface MentionDropdownState {
   command: ((item: MentionItem) => void) | null
   x: number
   y: number
+  getReferenceRect: (() => DOMRect | null | undefined) | null
 }
 
 export function useMentionDropdown() {
@@ -21,6 +22,7 @@ export function useMentionDropdown() {
       command: null,
       x: 0,
       y: 0,
+      getReferenceRect: null,
     }),
   )
 

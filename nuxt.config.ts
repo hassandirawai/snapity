@@ -59,4 +59,29 @@ export default defineNuxtConfig({
   eslint: { config: { standalone: false } },
   shadcn: { prefix: '', componentDir: '@/components/ui' },
   colorMode: { classSuffix: '' },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@lucide/vue',
+        '@tanstack/vue-query',
+        '@tiptap/core',
+        '@tiptap/extension-mention',
+        '@tiptap/extension-placeholder',
+        '@tiptap/starter-kit',
+        '@tiptap/vue-3',
+        '@vee-validate/zod',
+        'browser-image-compression',
+        'class-variance-authority',
+        'clsx',
+        'date-fns',
+        'lucide-vue-next',
+        'reka-ui',
+        'tailwind-merge',
+        'vue-advanced-cropper',
+        'vue-sonner',
+        'zod',
+      ],
+    },
+  },
 })

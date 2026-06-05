@@ -1,12 +1,54 @@
 <script setup lang="ts">
 const { state } = useMentionDropdown()
+
+const dropdownRef = useTemplateRef('dropdownRef')
+
+function updatePosition() {
+  const cursorPosition = state.value.getReferenceRect?.()
+
+  if (!cursorPosition) {
+    return
+  }
+
+  // Gap between cursor and dropdown.
+  const offset = 8
+  const dropdownHeight = dropdownRef.value?.getBoundingClientRect().height ?? 0
+
+  const spaceBelow = window.innerHeight - cursorPosition.bottom
+  const spaceAbove = cursorPosition.top
+
+  state.value.x = cursorPosition.left
+
+  const shouldShowAbove
+    = spaceBelow < dropdownHeight
+      && spaceAbove > spaceBelow
+
+  let y = shouldShowAbove
+    ? cursorPosition.top - dropdownHeight - offset
+    : cursorPosition.bottom + offset
+
+  y = Math.max(8, y)
+
+  state.value.y = y
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', updatePosition, true)
+  window.addEventListener('resize', updatePosition, true)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updatePosition, true)
+  window.removeEventListener('resize', updatePosition, true)
+})
 </script>
 
 <template>
   <Teleport to="body">
     <div
       v-if="state.isOpen"
-      class="p-1 fixed z-50 w-80 overflow-hidden rounded-2xl border bg-popover shadow-xl"
+      ref="dropdownRef"
+      class="p-1 fixed z-50 w-80 max-h-[40vh] overflow-y-auto rounded-2xl border bg-popover shadow-xl"
       :style="{
         left: `${state.x}px`,
         top: `${state.y}px`,
