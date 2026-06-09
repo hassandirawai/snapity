@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import Placeholder from '@tiptap/extension-placeholder'
-import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { toast } from 'vue-sonner'
 import { cn } from '~/lib/utils'
@@ -9,34 +7,8 @@ const { user: loggedInUser } = useUserSession()
 
 const editor = useEditor({
   extensions: [
-    StarterKit
-      .extend({
-        addKeyboardShortcuts() {
-          return {
-            Backspace: () => {
-              const { editor } = this
-              nextTick(() => {
-                if (editor.isEmpty) {
-                  editor.commands.focus('end')
-                  return true
-                }
-              })
-            },
-          }
-        },
-      })
-      .configure({
-        bold: false,
-        italic: false,
-        heading: false,
-        codeBlock: false,
-        horizontalRule: false,
-        blockquote: false,
-        bulletList: false,
-      }),
-    Placeholder.configure({
-      placeholder: 'Write your post content here',
-    }),
+    createStarterKitExtension(),
+    createPlaceholderExtension('Write your post content here'),
     createMentionExtension(),
     // createHashtagExtenstion() will keep it pending for now,
   ],
@@ -121,6 +93,16 @@ async function onSubmit() {
 onBeforeUnmount(() => {
   unref(editor)?.destroy()
 })
+
+watch(editor, (editorInstance) => {
+  if (!editorInstance) {
+    return
+  }
+
+  editorInstance.on('selectionUpdate', ({ editor }) => {
+    console.log(editor.getJSON())
+  })
+}, { immediate: true })
 </script>
 
 <template>

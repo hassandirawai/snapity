@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import Placeholder from '@tiptap/extension-placeholder'
-import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 
 interface CommentInputProps {
@@ -10,34 +8,9 @@ const props = defineProps<CommentInputProps>()
 
 const editor = useEditor({
   extensions: [
-    StarterKit
-      .extend({
-        addKeyboardShortcuts() {
-          return {
-            Backspace: () => {
-              nextTick(() => {
-                console.warn(this.editor.isEmpty)
-                if (this.editor.isEmpty) {
-                  this.editor.commands.focus('end')
-                  return true
-                }
-              })
-            },
-          }
-        },
-      })
-      .configure({
-        bold: false,
-        italic: false,
-        heading: false,
-        codeBlock: false,
-        horizontalRule: false,
-        blockquote: false,
-        bulletList: false,
-      }),
-    Placeholder.configure({
-      placeholder: 'Write a comment',
-    }),
+    createStarterKitExtension(),
+    createPlaceholderExtension('Write a comment'),
+    createMentionExtension(),
     createMentionExtension(),
   ],
 })

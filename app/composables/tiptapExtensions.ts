@@ -1,6 +1,8 @@
 import type { MentionItem } from '~/types/mention'
 import { Node, nodeInputRule } from '@tiptap/core'
 import Mention from '@tiptap/extension-mention'
+import Placeholder from '@tiptap/extension-placeholder'
+import StarterKit from '@tiptap/starter-kit'
 
 export function createMentionExtension() {
   const { state } = useMentionDropdown()
@@ -240,5 +242,45 @@ export function createHashtagExtenstion() {
         }),
       ]
     },
+  })
+}
+
+export function createStarterKitExtension() {
+  return StarterKit
+    .extend({
+      addKeyboardShortcuts() {
+        return {
+          'Backspace': () => {
+            const { editor } = this
+            nextTick(() => {
+              if (editor.isEmpty) {
+                editor.commands.focus('end')
+                return true
+              }
+            })
+          },
+          'Shift-Enter': () => {
+            const { editor } = this
+            editor.commands.splitBlock()
+            return true
+          },
+        }
+      },
+    })
+    .configure({
+      hardBreak: false,
+      bold: false,
+      italic: false,
+      heading: false,
+      codeBlock: false,
+      horizontalRule: false,
+      blockquote: false,
+      bulletList: false,
+    })
+}
+
+export function createPlaceholderExtension(placeholder: string) {
+  return Placeholder.configure({
+    placeholder,
   })
 }

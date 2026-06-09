@@ -9,14 +9,14 @@ export function extractText(node: any): string {
     text += `@${node.attrs.label}`
   }
 
-  if (node.type === 'hardBreak') {
-    text += '\n'
-  }
-
   if (Array.isArray(node.content)) {
     for (const child of node.content) {
       text += extractText(child)
     }
+  }
+
+  if (node.type === 'paragraph') {
+    text += '\n'
   }
 
   return text
