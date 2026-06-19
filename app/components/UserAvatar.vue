@@ -6,6 +6,7 @@ const props = withDefaults(defineProps<{
   avatarUrl: string | null | undefined
   size?: number | string
   class?: HTMLAttributes['class']
+  debugSource?: string
 }>(), {
   size: 48,
 })
@@ -20,6 +21,20 @@ const computedAvatarUrl = computed(() => {
   }
 
   return `/images/${props.avatarUrl}`
+})
+
+console.warn(
+  import.meta.server ? 'SERVER AVATAR RENDER' : 'CLIENT AVATAR RENDER',
+  computedAvatarUrl.value,
+)
+
+watchEffect(() => {
+  console.warn(
+    import.meta.server ? 'SERVER AVATAR' : 'CLIENT AVATAR',
+    props.debugSource,
+    props.avatarUrl,
+    computedAvatarUrl.value,
+  )
 })
 </script>
 

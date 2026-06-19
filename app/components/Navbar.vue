@@ -10,6 +10,7 @@
       <NuxtLink to="/">
         <NuxtImg
           src="/sanpity-logo.svg"
+          alt="Snapity Logo"
           width="48"
           height="48"
           class="w-28"

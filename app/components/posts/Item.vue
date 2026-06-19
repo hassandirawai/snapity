@@ -27,6 +27,7 @@ function relative(from: Date): boolean {
             <UserAvatar
               :avatar-url="postData.user?.avatar"
               class="sm:inline"
+              :debug-source="`PostsItem: ${postData.post.id}`"
             />
           </NuxtLink>
         </UserTooltip>

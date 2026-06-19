@@ -36,10 +36,10 @@ useSeoMeta({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="for-you-feed">
-            <ForYouFeed />
+            <LazyForYouFeed />
           </TabsContent>
           <TabsContent value="following-feed">
-            <FollowingFeed />
+            <LazyFollowingFeed />
           </TabsContent>
         </Tabs>
       </div>

@@ -62,7 +62,6 @@ export default defineNuxtConfig({
         'class-variance-authority',
         'clsx',
         'date-fns',
-        'lucide-vue-next',
         'reka-ui',
         'tailwind-merge',
         'vue-advanced-cropper',
