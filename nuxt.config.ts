@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
     '@nuxthub/core',
+    '@nuxt/hints',
   ],
   compatibilityDate: '2025-07-15',
   app: { head: { title: 'Snapity' } },

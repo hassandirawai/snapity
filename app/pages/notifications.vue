@@ -13,7 +13,7 @@ useSeoMeta({
           Notifications
         </h1>
       </div>
-      <NotificationsFeed />
+      <!-- <NotificationsFeed /> -->
     </div>
     <TrendsSidebar />
   </main>

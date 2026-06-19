@@ -21,37 +21,35 @@ const parts = computed(() => {
 </script>
 
 <template>
-  <ClientOnly>
-    <template
-      v-for="(part, index) in parts"
-      :key="`${part}-${index}`"
+  <template
+    v-for="(part, index) in parts"
+    :key="`${part}-${index}`"
+  >
+    <a
+      v-if="part.startsWith('http')"
+      :href="part"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-primary underline"
     >
-      <a
-        v-if="part.startsWith('http')"
-        :href="part"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-primary underline"
-      >
-        {{ part }}
-      </a>
+      {{ part }}
+    </a>
 
-      <UserMentionWithTooltip
-        v-else-if="part.startsWith('@')"
-        :username="part.slice(1)"
-      />
+    <UserMentionWithTooltip
+      v-else-if="part.startsWith('@')"
+      :username="part.slice(1)"
+    />
 
-      <NuxtLink
-        v-else-if="part.startsWith('#')"
-        :to="`/hashtag/${part.slice(1)}`"
-        class="text-primary hover:underline"
-      >
-        {{ part }}
-      </NuxtLink>
+    <NuxtLink
+      v-else-if="part.startsWith('#')"
+      :to="`/hashtag/${part.slice(1)}`"
+      class="text-primary hover:underline"
+    >
+      {{ part }}
+    </NuxtLink>
 
-      <span v-else>
-        {{ part }}
-      </span>
-    </template>
-  </ClientOnly>
+    <span v-else>
+      {{ part }}
+    </span>
+  </template>
 </template>
