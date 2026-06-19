@@ -11,9 +11,10 @@ useSeoMeta({
       <ClientOnly>
         <PostsEditor />
         <template #fallback>
-          <div class="bg-card border rounded-2xl p-6 h-32 animate-pulse" />
+          <Skeleton class="p-6 w-full h-32" />
         </template>
       </ClientOnly>
+      <!--
       <div>
         <Tabs default-value="for-you-feed">
           <TabsList class="w-full">
@@ -32,6 +33,7 @@ useSeoMeta({
           </TabsContent>
         </Tabs>
       </div>
+       -->
     </div>
     <TrendsSidebar />
   </main>
