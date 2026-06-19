@@ -27,7 +27,7 @@ useSeoMeta({
       </ClientOnly>
       <div>
         <Tabs default-value="for-you-feed">
-          <TabsList>
+          <TabsList class="w-full">
             <TabsTrigger value="for-you-feed">
               For You
             </TabsTrigger>
@@ -35,13 +35,11 @@ useSeoMeta({
               Following
             </TabsTrigger>
           </TabsList>
-
           <TabsContent value="for-you-feed">
-            Hello
+            <ForYouFeed />
           </TabsContent>
-
           <TabsContent value="following-feed">
-            World
+            <!-- <FollowingFeed /> -->
           </TabsContent>
         </Tabs>
       </div>
