@@ -16,7 +16,13 @@
         />
       </NuxtLink>
       <SearchField />
-      <UserButton class="sm:ms-auto" />
+      <ClientOnly>
+        <UserButton class="sm:ms-auto" />
+
+        <template #fallback>
+          <Skeleton class="w-10 h-10 rounded-full" />
+        </template>
+      </ClientOnly>
     </div>
   </header>
 </template>
