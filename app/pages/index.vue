@@ -26,28 +26,24 @@ useSeoMeta({
         </template>
       </ClientOnly>
       <div>
-        <ClientOnly>
-          <Tabs default-value="for-you-feed">
-            <TabsList class="w-full">
-              <TabsTrigger value="for-you-feed">
-                For You
-              </TabsTrigger>
-              <TabsTrigger value="following-feed">
-                Following
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="for-you-feed">
-              <ForYouFeed />
-            </TabsContent>
-            <TabsContent value="following-feed">
-              <FollowingFeed />
-            </TabsContent>
-          </Tabs>
+        <Tabs default-value="for-you-feed">
+          <TabsList>
+            <TabsTrigger value="for-you-feed">
+              For You
+            </TabsTrigger>
+            <TabsTrigger value="following-feed">
+              Following
+            </TabsTrigger>
+          </TabsList>
 
-          <template #fallback>
-            <Skeleton class="h-12 w-full" />
-          </template>
-        </ClientOnly>
+          <TabsContent value="for-you-feed">
+            Hello
+          </TabsContent>
+
+          <TabsContent value="following-feed">
+            World
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
     <TrendsSidebar />
