@@ -100,7 +100,7 @@ watch(editor, (editorInstance) => {
   }
 
   editorInstance.on('selectionUpdate', ({ editor }) => {
-    console.log(editor.getJSON())
+    console.warn(editor.getJSON())
   })
 }, { immediate: true })
 </script>
@@ -151,6 +151,7 @@ watch(editor, (editorInstance) => {
       </LoadingButton>
     </div>
   </div>
+
   <PostsEditorImageCropperDialog
     v-model:open="isCropDialogOpen"
     :files="croppedFiles"
