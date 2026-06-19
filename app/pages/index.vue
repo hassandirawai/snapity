@@ -15,22 +15,7 @@ useSeoMeta({
         </template>
       </ClientOnly>
       <div>
-        <Tabs default-value="for-you-feed">
-          <TabsList class="w-full">
-            <TabsTrigger value="for-you-feed">
-              For You
-            </TabsTrigger>
-            <TabsTrigger value="following-feed">
-              Following
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="for-you-feed">
-            <ForYouFeed />
-          </TabsContent>
-          <TabsContent value="following-feed">
-            <!-- <FollowingFeed /> -->
-          </TabsContent>
-        </Tabs>
+        <ForYouFeed />
       </div>
     </div>
     <TrendsSidebar />

@@ -312,7 +312,7 @@ export async function getBookmarksFeed({
   const db = useDrizzle()
 
   // Get posts
-  const postsData = await db
+  const postsData: PostDataType[] = await db
     .select(postDataSelect(userId))
     .from(bookmark)
     .leftJoin(post, eq(post.id, bookmark.postId))
@@ -333,7 +333,7 @@ export async function getBookmarksFeed({
     .orderBy(desc(bookmark.createdAt))
     .limit(pageSize + 1)
 
-  if (!postsData) {
+  if (!postsData.length) {
     throw createError({
       statusCode: 404,
       statusMessage: 'No posts found',
