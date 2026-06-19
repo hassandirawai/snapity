@@ -5,12 +5,12 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vee-validate/nuxt',
     '@nuxtjs/color-mode',
-    '@vueuse/nuxt',
     'nuxt-auth-utils',
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
     '@nuxthub/core',
     '@nuxt/hints',
+    '@vueuse/nuxt',
   ],
   compatibilityDate: '2025-07-15',
   app: { head: { title: 'Snapity' } },
@@ -39,16 +39,8 @@ export default defineNuxtConfig({
     },
   },
 
-  routeRules: {
-    '/login': {
-      ssr: false,
-    },
-    '/signup': {
-      ssr: false,
-    },
-    '/resetpassord': {
-      ssr: false,
-    },
+  experimental: {
+    asyncContext: true,
   },
 
   eslint: { config: { standalone: false } },

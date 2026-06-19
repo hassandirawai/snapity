@@ -333,13 +333,6 @@ export async function getBookmarksFeed({
     .orderBy(desc(bookmark.createdAt))
     .limit(pageSize + 1)
 
-  if (!postsData.length) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'No posts found',
-    })
-  }
-
   return postsData
 }
 
