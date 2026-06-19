@@ -14,7 +14,6 @@ useSeoMeta({
           <Skeleton class="p-6 w-full h-32" />
         </template>
       </ClientOnly>
-      <!--
       <div>
         <Tabs default-value="for-you-feed">
           <TabsList class="w-full">
@@ -29,11 +28,10 @@ useSeoMeta({
             <ForYouFeed />
           </TabsContent>
           <TabsContent value="following-feed">
-            <FollowingFeed />
+            <!-- <FollowingFeed /> -->
           </TabsContent>
         </Tabs>
       </div>
-       -->
     </div>
     <TrendsSidebar />
   </main>
