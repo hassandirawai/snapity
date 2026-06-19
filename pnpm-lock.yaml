@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@hugeicons/core-free-icons':
+        specifier: ^4.2.1
+        version: 4.2.1
+      '@hugeicons/vue':
+        specifier: ^1.0.6
+        version: 1.0.6(vue@3.5.26(typescript@5.9.3))
       '@iconify/vue':
         specifier: ^4.3.0
         version: 4.3.0(vue@3.5.26(typescript@5.9.3))
@@ -105,8 +111,8 @@ importers:
         specifier: ^2.3.1
         version: 2.9.8(vue@3.5.26(typescript@5.9.3))
       shadcn-vue:
-        specifier: ^2.6.2
-        version: 2.7.3(eslint@9.39.4(jiti@2.7.0))(magicast@0.5.3)(vue@3.5.26(typescript@5.9.3))
+        specifier: ^2.7.4
+        version: 2.7.4(eslint@9.39.4(jiti@2.7.0))(magicast@0.5.3)(vue@3.5.26(typescript@5.9.3))
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.6.0
@@ -1243,6 +1249,14 @@ packages:
   '@html-validate/stylish@5.2.0':
     resolution: {integrity: sha512-7lF57/RTs2tZi0FtgY7Y5CP73Y2GEPPMaJ9PeZKRRUOs7Bt7/Qlqt8kdsAbVMO7GrpuWtUfGvR11riSOryioow==}
     engines: {node: ^20.18 || ^22.16 || >= 24.0}
+
+  '@hugeicons/core-free-icons@4.2.1':
+    resolution: {integrity: sha512-75jYZKYyA9VwS35YRmmGUGzFedbY+Fl0Vxx5FzXR2CGDlIhNRumFeVqaaKoClf2MeYEJwPAVMEL9RwCYtOgnSw==}
+
+  '@hugeicons/vue@1.0.6':
+    resolution: {integrity: sha512-T1Wbuk2qDdoE2xcY3CDtwMOKewwIYDE7JoMVLeuAV4cbOx5CFtToHCQAmLgVPIFGGZUsV2nN52lBkts9upvePw==}
+    peerDependencies:
+      vue: ^2.6.0 || ^3.0.0
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -6768,8 +6782,8 @@ packages:
   shadcn-nuxt@2.7.3:
     resolution: {integrity: sha512-aeH/Ecy/e3aiWUgQyBm39iLA+pCZuB1uisPYPha03U1/dpidnaYe4qblPETTbDyNEAVBjqgfNdoM9lT7Zthbvw==}
 
-  shadcn-vue@2.7.3:
-    resolution: {integrity: sha512-bYfn9RbjG98++IjvCEhVhvva64mjDAGrtE4QNSuy6jjtE/XpI3syRJaBYmrvPBI93W27dLGbCTr8p7gnvjkQvQ==}
+  shadcn-vue@2.7.4:
+    resolution: {integrity: sha512-+ZxxEbxbYvKerod/vFNdnQ8JEiQWhfZJWH/bKr6MFvFGSSulJS29QjyFrT1VudkOwUhLFtm+6sTT+ZVBxeNQIg==}
     hasBin: true
 
   sharp@0.34.5:
@@ -8625,6 +8639,12 @@ snapshots:
       hono: 4.12.23
 
   '@html-validate/stylish@5.2.0': {}
+
+  '@hugeicons/core-free-icons@4.2.1': {}
+
+  '@hugeicons/vue@1.0.6(vue@3.5.26(typescript@5.9.3))':
+    dependencies:
+      vue: 3.5.26(typescript@5.9.3)
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -14852,7 +14872,7 @@ snapshots:
       - '@emnapi/runtime'
       - magicast
 
-  shadcn-vue@2.7.3(eslint@9.39.4(jiti@2.7.0))(magicast@0.5.3)(vue@3.5.26(typescript@5.9.3)):
+  shadcn-vue@2.7.4(eslint@9.39.4(jiti@2.7.0))(magicast@0.5.3)(vue@3.5.26(typescript@5.9.3)):
     dependencies:
       '@dotenvx/dotenvx': 1.69.2
       '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)

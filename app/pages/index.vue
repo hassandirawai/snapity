@@ -1,13 +1,4 @@
 <script lang="ts" setup>
-import {
-  TabsContent,
-  TabsList,
-  TabsRoot,
-  TabsTrigger,
-} from 'reka-ui'
-
-const tab = ref('a')
-
 useSeoMeta({
   title: 'Home',
   description: 'Snapity is a social media platform that allows users to connect with each other and share their thoughts, ideas, and experiences.',
@@ -35,25 +26,22 @@ useSeoMeta({
         </template>
       </ClientOnly>
       <div>
-        <TabsRoot v-model="tab">
-          <TabsList>
-            <TabsTrigger value="a">
-              A
+        <Tabs default-value="for-you-feed">
+          <TabsList class="w-full">
+            <TabsTrigger value="for-you-feed">
+              For You
             </TabsTrigger>
-
-            <TabsTrigger value="b">
-              B
+            <TabsTrigger value="following-feed">
+              Following
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="a">
+          <TabsContent value="for-you-feed">
             <ForYouFeed />
           </TabsContent>
-
-          <TabsContent value="b">
+          <TabsContent value="following-feed">
             <FollowingFeed />
           </TabsContent>
-        </TabsRoot>
+        </Tabs>
       </div>
     </div>
     <TrendsSidebar />
