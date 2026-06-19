@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-import { TabsRoot } from 'reka-ui'
+import {
+  TabsContent,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+} from 'reka-ui'
 
 useSeoMeta({
   title: 'Home',
@@ -28,22 +33,19 @@ useSeoMeta({
         </template>
       </ClientOnly>
       <div>
-        <TabsRoot default-value="a">
-          <TabsList>
-            <TabsTrigger value="a">
-              A
+        <TabsRoot default-value="for-you-feed">
+          <TabsList class="w-full">
+            <TabsTrigger value="for-you-feed">
+              For You
             </TabsTrigger>
-
-            <TabsTrigger value="b">
-              B
+            <TabsTrigger value="following-feed">
+              Following
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="a">
+          <TabsContent value="for-you-feed">
             <ForYouFeed />
           </TabsContent>
-
-          <TabsContent value="b">
+          <TabsContent value="following-feed">
             <FollowingFeed />
           </TabsContent>
         </TabsRoot>
