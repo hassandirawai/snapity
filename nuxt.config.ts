@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
     '@nuxthub/core',
-    '@nuxt/hints',
     '@vueuse/nuxt',
   ],
   compatibilityDate: '2025-07-15',
