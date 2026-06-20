@@ -36,9 +36,7 @@ useSeoMeta({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="for-you-feed">
-            <Suspense>
-              <ForYouFeed />
-            </Suspense>
+            <ForYouFeed />
           </TabsContent>
           <TabsContent value="following-feed">
             <FollowingFeed />

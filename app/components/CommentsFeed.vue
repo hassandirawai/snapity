@@ -13,6 +13,7 @@ const {
   hasNextPage,
   isFetchingNextPage,
   status,
+  suspense,
 } = useInfiniteQuery({
   queryKey: ['comments-feed', props.postData.post.id],
   queryFn: async ({ pageParam }) => {
@@ -20,13 +21,17 @@ const {
       ? `/api/posts/${props.postData.post.id}/comments-feed/${pageParam}`
       : `/api/posts/${props.postData.post.id}/comments-feed/:cursorDate`
 
-    return await $fetch<CommentsPageType>(url)
+    return await $fetch<CommentsPageType>(url, {
+      headers: useRequestHeaders(['cookie']),
+    })
   },
   initialPageParam: null as Date | null,
   getNextPageParam: lastPage => lastPage.nextCursor,
 })
 
 const commentsData = computed<CommentDataType[]>(() => commentsPage.value?.pages.flatMap(page => page.commentsData) ?? [])
+
+await suspense()
 </script>
 
 <template>

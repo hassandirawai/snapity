@@ -19,6 +19,23 @@ const { data: notificationsCountInfo } = useQuery({
 
 <template>
   <ClientOnly>
+    <template #fallback>
+      <Button
+        variant="ghost"
+        title="Messages"
+        class="flex items-center justify-start gap-3"
+        as-child
+      >
+        <NuxtLink to="/messages">
+          <Icon
+            name="fluent:alert-20-regular"
+            class="text-xl"
+          />
+          <span class="hidden lg:inline">Notifications</span>
+        </NuxtLink>
+      </Button>
+    </template>
+
     <Button
       variant="ghost"
       title="Notifications"

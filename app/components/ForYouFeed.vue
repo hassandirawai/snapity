@@ -16,6 +16,7 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
     },
     initialPageParam: null as Date | null,
     getNextPageParam: lastPage => lastPage.nextCursor,
+    staleTime: 5000,
   })
 
 await suspense()

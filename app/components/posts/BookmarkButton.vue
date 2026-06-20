@@ -75,15 +75,13 @@ const { mutate } = useMutation({
 </script>
 
 <template>
-  <ClientOnly>
-    <button
-      :class="cn('flex items-center gap-2', props.class)"
-      @click="mutate(bookmarkData)"
-    >
-      <Icon
-        :name="bookmarkData.isBookmarkedByUser ? 'fluent:bookmark-20-filled' : 'fluent:bookmark-20-regular'"
-        :class="cn('text-xl', bookmarkData.isBookmarkedByUser && 'text-primary')"
-      />
-    </button>
-  </ClientOnly>
+  <button
+    :class="cn('flex items-center gap-2', props.class)"
+    @click="mutate(bookmarkData)"
+  >
+    <Icon
+      :name="bookmarkData.isBookmarkedByUser ? 'fluent:bookmark-20-filled' : 'fluent:bookmark-20-regular'"
+      :class="cn('text-xl', bookmarkData.isBookmarkedByUser && 'text-primary')"
+    />
+  </button>
 </template>

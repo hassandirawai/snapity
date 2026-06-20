@@ -2,7 +2,7 @@
 import { useInfiniteQuery } from '@tanstack/vue-query'
 
 // Fetch the posts for the for-you feed
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
   = useInfiniteQuery({
     queryKey: ['posts-feed', 'bookmarks-feed'],
     queryFn: async ({ pageParam }) => {
@@ -10,11 +10,15 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
         ? `/api/posts/bookmarks-feed/${pageParam}`
         : '/api/posts/bookmarks-feed/:cursorDate'
 
-      return await $fetch<PostsPageType>(url)
+      return await $fetch<PostsPageType>(url, {
+        headers: useRequestHeaders(['cookie']),
+      })
     },
     initialPageParam: null as Date | null,
     getNextPageParam: lastPage => lastPage.nextCursor,
   })
+
+await suspense()
 
 // Flatten the pages of posts into a single array
 const postsData = computed(() => data.value?.pages.flatMap(page => page.postsData) ?? [])

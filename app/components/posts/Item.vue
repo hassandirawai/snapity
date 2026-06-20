@@ -79,7 +79,7 @@ function relative(from: Date): boolean {
 
     <div class="flex justify-start items-center gap-6">
       <!-- Likes -->
-      <PostsLikeButton
+      <LazyPostsLikeButton
         :post-id="postData.post.id"
         :initial-state="{
           likesCount: postData.post.likesCount,
@@ -87,11 +87,11 @@ function relative(from: Date): boolean {
         }"
       />
       <!-- Comments -->
-      <PostsCommentButton
+      <LazyPostsCommentButton
         :post-data
         @show-comments="showComments = !showComments"
       />
-      <PostsBookmarkButton
+      <LazyPostsBookmarkButton
         class="ml-auto"
         :post-id="postData.post.id"
         :initial-state="{
@@ -108,8 +108,5 @@ function relative(from: Date): boolean {
 </template>
 
 <style>
-.tiptap-content .mention {
-  color: hsl(var(--primary));
-  font-weight: 500;
-}
+
 </style>
