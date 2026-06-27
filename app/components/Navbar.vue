@@ -22,7 +22,7 @@ const { user: loggedInUser } = useUserSession()
           <UserButton />
 
           <template #fallback>
-            <Skeleton class="w-10 h-10 rounded-full" />
+            <Skeleton class="w-9 h-9 rounded-full" />
           </template>
         </ClientOnly>
 

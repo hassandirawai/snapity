@@ -69,7 +69,7 @@ useSeoMeta({
     </div>
     <ClientOnly>
       <template #fallback>
-        <div class="block min-w-72 lg:min-w-80" />
+        <div class="hidden md:block min-w-72 lg:min-w-80" />
       </template>
 
       <TrendsSidebar />
