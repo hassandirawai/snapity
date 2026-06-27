@@ -1,8 +1,12 @@
 <script lang="ts" setup>
+const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
-  <div class="sticky top-[5.54rem] w-72 lg:w-80 h-fit hidden md:block space-y-6 flex-none">
+  <div
+    v-if="loggedInUser"
+    class="sticky top-20 w-72 lg:w-80 h-fit hidden md:block space-y-6 flex-none"
+  >
     <Suspense>
       <template #fallback>
         <div class="w-full bg-card space-y-6 p-6 border rounded-2xl">
@@ -47,6 +51,43 @@
 
       <TrendingTopics />
     </Suspense>
+  </div>
+
+  <div
+    v-else
+    class="sticky top-20 w-72 lg:w-80 h-fit hidden md:block space-y-6 flex-none"
+  >
+    <Card class="w-full">
+      <CardHeader>
+        <CardTitle class="text-lg">
+          New to Snapity?
+        </CardTitle>
+        <CardDescription>
+          Sign up now to get your own personalized timeline!
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-3">
+          <Button
+            class="w-full"
+            as-child
+          >
+            <NuxtLink to="/login">
+              Login
+            </NuxtLink>
+          </Button>
+          <Button
+            variant="secondary"
+            class="w-full"
+            as-child
+          >
+            <NuxtLink to="/signup">
+              Sign Up
+            </NuxtLink>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   </div>
 </template>
 

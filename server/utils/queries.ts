@@ -257,10 +257,12 @@ export async function getFollowerFeedPosts({
 }
 
 export async function getUserPosts({
+  loggedInUserId,
   userId,
   pageSize,
   cursorDate,
 }: {
+  loggedInUserId?: string
   userId: string
   pageSize: number
   cursorDate?: Date
@@ -269,7 +271,7 @@ export async function getUserPosts({
 
   // Get posts
   const postsData = await db
-    .select(postDataSelect(userId))
+    .select(postDataSelect(loggedInUserId))
     .from(post)
     .innerJoin(user, eq(post.authorId, user.id))
     .leftJoin(postHashtag, eq(postHashtag.postId, post.id))

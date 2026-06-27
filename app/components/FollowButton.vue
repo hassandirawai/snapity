@@ -10,6 +10,10 @@ interface FollowButtonProps extends ButtonProps {
 
 const props = defineProps<FollowButtonProps>()
 
+const showAuthDialog = ref<boolean>(false)
+
+const { loggedIn } = useUserSession()
+
 const queryClient = useQueryClient()
 
 const { data: followerData } = useFollowerInfo(props.userId, props.initialState)
@@ -64,7 +68,7 @@ const { mutate } = useMutation({
 </script>
 
 <template>
-  <ClientOnly>
+  <ClientOnly v-if="loggedIn">
     <Button
       :class="cn(props.class)"
       :variant="followerData.isFollowedByUser ? 'secondary' : 'default'"
@@ -73,6 +77,21 @@ const { mutate } = useMutation({
       {{ followerData.isFollowedByUser ? 'Unfollow' : 'Follow' }}
     </Button>
   </ClientOnly>
+
+  <div v-else>
+    <Button
+      :class="cn(props.class)"
+      @click="showAuthDialog = true"
+    >
+      Follow
+    </Button>
+
+    <AuthDialog
+      source-type="FOLLOW"
+      :is-open="showAuthDialog"
+      @close="showAuthDialog = false"
+    />
+  </div>
 </template>
 
 <style></style>

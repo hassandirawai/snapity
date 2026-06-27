@@ -41,7 +41,7 @@ const notificationTypeMap: Record<NotificationType, {
   },
 }
 
-const { message, icon, class: notificationClass, herf } = notificationTypeMap[props.notificationData.type]
+const { message, icon, class: className, herf } = notificationTypeMap[props.notificationData.type]
 </script>
 
 <template>
@@ -55,7 +55,7 @@ const { message, icon, class: notificationClass, herf } = notificationTypeMap[pr
         !notificationData.isRead && 'bg-primary/10',
       )"
     >
-      <Icon :name="icon" :class="cn(notificationClass, 'text-3xl')" />
+      <Icon :name="icon" :class="cn(className, 'text-3xl')" />
       <div class="flex flex-col gap-y-3 flex-1">
         <div class="flex items-center">
           <UserAvatar

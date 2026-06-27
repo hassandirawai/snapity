@@ -8,7 +8,7 @@ const props = defineProps<{
 const { user: loggedInUser } = useUserSession()
 
 // Fetch the posts for the for-you feed
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status } = useInfiniteQuery({
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status, suspense } = useInfiniteQuery({
   queryKey: ['posts-feed', 'user-posts-feed', props.userId],
   queryFn: async ({ pageParam }) => {
     const url = pageParam
@@ -19,9 +19,11 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, status 
   },
   getNextPageParam: lastPage => lastPage.nextCursor,
   initialPageParam: null as Date | null,
-  enabled: computed(() => !!loggedInUser.value && !!props.userId),
+  enabled: computed(() => !!props.userId),
   refetchOnMount: true,
 })
+
+await suspense()
 
 // Flatten the pages of posts into a single array
 const postsData = computed(() => data.value?.pages.flatMap(page => page.postsData) ?? [])

@@ -1,6 +1,4 @@
 export default defineEventHandler(async (event) => {
-  const { user: loggedInUser } = await requireUserSession(event)
-
   const username = getRouterParam(event, 'username') as string | undefined
 
   if (!username) {
@@ -12,7 +10,6 @@ export default defineEventHandler(async (event) => {
 
   const users = await findUserByUsername({
     username,
-    loggedInUserId: loggedInUser.id,
   })
 
   const userData: UserDataType = users

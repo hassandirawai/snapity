@@ -13,9 +13,9 @@ useSeoMeta({
           Bookmarks
         </h1>
       </div>
-      <BookmarksFeed />
+      <LazyBookmarksFeed />
     </div>
-    <TrendsSidebar />
+    <LazyTrendsSidebar />
   </main>
 </template>
 

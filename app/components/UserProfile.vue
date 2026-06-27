@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { userData, loggedInUserId } = defineProps<{
   userData: UserDataType
-  loggedInUserId: string
+  loggedInUserId?: string
 }>()
 
 const followerInfo: FollowerInfo = {
@@ -27,6 +27,10 @@ const followerInfo: FollowerInfo = {
       </div>
       <!-- Since it does not required any seo will render it on the client side -->
       <ClientOnly>
+        <template #fallback>
+          <Skeleton class="h-9 px-4 py-2 has-[>svg]:px-3 w-25" />
+        </template>
+
         <FollowButton
           v-if="userData.id !== loggedInUserId"
           :user-id="userData.id"

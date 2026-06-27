@@ -22,20 +22,6 @@ const computedAvatarUrl = computed(() => {
 
   return `/images/${props.avatarUrl}`
 })
-
-console.warn(
-  import.meta.server ? 'SERVER AVATAR RENDER' : 'CLIENT AVATAR RENDER',
-  computedAvatarUrl.value,
-)
-
-watchEffect(() => {
-  console.warn(
-    import.meta.server ? 'SERVER AVATAR' : 'CLIENT AVATAR',
-    props.debugSource,
-    props.avatarUrl,
-    computedAvatarUrl.value,
-  )
-})
 </script>
 
 <template>

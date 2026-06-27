@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-
+const { user: loggedInUser } = useUserSession()
 </script>
 
 <template>
@@ -16,14 +16,25 @@
           class="w-28"
         />
       </NuxtLink>
-      <SearchField />
-      <ClientOnly>
-        <UserButton class="sm:ms-auto" />
+      <SearchField v-if="loggedInUser" />
+      <div class="sm:ms-auto">
+        <ClientOnly v-if="loggedInUser">
+          <UserButton />
 
-        <template #fallback>
-          <Skeleton class="w-10 h-10 rounded-full" />
-        </template>
-      </ClientOnly>
+          <template #fallback>
+            <Skeleton class="w-10 h-10 rounded-full" />
+          </template>
+        </ClientOnly>
+
+        <Button
+          v-else
+          as-child
+        >
+          <NuxtLink to="/login">
+            Login
+          </NuxtLink>
+        </Button>
+      </div>
     </div>
   </header>
 </template>

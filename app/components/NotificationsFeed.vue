@@ -3,7 +3,7 @@ import type { QueryKey } from '@tanstack/vue-query'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 
 // Fetch the notifications for the notifications feed
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
   = useInfiniteQuery({
     queryKey: ['notifications-feed'],
     queryFn: async ({ pageParam }) => {
@@ -11,7 +11,7 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
         ? `/api/notifications/${pageParam}`
         : '/api/notifications/:cursorDate'
 
-      return await $fetch<NotificationsPageType>(url, {
+      return $fetch<NotificationsPageType>(url, {
         headers: useRequestHeaders(['cookie']),
       })
     },
@@ -40,8 +40,6 @@ const { mutate } = useMutation({
 
 // Flatten the pages of notifications into a single array
 const notificationsData = computed(() => data.value?.pages.flatMap(page => page.notificationsData) ?? [])
-
-await suspense()
 
 onMounted(() => {
   mutate()

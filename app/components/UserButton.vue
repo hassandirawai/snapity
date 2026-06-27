@@ -29,7 +29,7 @@ async function handleSignOut() {
   <DropdownMenu>
     <DropdownMenuTrigger :class="cn('flex rounded-full', props.class)">
       <UserAvatar
-        :size="40"
+        :size="36"
         :avatar-url="user?.avatar"
       />
     </DropdownMenuTrigger>
