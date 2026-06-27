@@ -28,7 +28,7 @@ useSeoMeta({
         </Tabs>
       </div>
     </div>
-    <TrendsSidebar />
+    <LazyTrendsSidebar />
   </main>
 </template>
 

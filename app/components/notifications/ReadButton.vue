@@ -1,17 +1,10 @@
 <script lang="ts" setup>
 import { useQuery } from '@tanstack/vue-query'
 
-interface NotificationsButtonProps {
-  initialState: NotificationsCountInfoType
-}
-
-const props = defineProps<NotificationsButtonProps>()
-
 const { data: notificationsCountInfo } = useQuery({
   queryKey: ['unread-notifications-count'],
-  initialData: props.initialState,
   queryFn: async () => {
-    return await $fetch<NotificationsCountInfoType>('/api/notifications/unread-count')
+    return $fetch<NotificationsCountInfoType>('/api/notifications/unread-count')
   },
   refetchInterval: 60 * 1000,
 })
@@ -31,7 +24,7 @@ const { data: notificationsCountInfo } = useQuery({
           class="text-xl"
         />
         <span
-          v-if="notificationsCountInfo?.unreadCount > 0"
+          v-if="notificationsCountInfo?.unreadCount"
           class="absolute -right-1 -top-1 rounded-full bg-primary text-primary-foreground px-1 text-xs font-medium tabular-nums"
         >
           {{ notificationsCountInfo.unreadCount }}

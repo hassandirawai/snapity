@@ -10,7 +10,7 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
         ? `/api/posts/for-you-feed/${pageParam}`
         : '/api/posts/for-you-feed/:cursorDate'
 
-      return await $fetch<PostsPageType>(url, {
+      return $fetch<PostsPageType>(url, {
         headers: useRequestHeaders(['cookie']),
       })
     },
