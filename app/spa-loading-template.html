@@ -1,0 +1,47 @@
+<div id="spa-loader" style="
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="42"
+    height="42"
+    viewBox="0 0 20 20"
+    id="spa-spinner"
+    style="animation: spin 1s linear infinite;"
+  >
+    <path d="M0 0h20v20H0z" fill="none" />
+    <path fill="currentColor" d="M10 3.5A6.5 6.5 0 0 0 3.5 10A.75.75 0 0 1 2 10a8 8 0 1 1 8 8a.75.75 0 0 1 0-1.5a6.5 6.5 0 1 0 0-13" />
+  </svg>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var loader = document.getElementById('spa-loader')
+      var spinner = document.getElementById('spa-spinner')
+
+      // nuxt-color-mode stores the theme in localStorage as 'nuxt-color-mode'
+      var stored = localStorage.getItem('nuxt-color-mode')
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      var isDark = stored === 'dark' || (!stored && prefersDark)
+
+      if (isDark) {
+        loader.style.background = 'oklch(0.145 0 0)'
+        spinner.style.color = 'oklch(0.424 0.199 265.638)'
+      } else {
+        loader.style.background = 'oklch(1 0 0)'
+        spinner.style.color = 'oklch(0.488 0.243 264.376)'
+      }
+    })()
+  </script>
+</div>

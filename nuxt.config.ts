@@ -59,6 +59,8 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
+  spaLoadingTemplate: true,
+
   eslint: { config: { standalone: false } },
   shadcn: { prefix: '', componentDir: '@/components/ui' },
   colorMode: { classSuffix: '' },
