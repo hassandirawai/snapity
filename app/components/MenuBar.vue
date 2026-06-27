@@ -23,7 +23,7 @@ const props = defineProps<{
         <span class="hidden lg:inline">Home</span>
       </NuxtLink>
     </Button>
-    <NotificationsReadButton :initial-state="notificationsCountInfo ?? { unreadCount: 0 }" />
+    <NotificationsReadButton />
     <Button
       variant="ghost"
       title="Messages"
