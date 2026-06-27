@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { data: usersData } = useFetch<UserDataType[]>('/api/users/5/', {
+const usersData = await $fetch<UserDataType[]>('/api/users/5/', {
   method: 'GET',
 })
 </script>
@@ -29,15 +29,13 @@ const { data: usersData } = useFetch<UserDataType[]>('/api/users/5/', {
             </div>
           </NuxtLink>
         </UserTooltip>
-        <ClientOnly>
-          <FollowButton
-            :user-id="userData.id"
-            :initial-state="{
-              followersCount: userData.followersCount,
-              isFollowedByUser: userData.isFollowedByUser,
-            }"
-          />
-        </ClientOnly>
+        <FollowButton
+          :user-id="userData.id"
+          :initial-state="{
+            followersCount: userData.followersCount,
+            isFollowedByUser: userData.isFollowedByUser,
+          }"
+        />
       </div>
     </div>
   </div>

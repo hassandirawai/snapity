@@ -8,7 +8,7 @@ const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, status,
       ? `/api/posts/following-feed/${pageParam}`
       : `/api/posts/following-feed/:cursorDate`
 
-    return await $fetch<PostsPageType>(url, {
+    return $fetch<PostsPageType>(url, {
       headers: useRequestHeaders(['cookie']),
     })
   },

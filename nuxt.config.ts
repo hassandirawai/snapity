@@ -38,8 +38,25 @@ export default defineNuxtConfig({
     },
   },
 
+  routeRules: {
+    // CSR — personalized, no SEO value
+    '/': { ssr: false },
+    '/login': { ssr: false },
+    '/signup': { ssr: false },
+    '/resetpassword': { ssr: false },
+    '/search': { ssr: false },
+    '/bookmarks': { ssr: false },
+    '/messages': { ssr: false },
+    '/notifications': { ssr: false },
+
+    // SSR — public, shareable, indexable
+    '/users/**': { ssr: true },
+    '/post/**': { ssr: true },
+    '/hashtag/**': { ssr: true },
+  },
+
   experimental: {
-    asyncContext: true,
+    typedPages: true,
   },
 
   eslint: { config: { standalone: false } },

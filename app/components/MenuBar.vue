@@ -5,8 +5,6 @@ import { cn } from '~/lib/utils'
 const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
-
-const { data: notificationsCountInfo } = await useFetch<NotificationsCountInfoType>('/api/notifications/unread-count')
 </script>
 
 <template>
@@ -25,7 +23,6 @@ const { data: notificationsCountInfo } = await useFetch<NotificationsCountInfoTy
         <span class="hidden lg:inline">Home</span>
       </NuxtLink>
     </Button>
-    <NotificationsReadButton :initial-state="notificationsCountInfo ?? { unreadCount: 0 }" />
     <Button
       variant="ghost"
       title="Messages"

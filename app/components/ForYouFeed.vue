@@ -2,7 +2,7 @@
 import { useInfiniteQuery } from '@tanstack/vue-query'
 
 // Fetch the posts for the for-you feed
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status }
   = useInfiniteQuery({
     queryKey: ['posts-feed', 'for-you-feed'],
     queryFn: async ({ pageParam }) => {
@@ -18,8 +18,6 @@ const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, suspense }
     getNextPageParam: lastPage => lastPage.nextCursor,
     staleTime: 5000,
   })
-
-await suspense()
 
 // Flatten the pages of posts into a single array
 const postsData = computed(() => data.value?.pages.flatMap(page => page.postsData) ?? [])
